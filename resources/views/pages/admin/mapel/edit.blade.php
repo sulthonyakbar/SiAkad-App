@@ -1,0 +1,74 @@
+@extends('layouts.app')
+
+@section('title', 'Edit Data Mata Pelajaran')
+
+@push('style')
+    <!-- CSS Libraries -->
+    <link href="{{ asset('dist/css/lightbox.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
+@section('main')
+    <section class="section">
+        <div class="section-header">
+            <h1>Edit Data Mata Pelajaran</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('mapel.index') }}">Data Mata Pelajaran</a></div>
+            </div>
+        </div>
+
+        <div class="card card-primary">
+            <div class="card-header">
+                <a class="btn btn-primary" href="{{ route('mapel.index') }}" role="button"><i
+                        class="fa-solid fa-chevron-left"></i></a>
+            </div>
+
+            <div class="card-body">
+                <form method="POST" action="{{ route('mapel.update', $mapel->id) }}" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="id" value="{{ $mapel->id }}" required>
+
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="nama_mapel">Mata Pelajaran<span class="text-danger">*</span></label>
+                                <input id="nama_mapel" type="text" class="form-control" name="nama_mapel"
+                                    value="{{ old('nama_mapel', $mapel->nama_mapel) }}" required>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+
+                            <div class="form-group">
+                                <label for="deskripsi">Deskripsi </span></label>
+                                <textarea id="deskripsi" class="form-control" name="deskripsi">{{ old('deskripsi', $mapel->deskripsi) }}</textarea>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            Edit Data Mata Pelajaran
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+@endsection
+
+@push('scripts')
+    <!-- JS Libraies -->
+    <script src="{{ asset('library/jquery-ui-dist/jquery-ui.min.js') }}"></script>
+
+    <!-- Page Specific JS File -->
+    <script src="{{ asset('js/page/components-table.js') }}"></script>
+    <script src="{{ asset('dist/js/lightbox.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+@endpush

@@ -1,0 +1,227 @@
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+use App\Models\Guru;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\UploadedFile;
+
+class AdminTest extends TestCase
+{
+    use RefreshDatabase;
+    /**
+     * A basic feature test example.
+     */
+    public function testCreateAdminValid()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
+
+        $this->actingAs($admin);
+
+        $adminData = Guru::factory()->make([
+            'role' => 'admin',
+            'nama_guru' => 'Test Create Admin',
+            'NIP' => '12345678',
+            'foto' => UploadedFile::fake()->image('foto-guru.jpg'),
+            'email' => 'test.create.admin@example.com',
+        ])->toArray();
+
+        $response = $this->post(route('pegawai.store'), $adminData);
+
+        $response->assertRedirect(route('pegawai.admin.index'));
+
+        $this->assertDatabaseHas('gurus', [
+            'nama_guru' => 'Test Create Admin',
+            'NIP' => '12345678',
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'email' => 'test.create.admin@example.com',
+            'role' => 'admin',
+        ]);
+    }
+
+    public function testCreateAdminInvalid()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
+
+        $this->actingAs($admin);
+
+        $adminData = Guru::factory()->make([
+            'role' => 'admin',
+            'nama_guru' => '12345678',
+            'NIP' => 'abcdefgh',
+            'email' => 'invalid-email',
+        ])->toArray();
+
+        $response = $this->post(route('pegawai.store'), $adminData);
+
+        $response->assertSessionHasErrors(['nama_guru', 'NIP', 'email']);
+    }
+
+    public function testEditAdminValid()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
+
+        $this->actingAs($admin);
+
+        $adminData = Guru::factory()->create([
+            'nama_guru' => 'Test Create Admin',
+            'NIP' => '12345678',
+        ]);
+
+        $updateData = [
+            'nama_guru' => 'Test Admin Updated',
+            'jabatan' => 'Admin Sekolah',
+            'jenis_kelamin' => 'Laki-laki',
+            'NIP' => '987654321',
+            'pangkat' => 'III/C',
+            'NUPTK' => '64278127391',
+            'tempat_lahir' => 'Surabaya',
+            'tanggal_lahir' => '1985-05-10',
+            'pendidikan' => 'Strata 2',
+            'mulai_bekerja' => '2010-07-15',
+            'sertifikasi' => 'Ya',
+            'no_telp' => '08843617628398',
+            'alamat' => 'Jl. Merdeka No. 20, Surabaya',
+            'foto' => UploadedFile::fake()->image('foto-guru.jpg'),
+        ];
+
+        $response = $this->put(route('pegawai.update', $adminData->id), $updateData);
+
+        $response->assertRedirect(route('pegawai.guru.index'));
+
+        $this->assertDatabaseHas('gurus', [
+            'id' => $adminData->id,
+            'nama_guru' => 'Test Admin Updated',
+            'NIP' => '987654321',
+        ]);
+    }
+
+
+    public function testEditAdminInvalid()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
+
+        $this->actingAs($admin);
+
+        $adminData = Guru::factory()->create([
+            'nama_guru' => 'Test Create Admin',
+            'NIP' => '12345678',
+        ]);
+
+        $updateData = [
+            'nama_guru' => '12345678',
+            'NIP' => 'abcdefgh'
+        ];
+
+        $response = $this->put(route('pegawai.update', $adminData->id), $updateData);
+
+        $response->assertSessionHasErrors(['nama_guru', 'NIP']);
+    }
+
+    public function testViewAdminList()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
+
+        $this->actingAs($admin);
+
+        Guru::factory()->count(3)->create();
+
+        $response = $this->get(route('pegawai.admin.index'));
+
+        $response->assertSeeText('Data Admin');
+    }
+
+    public function testShowDetailAdmin()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
+
+        $this->actingAs($admin);
+
+        $adminData = Guru::factory()->create([
+            'nama_guru' => 'Test Show Detail Admin',
+            'NIP' => '12345678',
+        ]);
+
+        $response = $this->get(route('pegawai.detail', $adminData->id));
+
+        $response->assertSeeText('Detail Data Admin');
+    }
+
+    // public function testChangeStatusGuru()
+    // {
+    //      $admin = User::factory()->create([
+    //         'email' => 'admin@siakad-slbdwsidoarjo.com',
+    //         'username' => 'admin',
+    //         'password' => Hash::make('admin123'),
+    //         'role' => 'admin'
+    //     ]);
+
+    //     $this->actingAs($admin);
+
+    //     $guru = Guru::factory()->create([
+    //         'nama_guru' => 'Test Status Guru',
+    //         'NIP' => '12345678',
+    //         'status' => 'Aktif',
+    //     ]);
+
+    //     $response = $this->put(route('pegawai.status', $guru->id));
+
+    //     $response->assertRedirect(route('pegawai.guru.index'));
+
+    //     $guru->refresh();
+
+    //     $this->assertEquals('Nonaktif', $guru->status);
+    // }
+
+    public function testUnauthorizedUserCannotAccess()
+    {
+        $siswa = User::factory()->create([
+            'email' => 'siswa@siakad-slbdwsidoarjo.com',
+            'username' => 'siswa',
+            'password' => Hash::make('siswa123'),
+            'role' => 'orangtua'
+        ]);
+
+        $this->actingAs($siswa);
+
+        $response = $this->get(route('pegawai.admin.index'));
+
+        $response->assertRedirect(route('login'));
+    }
+}
