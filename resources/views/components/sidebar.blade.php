@@ -236,8 +236,7 @@
                     <a href="#" class="nav-link has-dropdown text-dark">
                         <i class="fas fa-chart-bar"></i><span>Data Nilai</span>
                     </a>
-                    <ul class="dropdown-menu"
-                        style="{{ request()->routeIs('nilai.*') ? 'display: block;' : '' }}">
+                    <ul class="dropdown-menu" style="{{ request()->routeIs('nilai.*') ? 'display: block;' : '' }}">
                         <li><a class="nav-link {{ request()->routeIs('nilai.index') ? 'active' : '' }}"
                                 href="{{ route('nilai.index') }}">Daftar Nilai</a></li>
                         {{-- <li><a class="nav-link {{ request()->routeIs('nilai.create') ? 'active' : '' }}"
@@ -251,6 +250,17 @@
                         <i class="fas fa-clipboard-list"></i><span>Bobot Penilaian</span>
                     </a>
                 </li>
+            @endif
+
+            @if (auth()->user()->role === 'orangtua')
+                <li class="menu-header text-dark">Siswa</li>
+                <li class="{{ request()->routeIs('siswa.dashboard') ? 'active' : '' }}">
+                    <a href="{{ route('siswa.dashboard') }}" class="nav-link text-dark">
+                        <i class="fas fa-fire"></i><span>Dashboard</span>
+                    </a>
+                </li>
+
+
             @endif
         </ul>
     </aside>

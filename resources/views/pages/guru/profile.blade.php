@@ -13,6 +13,7 @@
             <h1>Profile Guru</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('guru.dashboard') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('guru.profile') }}">Profile Guru</a></div>
             </div>
         </div>
 
@@ -183,14 +184,17 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="foto">Foto </label>
+                                <label for="foto">Foto <span class="text-danger">* </span></label>
                                 @if ($guru->foto)
                                     <a href="{{ asset($guru->foto) }}" data-lightbox="image-foto">
                                         <img src="{{ asset($guru->foto) }}" alt="Foto Guru" class="img-thumbnail"
                                             style="max-height: 200px;">
                                     </a>
                                 @endif
-                                <input type="file" class="form-control mt-3" id="foto" name="foto">
+                                <div class="custom-file mt-3">
+                                    <input type="file" name="foto" class="custom-file-input" id="foto">
+                                    <label class="custom-file-label">Choose File</label>
+                                </div>
                             </div>
 
                         </div>

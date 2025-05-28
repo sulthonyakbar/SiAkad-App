@@ -12,4 +12,9 @@ class Feedback extends Model
     protected $fillable = [
         'pesan',
     ];
+
+    public function aktivitasHarian()
+    {
+        return $this->hasMany(AktivitasHarian::class, 'feedback_id');
+    }
 }

@@ -43,8 +43,12 @@
                         <div class="col-md-6">
 
                             <div class="form-group">
-                                <label for="gambar">Gambar (.PNG)<span class="text-danger">* </span></label>
-                                <input id="gambar" type="file" class="form-control" name="gambar" required>
+                                <label for="gambar">Gambar <span class="text-danger">* </span></label>
+                                <div class="custom-file">
+                                    <input type="file" name="gambar" class="custom-file-input" id="gambar">
+                                    <label class="custom-file-label">Choose File</label>
+                                </div>
+                                <div class="form-text text-muted">The image must be a PNG file</div>
                             </div>
 
                             <div class="form-group">

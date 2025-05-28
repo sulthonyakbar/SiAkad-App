@@ -119,7 +119,7 @@
 
         <li class="dropdown">
             <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-                @if (auth()->user()->role === 'orangtua' && auth()->user()->foto)
+                @if (auth()->user()->role === 'orangtua' && auth()->user()->siswa->foto)
                     <img alt="Foto Profile" src="{{ asset(Auth::user()->siswa->foto) }}" class="rounded-circle mr-1"
                         style="max-width: 30px; max-height: 35px;">
                 @elseif (auth()->user()->role === 'guru' || auth()->user()->role === 'admin' && auth()->user()->guru->foto)
@@ -137,15 +137,20 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 @if (auth()->user()->role === 'orangtua')
-                    <form action="{{ route('siswa.profile') }}" method="GET">
+                    <form action="" method="GET">
                         <button type="submit" class="dropdown-item">
-                            <i class="fas fa-user mr-2"></i> Profile
+                            <i class="fas fa-cog mr-2"></i> Setting Akun
                         </button>
                     </form>
                 @elseif (auth()->user()->role === 'guru')
                     <form action="{{ route('guru.profile') }}" method="GET">
                         <button type="submit" class="dropdown-item">
                             <i class="fas fa-user mr-2"></i> Profile
+                        </button>
+                    </form>
+                     <form action="" method="GET">
+                        <button type="submit" class="dropdown-item">
+                            <i class="fas fa-cog mr-2"></i> Setting Akun
                         </button>
                     </form>
                 @endif
