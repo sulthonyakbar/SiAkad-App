@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Feedback Aktivitas Siswa')
+@section('title', 'Data Feedback Aktivitas Harian Siswa')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -9,10 +9,10 @@
 @section('main')
     <section class="section">
         <div class="section-header">
-            <h1>Data Feedback Aktivitas Siswa</h1>
+            <h1>Data Feedback Aktivitas Harian Siswa</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('siswa.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('feedback.index') }}">Data Feedback Aktivitas Siswa</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('feedback.index') }}">Data Feedback Aktivitas Harian Siswa</a></div>
             </div>
         </div>
 
@@ -40,8 +40,10 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Nama Siswa</th>
+                                    <th>Tanggal</th>
                                     <th>Kegiatan</th>
+                                    <th>Kendala</th>
+                                    <th>Feedback</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -60,12 +62,12 @@
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/components-table.js') }}"></script>
 
-    <script>
+     <script>
         $(document).ready(function() {
-            $('#aktivitasTable').DataTable({
+            $('#feedbackTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('aktivitas.data') }}",
+                ajax: "{{ route('feedback.data') }}",
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',
@@ -73,12 +75,25 @@
                         searchable: false
                     },
                     {
-                        data: 'nama_siswa',
-                        name: 'nama_siswa',
+                        data: 'created_at',
+                        name: 'created_at',
+                        render: function(data) {
+                            return moment(data).format('DD MMMM YYYY');
+                        }
                     },
                     {
                         data: 'kegiatan',
                         name: 'kegiatan',
+                    },
+                    {
+                        data: 'kendala',
+                        name: 'kendala',
+                    },
+                    {
+                        data: 'aksi_feedback',
+                        name: 'aksi_feedback',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'aksi',

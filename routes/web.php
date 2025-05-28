@@ -14,7 +14,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\NilaiController;
-use App\Models\Nilai;
+use App\Http\Controllers\FeedbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -131,6 +131,15 @@ Route::group(['middleware' => 'role.orangtua'], function () {
     Route::get('/s/dashboard', [DashboardController::class, 'dashboardSiswa'])->name('siswa.dashboard');
     Route::get('/s/profile', [SiswaController::class, 'profile'])->name('siswa.profile');
     Route::put('/s/profile', [SiswaController::class, 'update'])->name('siswa.update.profile');
+
+    Route::get('/s/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
+    Route::get('/s/feedback/data', [FeedbackController::class, 'getFeedbackData'])->name('feedback.data');
+    Route::get('/s/feedback/create/{aktivitas_id}', [FeedbackController::class, 'create'])->name('feedback.create');
+    Route::post('/s/feedback/store', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::get('/s/feedback/{id}/detail', [FeedbackController::class, 'show'])->name('feedback.detail');
+    Route::get('/s/feedback/{id}/edit', [FeedbackController::class, 'edit'])->name('feedback.edit');
+    Route::put('/s/feedback/{id}', [FeedbackController::class, 'update'])->name('feedback.update');
+    Route::delete('/s/feedback/{id}', [FeedbackController::class, 'destroy'])->name('feedback.destroy');
 });
 
 Route::group(['middleware' => 'role.guru'], function () {

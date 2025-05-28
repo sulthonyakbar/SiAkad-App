@@ -15,6 +15,6 @@ class Feedback extends Model
 
     public function aktivitasHarian()
     {
-        return $this->hasMany(AktivitasHarian::class, 'feedback_id');
+        return $this->hasOne(AktivitasHarian::class, 'feedback_id');
     }
 }

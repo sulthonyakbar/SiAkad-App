@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use App\Models\AktivitasHarian;
 use App\Models\Feedback;
 
 class FeedbackController extends Controller
@@ -17,15 +19,29 @@ class FeedbackController extends Controller
 
     public function getFeedbackData()
     {
-        $feedback = Feedback::with('aktivitasHarian')->get();
+        $siswa = auth()->user()->siswa;
 
-        return \Yajra\DataTables\Facades\DataTables::of($feedback)
+        $aktivitas = AktivitasHarian::with('feedback')
+            ->where('siswa_id', $siswa->id)
+            ->get();
+
+        return DataTables::of($aktivitas)
+            ->addColumn('aksi_feedback', function ($row) {
+                if ($row->feedback) {
+                    return '<button class="btn btn-success btn-action" disabled><i class="fa fa-check"></i></button>';
+                } else {
+                    return '
+                    <a href="' . route('feedback.create', ['aktivitas_id' => $row->id]) . '" class="btn btn-primary btn-action" data-toggle="tooltip" title="Tambah Feedback">
+                        <i class="fa fa-plus"></i>
+                    </a>';
+                }
+            })
             ->addColumn('aksi', function ($row) {
                 return '
-                <a href="' . route('feedback.show', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
+                <a href="' . route('feedback.detail', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
-                <a href="' . route('feedback.edit', $row->id) . '" class="btn btn-warning btn-action"><i class="fas fa-pencil-alt"></i></a>
+                <a href="' . route('feedback.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
                 <form id="delete-form-' . $row->id . '" action="' . route('feedback.destroy', $row->id) . '" method="POST" class="d-inline">
                     ' . csrf_field() . '
                     ' . method_field('DELETE') . '
@@ -34,15 +50,17 @@ class FeedbackController extends Controller
                     </button>
                 </form>';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['aksi_feedback', 'aksi'])
             ->make(true);
     }
+
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($aktivitas_id)
     {
-        //
+        $aktivitas = AktivitasHarian::findOrFail($aktivitas_id);
+        return view('pages.siswa.feedback.create', compact('aktivitas'));
     }
 
     /**
@@ -50,7 +68,20 @@ class FeedbackController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'pesan' => 'required|string|max:1000',
+            'aktivitas_id' => 'required|exists:aktivitas_harians,id',
+        ]);
+
+        $feedback = new Feedback();
+        $feedback->pesan = $request->pesan;
+        $feedback->save();
+
+        $aktivitas = AktivitasHarian::findOrFail($request->aktivitas_id);
+        $aktivitas->feedback_id = $feedback->id;
+        $aktivitas->save();
+
+        return redirect()->route('feedback.index')->with('success', 'Feedback berhasil ditambahkan');
     }
 
     /**
@@ -58,7 +89,8 @@ class FeedbackController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $aktivitas = AktivitasHarian::with('feedback')->findOrFail($id);
+        return view('pages.siswa.feedback.detail', compact('aktivitas'));
     }
 
     /**
