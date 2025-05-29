@@ -37,18 +37,29 @@ class FeedbackController extends Controller
                 }
             })
             ->addColumn('aksi', function ($row) {
-                return '
+                $detailBtn = '
                 <a href="' . route('feedback.detail', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
-                </a>
-                <a href="' . route('feedback.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                <form id="delete-form-' . $row->id . '" action="' . route('feedback.destroy', $row->id) . '" method="POST" class="d-inline">
-                    ' . csrf_field() . '
-                    ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-danger btn-action" data-toggle="tooltip" title="Hapus">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>';
+                </a>';
+
+                if ($row->feedback) {
+                    $editBtn = '
+                    <a href="' . route('feedback.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                    $deleteForm = '
+                    <form id="delete-form-' . $row->id . '" action="' . route('feedback.destroy', $row->id) . '" method="POST" class="d-inline">
+                        ' . csrf_field() . '
+                        ' . method_field('DELETE') . '
+                        <button type="submit" class="btn btn-danger btn-action" onclick="confirmDelete(event, \'delete-form-' . $row->id . '\')" data-toggle="tooltip" title="Hapus">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </form>';
+                } else {
+                    $editBtn = '
+                    <button class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit" disabled><i class="fas fa-pencil-alt"></i></button>';
+                    $deleteForm = '';
+                }
+
+                return $detailBtn . $editBtn . $deleteForm;
             })
             ->rawColumns(['aksi_feedback', 'aksi'])
             ->make(true);
@@ -98,7 +109,8 @@ class FeedbackController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $aktivitas = AktivitasHarian::with('feedback')->findOrFail($id);
+        return view('pages.siswa.feedback.edit', compact('aktivitas'));
     }
 
     /**
@@ -106,7 +118,24 @@ class FeedbackController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'pesan' => 'required|string|max:1000',
+        ]);
+
+        $aktivitas = AktivitasHarian::findOrFail($id);
+
+        if ($aktivitas->feedback) {
+            $aktivitas->feedback->pesan = $request->pesan;
+            $aktivitas->feedback->save();
+        } else {
+            $feedback = new Feedback();
+            $feedback->pesan = $request->pesan;
+            $feedback->save();
+            $aktivitas->feedback_id = $feedback->id;
+            $aktivitas->save();
+        }
+
+        return redirect()->route('feedback.index')->with('success', 'Feedback berhasil diperbarui');
     }
 
     /**
@@ -114,6 +143,13 @@ class FeedbackController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $aktivitas = AktivitasHarian::findOrFail($id);
+        if ($aktivitas->feedback) {
+            $aktivitas->feedback->delete();
+        }
+        $aktivitas->feedback_id = null;
+        $aktivitas->save();
+
+        return redirect()->route('feedback.index')->with('success', 'Feedback berhasil dihapus');
     }
 }

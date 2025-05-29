@@ -31,7 +31,7 @@
                     <div class="row">
                         <div class="col-md-6">
 
-                            <input type="hidden" name="aktivitas_id" value="{{ $aktivitas->id }}">
+                            <input type="hidden" name="aktivitas_id" value="{{ $aktivitas->id }}" required>
 
                             <div class="form-group">
                                 <label for="kegiatan">Kegiatan</label>
