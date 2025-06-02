@@ -24,7 +24,7 @@
 
                 <li class="menu-header text-dark">Master Data</li>
 
-                {{-- Siswa --}}
+                {{-- Data Siswa --}}
                 <li class="nav-item dropdown {{ request()->routeIs('siswa.*') ? 'active show' : '' }}">
                     <a href="#" class="nav-link has-dropdown text-dark">
                         <i class="fas fa-users"></i><span>Data Siswa</span>
@@ -34,6 +34,19 @@
                                 href="{{ route('siswa.index') }}">Daftar Siswa</a></li>
                         <li><a class="nav-link {{ request()->routeIs('siswa.create') ? 'active' : '' }}"
                                 href="{{ route('siswa.create') }}">Tambah Data Siswa</a></li>
+                    </ul>
+                </li>
+
+                {{-- Data Alumni --}}
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link has-dropdown text-dark">
+                        <i class="fas fa-user-graduate"></i><span>Data Alumni</span>
+                    </a>
+                    <ul class="dropdown-menu" style="">
+                        <li>
+                            <a class="nav-link"
+                                href="">Daftar Alumni</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -224,9 +237,9 @@
                     </a>
                     <ul class="dropdown-menu"
                         style="{{ request()->routeIs('presensi.*') ? 'display: block;' : '' }}">
-                        <li><a class="nav-link {{ request()->routeIs('kartu.studi.index') ? 'active' : '' }}"
+                        <li><a class="nav-link {{ request()->routeIs('presensi.index') ? 'active' : '' }}"
                                 href="{{ route('presensi.index') }}">Daftar Presensi </a></li>
-                        <li><a class="nav-link {{ request()->routeIs('kartu.studi.create') ? 'active' : '' }}"
+                        <li><a class="nav-link {{ request()->routeIs('presensi.create') ? 'active' : '' }}"
                                 href="{{ route('presensi.create') }}">Tambah Presensi</a></li>
                     </ul>
                 </li>

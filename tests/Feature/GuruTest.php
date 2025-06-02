@@ -84,7 +84,7 @@ class GuruTest extends TestCase
 
         $this->actingAs($admin);
 
-        $guru = Guru::factory()->create([
+        $guru = Guru::factory()->withUserRole('guru')->create([
             'nama_guru' => 'Test Edit Guru',
             'NIP' => '12345678',
         ]);
@@ -129,7 +129,7 @@ class GuruTest extends TestCase
 
         $this->actingAs($admin);
 
-        $guru = Guru::factory()->create([
+        $guru = Guru::factory()->withUserRole('guru')->create([
             'nama_guru' => 'Test Edit Guru',
             'NIP' => '12345678',
         ]);
@@ -155,7 +155,7 @@ class GuruTest extends TestCase
 
         $this->actingAs($admin);
 
-        Guru::factory()->count(3)->create();
+        Guru::factory()->count(3)->withUserRole('guru')->create();
 
         $response = $this->get(route('pegawai.guru.index'));
 
@@ -173,7 +173,7 @@ class GuruTest extends TestCase
 
         $this->actingAs($admin);
 
-        $guru = Guru::factory()->create([
+        $guru = Guru::factory()->withUserRole('guru')->create([
             'nama_guru' => 'Test Show Detail Guru',
             'NIP' => '12345678',
         ]);

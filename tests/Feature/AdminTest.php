@@ -84,7 +84,7 @@ class AdminTest extends TestCase
 
         $this->actingAs($admin);
 
-        $adminData = Guru::factory()->create([
+        $adminData = Guru::factory()->withUserRole('admin')->create([
             'nama_guru' => 'Test Create Admin',
             'NIP' => '12345678',
         ]);
@@ -129,7 +129,7 @@ class AdminTest extends TestCase
 
         $this->actingAs($admin);
 
-        $adminData = Guru::factory()->create([
+        $adminData = Guru::factory()->withUserRole('admin')->create([
             'nama_guru' => 'Test Create Admin',
             'NIP' => '12345678',
         ]);
@@ -155,7 +155,7 @@ class AdminTest extends TestCase
 
         $this->actingAs($admin);
 
-        Guru::factory()->count(3)->create();
+        Guru::factory()->count(3)->withUserRole('admin')->create();
 
         $response = $this->get(route('pegawai.admin.index'));
 
@@ -173,7 +173,7 @@ class AdminTest extends TestCase
 
         $this->actingAs($admin);
 
-        $adminData = Guru::factory()->create([
+        $adminData = Guru::factory()->withUserRole('admin')->create([
             'nama_guru' => 'Test Show Detail Admin',
             'NIP' => '12345678',
         ]);

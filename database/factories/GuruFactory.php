@@ -33,7 +33,7 @@ class GuruFactory extends Factory
             'no_telp' => $this->faker->numerify('08#############'),
             'alamat' => $this->faker->address(),
             'foto' => $this->faker->imageUrl(640, 480, 'people', true, 'FOTO GURU'),
-            'user_id' => User::factory()->guru(),
+            'user_id' => null,
         ];
     }
 

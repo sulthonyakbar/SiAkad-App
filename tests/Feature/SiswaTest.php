@@ -248,4 +248,20 @@ class SiswaTest extends TestCase
 
         $response->assertSeeText('Detail Data Siswa');
     }
+
+    public function testUnauthorizedUserCannotAccess()
+    {
+        $siswa = User::factory()->create([
+            'email' => 'siswa@siakad-slbdwsidoarjo.com',
+            'username' => 'siswa',
+            'password' => Hash::make('siswa123'),
+            'role' => 'guru'
+        ]);
+
+        $this->actingAs($siswa);
+
+        $response = $this->get(route('siswa.index'));
+
+        $response->assertRedirect(route('login'));
+    }
 }

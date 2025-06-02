@@ -75,6 +75,53 @@
                 </div>
             </div>
         </div>
+
+        <h2 class="section-title">Jadwal Minggu Ini</h2>
+        <div class="card">
+            <div class="card-body">
+                <div id="siswaCalendar"></div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Pengumuman</h2>
+        <div class="row">
+            @forelse ($pengumuman as $item)
+                <div class="col-12 col-md-3 col-lg-3">
+                    <article class="article article-style-c">
+                        <div class="article-header">
+                            <div class="article-image" data-background="{{ asset($item->gambar) }}">
+                            </div>
+                        </div>
+                        <div class="article-details">
+                            <div class="article-category">
+                                <a href="#">{{ $item->kategori->nama_kategori ?? '-' }}</a>
+                                <div class="bullet"></div>
+                                <a href="#">{{ $item->created_at->diffForHumans() }}</a>
+                            </div>
+                            <div class="article-title">
+                                <h2><a href="#">{{ $item->judul }}</a></h2>
+                            </div>
+                            <p class="text-wrap">
+                                {{ Str::limit(preg_replace('/\s+/', ' ', strip_tags($item->isi)), 100, '...') }}
+                            </p>
+                            <div class="article-user">
+                                <img alt="image" src="{{ asset($item->guru->foto) }}">
+                                <div class="article-user-details">
+                                    <div class="user-detail-name">
+                                        <a href="#">{{ $item->guru->nama_guru ?? 'Admin' }}</a>
+                                    </div>
+                                    <div class="text-job">Admin</div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            @empty
+                <div class="col-12">
+                    <p class="text-muted">Belum ada pengumuman.</p>
+                </div>
+            @endforelse
+        </div>
     </section>
 @endsection
 
@@ -89,4 +136,28 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/index-0.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('siswaCalendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                firstDay: 1,
+                height: 500,
+                slotMinTime: "06:00:00",
+                slotMaxTime: "18:00:00",
+                locale: 'id',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek'
+                },
+                events: @json($events),
+            });
+
+            calendar.render();
+        });
+    </script>
 @endpush

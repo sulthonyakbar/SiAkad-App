@@ -62,6 +62,47 @@ class DashboardController extends Controller
             ->get();
 
         $events = $jadwal->map(function ($item) {
+            $today = Carbon::now(); // hari ini
+
+            // Hitung awal minggu ini (Senin)
+            $startOfWeek = $today->copy()->startOfWeek(Carbon::MONDAY);
+
+            // Hari keberapa dalam minggu (Senin = 0, Selasa = 1, dst)
+            $dayNames = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
+            // Cek index dari nama hari pada jadwal
+            $dayIndex = array_search($item->hari, $dayNames);
+
+            if ($dayIndex === false) {
+                return null; // skip jika hari tidak cocok
+            }
+
+            // Dapatkan tanggal untuk hari tersebut minggu ini
+            $date = $startOfWeek->copy()->addDays($dayIndex)->toDateString();
+
+            return [
+                'title' => $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas,
+                'start' => $date . 'T' . $item->jam_mulai,
+                'end' => $date . 'T' . $item->jam_selesai,
+            ];
+        })->filter();
+
+        return view('pages.guru.dashboard', compact('pengumuman', 'events'));
+    }
+
+    public function dashboardSiswa()
+    {
+        $pengumuman = Pengumuman::latest()->take(4)->get();
+
+        $siswa = auth()->user()->siswa;
+
+        $jadwal = JadwalPelajaran::with(['mapel', 'kelas', 'gurus'])
+            ->whereHas('kelas', function ($query) use ($siswa) {
+                $query->where('id', $siswa->kelas_id);
+            })
+            ->get();
+
+        $events = $jadwal->map(function ($item) {
             // Mapping nama hari ke tanggal minggu ini (misal, Senin = 2025-05-19)
             $days = [
                 'Senin' => '2025-05-19',
@@ -76,17 +117,12 @@ class DashboardController extends Controller
             $tanggal = $days[$item->hari] ?? now()->toDateString();
 
             return [
-                'title' => $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas,
+                'title' => $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas . ' - Pengajar ' . $item->gurus->nama_guru,
                 'start' => $tanggal . 'T' . $item->jam_mulai,
                 'end' => $tanggal . 'T' . $item->jam_selesai,
             ];
         });
 
-        return view('pages.guru.dashboard', compact('pengumuman', 'events'));
-    }
-
-    public function dashboardSiswa()
-    {
-        return view('pages.siswa.dashboard');
+        return view('pages.siswa.dashboard', compact('pengumuman', 'events'));
     }
 }
