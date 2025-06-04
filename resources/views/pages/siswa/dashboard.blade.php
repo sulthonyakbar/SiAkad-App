@@ -145,10 +145,17 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
                 firstDay: 1,
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                },
                 height: 500,
                 slotMinTime: "06:00:00",
                 slotMaxTime: "18:00:00",
                 locale: 'id',
+                nowIndicator: true,
+                slotEventOverlap: false,
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',

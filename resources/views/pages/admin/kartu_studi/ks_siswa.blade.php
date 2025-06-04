@@ -11,22 +11,30 @@
         <div class="section-header">
             <h1>Data Kartu Studi Siswa - {{ $siswa->nama_siswa . ' - ' . $siswa->NISN }}</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="/admin/dashboard">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="/admin/kartu-studi">Data Kartu Studi</a></div>
+                <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('kartu.studi.index') }}">Data Kartu Studi</a></div>
             </div>
         </div>
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-primary" href="/admin/kartu-studi" role="button"><i
+                <a class="btn btn-primary" href="{{ url()->previous() }}" role="button"><i
                         class="fa-solid fa-chevron-left"></i></a>
             </div>
 
             <div class="card-body">
                 @foreach ($kartuStudi as $item)
                     <div class="mb-5">
-                        <h5 class="text-primary">Kelas: {{ $item->kelas->nama_kelas ?? '-' }} | Ruang:
-                            {{ $item->kelas->ruang ?? '-' }}</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Kelas: <span class="text-primary">{{ $item->kelas->nama_kelas }} </span> | Ruang <span
+                                        class="text-primary">{{ $item->kelas->ruang }}
+                                </h6>
+                            </div>
+                            {{-- <div class="col-md-6">
+                        <h6>Tahun Ajaran: <span class="text-primary">{{ $kelas->angkatan->tahun_ajaran ?? '-' }}</span></h6>
+                    </div> --}}
+                        </div>
 
                         <h6 class="mt-4">Daftar Mata Pelajaran & Nilai:</h6>
                         <table class="table table-bordered">
@@ -40,9 +48,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($item->kelas->jadwalPelajaran as $jadwal)
+                                @forelse ($item->uniqueMapel as $mapel)
                                     <tr>
-                                        <td>{{ $jadwal->mapel->nama_mapel ?? '-' }}</td>
+                                        <td>{{ $mapel->nama_mapel ?? '-' }}</td>
                                         <td>{{ $item->nilai->nilai_uh ?? '-' }}</td>
                                         <td>{{ $item->nilai->nilai_uts ?? '-' }}</td>
                                         <td>{{ $item->nilai->nilai_uas ?? '-' }}</td>

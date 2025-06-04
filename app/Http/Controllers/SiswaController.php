@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use PHPUnit\Framework\Attributes\Before;
 use Yajra\DataTables\Facades\DataTables;
 
 class SiswaController extends Controller
@@ -100,13 +101,13 @@ class SiswaController extends Controller
             'NISN' => 'required|string|max:20|regex:/^[0-9]+$/|unique:siswas,NISN',
             'NIK' => 'required|string|max:20|regex:/^[0-9]+$/|unique:siswas,NIK',
             'tempat_lahir' => 'required|regex:/^[A-Za-z\s]+$/u|string|max:255',
-            'tanggal_lahir' => 'required|date',
+            'tanggal_lahir' => 'required|date|before:today',
             'jenis_kelamin' => 'required|string|max:255',
             'no_telp_siswa' => 'required|string|max:20|regex:/^[0-9]+$/|unique:siswas,no_telp_siswa',
             'alamat_siswa' => 'required|string|max:255',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'tamatan' => 'required|string|max:255',
-            'tanggal_lulus' => 'required|date',
+            'tanggal_lulus' => 'required|date|before:today',
             'STTB' => 'required|string|max:255|regex:/^[0-9]+$/|unique:siswas,STTB',
             'lama_belajar' => 'required|string|regex:/^[0-9]+$/|max:2',
             'pindahan' => 'nullable|string|max:255',

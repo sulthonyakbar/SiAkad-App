@@ -80,10 +80,9 @@ class KartuStudiController extends Controller
      */
     public function create()
     {
-        $angkatanId = session('angkatan_aktif');
-        $angkatan = Angkatan::findOrFail($angkatanId);
-        $kelas = Kelas::where('angkatan_id', $angkatanId)->get();
-        $siswa = Siswa::where('angkatan_id', $angkatanId)->get();
+        $angkatan = session('angkatan_aktif');
+        $kelas = Kelas::where('angkatan_id', $angkatan)->get();
+        $siswa = Siswa::where('angkatan_id', $angkatan)->get();
 
         return view('pages.admin.kartu_studi.create', compact('kelas', 'angkatan'));
     }
@@ -156,18 +155,26 @@ class KartuStudiController extends Controller
             'kartuStudi.nilai'
         ])->findOrFail($id);
 
+        foreach ($siswa->kartuStudi as $ks) {
+            $ks->uniqueMapel = $ks->kelas->jadwalPelajaran
+                ->pluck('mapel')
+                ->unique('id');
+        }
+
         $kartuStudi = $siswa->kartuStudi;
 
         return view('pages.admin.kartu_studi.ks_siswa', compact('siswa', 'kartuStudi'));
     }
-
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
     {
-        //
+        $kelas = Kelas::with('siswa')->findOrFail($id);
+        $kartuStudi = KartuStudi::where('kelas_id', $id)->get();
+
+        return view('pages.admin.kartu_studi.edit', compact('kartuStudi'));
     }
 
     /**

@@ -97,7 +97,7 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/index-0.js') }}"></script>
-     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('adminCalendar');
@@ -105,10 +105,17 @@
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'timeGridWeek',
                 firstDay: 1,
-                height: 500,
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                },
+                height: 800,
                 slotMinTime: "06:00:00",
-                slotMaxTime: "18:00:00",
+                slotMaxTime: "19:00:00",
                 locale: 'id',
+                nowIndicator: true,
+                slotEventOverlap: false,
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',

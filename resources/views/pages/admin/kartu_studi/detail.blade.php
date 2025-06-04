@@ -25,12 +25,12 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <h6>Kelas: <span class="text-primary">{{ $kelas->nama_kelas }} </span> - Ruang {{ $kelas->ruang }}
+                        <h6>Kelas: <span class="text-primary">{{ $kelas->nama_kelas }} </span> | Ruang <span class="text-primary">{{ $kelas->ruang }}
                         </h6>
                     </div>
-                    <div class="col-md-6">
+                    {{-- <div class="col-md-6">
                         <h6>Tahun Ajaran: <span class="text-primary">{{ $kelas->angkatan->tahun_ajaran ?? '-' }}</span></h6>
-                    </div>
+                    </div> --}}
                 </div>
 
                 <div class="table-responsive">

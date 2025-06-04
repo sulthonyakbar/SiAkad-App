@@ -9,10 +9,58 @@ use App\Models\Kelas;
 use App\Models\JadwalPelajaran;
 use App\Models\Pengumuman;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
 {
+    private function mapJadwalToCalendarEvents(Collection $jadwal, callable $titleFormatter): Collection
+    {
+        return $jadwal->map(function ($item) use ($titleFormatter) {
+            // Get today's date
+            $today = Carbon::now();
+
+            // Determine the start of the current week (Monday)
+            $startOfWeek = $today->copy()->startOfWeek(Carbon::MONDAY);
+
+            // Define the order of days in a week
+            $dayNames = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
+            // Find the index of the schedule's day
+            $dayIndex = array_search($item->hari, $dayNames);
+
+            // If the day name is not valid, skip this item
+            if ($dayIndex === false) {
+                // Optionally log an error or handle this case
+                // error_log("Invalid day name: " . $item->hari . " for jadwal ID: " . $item->id);
+                return null;
+            }
+
+            // Calculate the date for the event based on the day of the current week
+            $eventDate = $startOfWeek->copy()->addDays($dayIndex)->toDateString();
+
+            // Ensure related models are loaded to prevent N+1 issues if not eager loaded before
+            // This is a safeguard; ideally, $jadwal should already have these eager loaded.
+            $item->loadMissing(['mapel', 'kelas', 'gurus']);
+
+            // Check if mapel, kelas, or gurus (for admin/siswa) are null to prevent errors
+            if (!$item->mapel || !$item->kelas) {
+                // error_log("Missing mapel or kelas for jadwal ID: " . $item->id);
+                return null;
+            }
+            // For admin/siswa, gurus relation is also expected
+            if (str_contains($titleFormatter($item), 'Pengajar') && !$item->gurus) {
+                // error_log("Missing gurus for jadwal ID: " . $item->id . " when Pengajar is expected in title.");
+                return null;
+            }
+
+            return [
+                'title' => $titleFormatter($item),
+                'start' => $eventDate . 'T' . $item->jam_mulai,
+                'end' => $eventDate . 'T' . $item->jam_selesai,
+            ];
+        })->filter();
+    }
+
     public function dashboardAdmin()
     {
         $siswaCount = Siswa::count();
@@ -27,26 +75,12 @@ class DashboardController extends Controller
 
         $jadwal = JadwalPelajaran::with(['mapel', 'kelas', 'gurus'])->get();
 
-        $events = $jadwal->map(function ($item) {
-            // Mapping nama hari ke tanggal minggu ini (misal, Senin = 2025-05-19)
-            $days = [
-                'Senin' => '2025-05-19',
-                'Selasa' => '2025-05-20',
-                'Rabu' => '2025-05-21',
-                'Kamis' => '2025-05-22',
-                'Jumat' => '2025-05-23',
-                'Sabtu' => '2025-05-24',
-                'Minggu' => '2025-05-25',
-            ];
+        $titleFormatter = function ($item) {
+            $namaGuru = $item->gurus ? $item->gurus->nama_guru : 'N/A';
+            return $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas . ' - Pengajar ' . $namaGuru;
+        };
 
-            $tanggal = $days[$item->hari] ?? now()->toDateString();
-
-            return [
-                'title' => $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas . ' - Pengajar ' . $item->gurus->nama_guru,
-                'start' => $tanggal . 'T' . $item->jam_mulai,
-                'end' => $tanggal . 'T' . $item->jam_selesai,
-            ];
-        });
+        $events = $this->mapJadwalToCalendarEvents($jadwal, $titleFormatter);
 
         return view('pages.admin.dashboard', compact('siswaCount', 'guruCount', 'kelasCount', 'jadwalCount', 'events'));
     }
@@ -57,35 +91,15 @@ class DashboardController extends Controller
 
         $guru = auth()->user()->guru;
 
-        $jadwal = JadwalPelajaran::with(['mapel', 'kelas', 'gurus'])
+        $jadwal = JadwalPelajaran::with(['mapel', 'kelas'])
             ->where('guru_id', $guru->id)
             ->get();
 
-        $events = $jadwal->map(function ($item) {
-            $today = Carbon::now(); // hari ini
+        $titleFormatter = function ($item) {
+            return $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas;
+        };
 
-            // Hitung awal minggu ini (Senin)
-            $startOfWeek = $today->copy()->startOfWeek(Carbon::MONDAY);
-
-            // Hari keberapa dalam minggu (Senin = 0, Selasa = 1, dst)
-            $dayNames = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-
-            // Cek index dari nama hari pada jadwal
-            $dayIndex = array_search($item->hari, $dayNames);
-
-            if ($dayIndex === false) {
-                return null; // skip jika hari tidak cocok
-            }
-
-            // Dapatkan tanggal untuk hari tersebut minggu ini
-            $date = $startOfWeek->copy()->addDays($dayIndex)->toDateString();
-
-            return [
-                'title' => $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas,
-                'start' => $date . 'T' . $item->jam_mulai,
-                'end' => $date . 'T' . $item->jam_selesai,
-            ];
-        })->filter();
+        $events = $this->mapJadwalToCalendarEvents($jadwal, $titleFormatter);
 
         return view('pages.guru.dashboard', compact('pengumuman', 'events'));
     }
@@ -102,26 +116,12 @@ class DashboardController extends Controller
             })
             ->get();
 
-        $events = $jadwal->map(function ($item) {
-            // Mapping nama hari ke tanggal minggu ini (misal, Senin = 2025-05-19)
-            $days = [
-                'Senin' => '2025-05-19',
-                'Selasa' => '2025-05-20',
-                'Rabu' => '2025-05-21',
-                'Kamis' => '2025-05-22',
-                'Jumat' => '2025-05-23',
-                'Sabtu' => '2025-05-24',
-                'Minggu' => '2025-05-25',
-            ];
+        $titleFormatter = function ($item) {
+            $namaGuru = $item->gurus ? $item->gurus->nama_guru : 'N/A';
+            return $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas . ' - Pengajar ' . $namaGuru;
+        };
 
-            $tanggal = $days[$item->hari] ?? now()->toDateString();
-
-            return [
-                'title' => $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas . ' - Pengajar ' . $item->gurus->nama_guru,
-                'start' => $tanggal . 'T' . $item->jam_mulai,
-                'end' => $tanggal . 'T' . $item->jam_selesai,
-            ];
-        });
+        $events = $this->mapJadwalToCalendarEvents($jadwal, $titleFormatter);
 
         return view('pages.siswa.dashboard', compact('pengumuman', 'events'));
     }

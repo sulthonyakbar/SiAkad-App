@@ -11,8 +11,8 @@
         <div class="section-header">
             <h1>Data Kartu Studi</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="/admin/dashboard">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="/admin/kartu-studi">Data Kartu Studi</a></div>
+                <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('kartu.studi.index') }}">Data Kartu Studi</a></div>
             </div>
         </div>
 
