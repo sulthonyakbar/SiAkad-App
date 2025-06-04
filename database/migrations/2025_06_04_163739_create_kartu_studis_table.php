@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kartu_studis', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('siswa_id');
+            $table->uuid('id')->primary();
+            $table->uuid('siswa_id');
             $table->foreign('siswa_id')->references('id')->on('siswas')->onDelete('cascade');
-            $table->unsignedBigInteger('nilai_id')->nullable();
+            $table->uuid('nilai_id')->nullable();
             $table->foreign('nilai_id')->references('id')->on('nilais')->onDelete('cascade');
-            $table->unsignedBigInteger('kelas_id');
+            $table->uuid('kelas_id');
             $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
-            $table->unsignedBigInteger('presensi_id')->nullable();
+            $table->uuid('presensi_id')->nullable();
             $table->foreign('presensi_id')->references('id')->on('presensis')->onDelete('cascade');
             $table->timestamps();
         });

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Nilai extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
         'nilai_uh',
@@ -24,5 +25,10 @@ class Nilai extends Model
     public function mataPelajaran()
     {
         return $this->belongsTo(MataPelajaran::class, 'nilai_id');
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class, 'semester_id');
     }
 }

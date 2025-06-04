@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bobot_penilaians', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->integer('bobot_uh');
             $table->integer('bobot_uts');
             $table->integer('bobot_uas');

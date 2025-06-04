@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('jadwal_pelajarans', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('hari');
             $table->time('jam_mulai');
             $table->time('jam_selesai');
-            $table->unsignedBigInteger('mapel_id');
+            $table->uuid('mapel_id');
             $table->foreign('mapel_id')->references('id')->on('mata_pelajarans')->onDelete('cascade');
-            $table->unsignedBigInteger('kelas_id');
+            $table->uuid('kelas_id');
             $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
-            $table->unsignedBigInteger('guru_id');
+            $table->uuid('guru_id');
             $table->foreign('guru_id')->references('id')->on('gurus')->onDelete('cascade');
             $table->timestamps();
         });

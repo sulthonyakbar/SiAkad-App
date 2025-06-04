@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('mata_pelajarans', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('nama_mapel');
             $table->text('deskripsi')->nullable();
-            $table->unsignedBigInteger('bobot_id')->nullable();
+            $table->uuid('bobot_id')->nullable();
             $table->foreign('bobot_id')->references('id')->on('bobot_penilaians')->onDelete('cascade');
-            $table->unsignedBigInteger('nilai_id')->nullable();
+            $table->uuid('nilai_id')->nullable();
             $table->foreign('nilai_id')->references('id')->on('nilais')->onDelete('set null');
             $table->timestamps();
         });

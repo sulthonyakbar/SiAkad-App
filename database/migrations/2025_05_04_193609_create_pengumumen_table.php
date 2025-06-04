@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pengumumen', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('judul');
             $table->text('isi');
             $table->string('gambar');
-            $table->unsignedBigInteger('kategori_id');
+            $table->uuid('kategori_id');
             $table->foreign('kategori_id')->references('id')->on('kategoris')->onDelete('cascade');
-            $table->unsignedBigInteger('guru_id');
+            $table->uuid('guru_id');
             $table->foreign('guru_id')->references('id')->on('gurus')->onDelete('cascade');
             $table->timestamps();
         });
