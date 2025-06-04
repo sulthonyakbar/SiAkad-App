@@ -19,7 +19,7 @@
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-primary" href="{{ route('siswa.index') }}" role="button"><i class="fa-solid fa-chevron-left"></i></a>
+                <a class="btn btn-primary" href="{{ url()->previous() }}" role="button"><i class="fa-solid fa-chevron-left"></i></a>
             </div>
             <div class="card-body">
                 <h5 class="text-primary">Informasi Siswa</h5>

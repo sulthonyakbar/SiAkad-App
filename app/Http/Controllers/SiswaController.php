@@ -25,7 +25,9 @@ class SiswaController extends Controller
 
     public function getSiswaData()
     {
-        $siswa = Siswa::with('kartuStudi.kelas', 'orang_tuas')->select('siswas.*');
+        $siswa = Siswa::with('kartuStudi.kelas', 'orang_tuas')
+            ->whereIn('status', ['Aktif', 'Nonaktif'])
+            ->select('siswas.*');
 
         return DataTables::of($siswa)
             ->addColumn('kelas', function ($row) {
@@ -39,18 +41,87 @@ class SiswaController extends Controller
                 return $row->orang_tuas->nama_ibu ?? '-';
             })
             ->addColumn('aksi', function ($row) {
-                return '
+                $buttons = '
                 <a href="' . route('siswa.detail', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
                 <a href="' . route('siswa.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                <form id="status-form-' . $row->id . '" action="' . route('siswa.status', $row->id) . '" method="POST" class="d-inline">
-                    ' . csrf_field() . '
-                    ' . method_field('PATCH') . '
-                    <button type="submit" class="btn btn-' . ($row->status === 'Aktif' ? 'danger' : 'success') . ' btn-action" data-toggle="tooltip" title="' . ($row->status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan') . '">
-                        <i class="fa-solid ' . ($row->status === 'Aktif' ? 'fa-ban' : 'fa-check') . '"></i>
+                ';
+
+                if ($row->status === 'Aktif') {
+                    $buttons .= '
+                    <form action="' . route('siswa.status', [$row->id, 'Nonaktif']) . '" method="POST" class="d-inline">
+                        ' . csrf_field() . method_field('PATCH') . '
+                        <button type="submit" class="btn btn-danger btn-action" data-toggle="tooltip" title="Nonaktifkan">
+                            <i class="fa-solid fa-ban"></i>
+                        </button>
+                    </form>
+                    <form action="' . route('siswa.status', [$row->id, 'Lulus']) . '" method="POST" class="d-inline">
+                        ' . csrf_field() . method_field('PATCH') . '
+                        <button type="submit" class="btn btn-primary btn-action" data-toggle="tooltip" title="Luluskan">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </button>
+                    </form>';
+                } elseif ($row->status === 'Nonaktif') {
+                    $buttons .= '
+                    <form action="' . route('siswa.status', [$row->id, 'Aktif']) . '" method="POST" class="d-inline">
+                        ' . csrf_field() . method_field('PATCH') . '
+                        <button type="submit" class="btn btn-success btn-action" data-toggle="tooltip" title="Aktifkan">
+                            <i class="fa-solid fa-check"></i>
+                        </button>
+                    </form>
+                    <form action="' . route('siswa.status', [$row->id, 'Lulus']) . '" method="POST" class="d-inline">
+                        ' . csrf_field() . method_field('PATCH') . '
+                        <button type="submit" class="btn btn-primary btn-action" data-toggle="tooltip" title="Luluskan">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </button>
+                    </form>';
+                }
+                return $buttons;
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
+    }
+
+    public function indexAlumni()
+    {
+        return view('pages.admin.siswa.alumni.index');
+    }
+
+    public function getAlumniData()
+    {
+        $alumni = Siswa::with('kartuStudi.kelas', 'orang_tuas')
+            ->where('status', 'Lulus')
+            ->select('siswas.*');
+
+        return DataTables::of($alumni)
+            ->addColumn('kelas', function ($row) {
+                $kartuStudi = $row->kartuStudi->sortByDesc('created_at')->first();
+                return $kartuStudi && $kartuStudi->kelas ? $kartuStudi->kelas->nama_kelas : '-';
+            })
+            ->addColumn('nama_ayah', function ($row) {
+                return $row->orang_tuas->nama_ayah ?? '-';
+            })
+            ->addColumn('nama_ibu', function ($row) {
+                return $row->orang_tuas->nama_ibu ?? '-';
+            })
+            ->addColumn('aksi', function ($row) {
+                $buttons = '
+                <a href="' . route('siswa.detail', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
+                    <i class="fa-solid fa-eye"></i>
+                </a>
+                <a href="' . route('siswa.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
+                ';
+
+                $buttons .= '
+                <form action="' . route('siswa.status', [$row->id, 'Aktif']) . '" method="POST" class="d-inline">
+                    ' . csrf_field() . method_field('PATCH') . '
+                    <button type="submit" class="btn btn-success btn-action" data-toggle="tooltip" title="Aktifkan Kembali">
+                        <i class="fa-solid fa-check"></i>
                     </button>
                 </form>';
+
+                return $buttons;
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -323,17 +394,24 @@ class SiswaController extends Controller
         }
     }
 
-
     /**
      * Remove the specified resource from storage.
      */
-    public function status(string $id)
+    public function status(string $id, $status)
     {
         $siswa = Siswa::findOrFail($id);
-        $siswa->status = $siswa->status === 'Aktif' ? 'Nonaktif' : 'Aktif';
+
+        // Validasi status yang diizinkan
+        $allowedStatus = ['Aktif', 'Nonaktif', 'Lulus'];
+        if (!in_array($status, $allowedStatus)) {
+            return redirect()->back()->with('error', 'Status tidak valid.');
+        }
+
+        // Update status
+        $siswa->status = $status;
         $siswa->save();
 
-        return redirect()->route('siswa.index')->with('success', 'Status siswa berhasil diubah.');
+        return redirect()->back()->with('success', 'Status siswa berhasil diubah menjadi ' . $status . '.');
     }
 
     public function profile()

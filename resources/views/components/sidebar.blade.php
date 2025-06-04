@@ -38,15 +38,13 @@
                 </li>
 
                 {{-- Data Alumni --}}
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown {{ request()->routeIs('alumni.*') ? 'active show' : '' }}">
                     <a href="#" class="nav-link has-dropdown text-dark">
                         <i class="fas fa-user-graduate"></i><span>Data Alumni</span>
                     </a>
-                    <ul class="dropdown-menu" style="">
-                        <li>
-                            <a class="nav-link"
-                                href="">Daftar Alumni</a>
-                        </li>
+                    <ul class="dropdown-menu" style="{{ request()->routeIs('alumni.*') ? 'display: block;' : '' }}">
+                        <li><a class="nav-link {{ request()->routeIs('alumni.index') ? 'active' : '' }}"
+                                href="{{ route('alumni.index') }}">Daftar Alumni</a></li>
                     </ul>
                 </li>
 
@@ -278,7 +276,8 @@
                     <a href="#" class="nav-link has-dropdown text-dark">
                         <i class="fas fa-comments"></i><span>Data Feedback</span>
                     </a>
-                    <ul class="dropdown-menu" style="{{ request()->routeIs('feedback.*') ? 'display: block;' : '' }}">
+                    <ul class="dropdown-menu"
+                        style="{{ request()->routeIs('feedback.*') ? 'display: block;' : '' }}">
                         <li><a class="nav-link {{ request()->routeIs('feedback.index') ? 'active' : '' }}"
                                 href="{{ route('feedback.index') }}">Daftar Feedback</a></li>
                         {{-- <li><a class="nav-link {{ request()->routeIs('nilai.create') ? 'active' : '' }}"

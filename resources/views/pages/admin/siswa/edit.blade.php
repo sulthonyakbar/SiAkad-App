@@ -10,7 +10,7 @@
 @section('main')
     <section class="section">
         <div class="section-header">
-            <h1>Edit Data Guru</h1>
+            <h1>Edit Data Siswa</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
                 <div class="breadcrumb-item"><a href="{{ route('siswa.index') }}">Data Siswa</a></div>
@@ -19,7 +19,7 @@
 
         <div class="card card-primary">
             <div class="card-header">
-                <a class="btn btn-primary" href="{{ route('siswa.index') }}" role="button"><i class="fa-solid fa-chevron-left"></i></a>
+                <a class="btn btn-primary" href="{{ url()->previous() }}" role="button"><i class="fa-solid fa-chevron-left"></i></a>
             </div>
 
             <div class="card-body">

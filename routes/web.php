@@ -48,6 +48,9 @@ Route::group(['middleware' => ['role.admin', 'tahun.ajaran']], function () {
     Route::get('/a/pegawai/admin', [GuruController::class, 'indexAdmin'])->name('pegawai.admin.index');
     Route::get('/a/pegawai/admin/data', [GuruController::class, 'getAdminData'])->name('admin.data');
 
+    Route::get('/a/alumni', [SiswaController::class, 'indexAlumni'])->name('alumni.index');
+    Route::get('/a/alumni/data', [SiswaController::class, 'getAlumniData'])->name('alumni.data');
+
     Route::get('/a/siswa', [SiswaController::class, 'index'])->name('siswa.index');
     Route::get('/a/siswa/data', [SiswaController::class, 'getSiswaData'])->name('siswa.data');
     Route::get('/a/siswa/create', [SiswaController::class, 'create'])->name('siswa.create');
@@ -55,7 +58,7 @@ Route::group(['middleware' => ['role.admin', 'tahun.ajaran']], function () {
     Route::get('/a/siswa/{id}/edit', [SiswaController::class, 'edit'])->name('siswa.edit');
     Route::put('/a/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
     Route::get('/a/siswa/{id}/detail', [SiswaController::class, 'show'])->name('siswa.detail');
-    Route::patch('/a/siswa/{id}', [SiswaController::class, 'status'])->name('siswa.status');
+    Route::patch('/a/siswa/{id}/{status}', [SiswaController::class, 'status'])->name('siswa.status');
 
     Route::get('/a/akun/siswa', [SiswaController::class, 'indexAkunSiswa'])->name('siswa.akun.index');
     Route::get('/a/akun/siswa/data', [SiswaController::class, 'getAkunSiswaData'])->name('siswa.akun.data');

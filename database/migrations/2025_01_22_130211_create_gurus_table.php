@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('nama_guru');
             $table->string('jabatan');
-            $table->string('status');
+            $table->enum('status', ['Aktif', 'Nonaktif']);
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
             $table->string('NIP', 20)->unique();
             $table->string('pangkat');

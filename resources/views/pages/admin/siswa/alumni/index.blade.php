@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Siswa')
+@section('title', 'Data Alumni Siswa')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -12,7 +12,7 @@
             <h1>Data Siswa</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('siswa.index') }}">Data Siswa</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('alumni.index') }}">Data Alumni Siswa</a></div>
             </div>
         </div>
 
@@ -36,7 +36,7 @@
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
-                        <table class="table-striped table-md table" id="siswaTable">
+                        <table class="table-striped table-md table" id="alumniTable">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -49,63 +49,9 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            {{-- <?php $no = ($siswa->currentPage() - 1) * $siswa->perPage() + 1; ?>
-                            @foreach ($siswa as $s)
-                                <tr>
-                                    <td>{{ $no }}</td>
-                                    <td>{{ $s->NISN }}</td>
-                                    <td>{{ $s->nama_siswa }}</td>
-                                    <td>{{ $s->kelas->nama_kelas ?? '-' }}</td>
-                                    <td>{{ $s->orang_tuas->nama_ayah ?? '-' }}</td>
-                                    <td>{{ $s->orang_tuas->nama_ibu ?? '-' }}</td>
-                                    <td class="row">
-                                        <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-action mr-1"
-                                            data-toggle="tooltip" title="Detail">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('siswa.edit', $s->id) }}" class="btn btn-success btn-action mr-1"
-                                            data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                                        <form id="delete-form-{{ $s->id }}"
-                                            action="{{ route('siswa.destroy', $s->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="confirmDelete(event, 'delete-form-{{ $s->id }}')"><i
-                                                    class="fa-solid fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <?php $no++; ?>
-                            @endforeach --}}
                         </table>
                     </div>
                 </div>
-
-                {{-- <div class="card-footer text-right">
-                    <nav class="d-inline-block">
-                        <ul class="pagination mb-0">
-                            <!-- Tombol Sebelumnya -->
-                            <li class="page-item {{ $siswa->currentPage() <= 1 ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $siswa->previousPageUrl() ?? '#' }}" tabindex="-1"><i
-                                        class="fas fa-chevron-left"></i></a>
-                            </li>
-
-                            <!-- Halaman-halaman -->
-                            @for ($i = 1; $i <= $siswa->lastPage(); $i++)
-                                <li class="page-item {{ $i === $siswa->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="?page={{ $i }}">{{ $i }} <span
-                                            class="sr-only">(current)</span></a>
-                                </li>
-                            @endfor
-
-                            <!-- Tombol Berikutnya -->
-                            <li class="page-item {{ $siswa->currentPage() >= $siswa->lastPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $siswa->nextPageUrl() ?? '#' }}"><i
-                                        class="fas fa-chevron-right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div> --}}
             </div>
         </div>
     </section>
@@ -120,10 +66,10 @@
 
     <script>
         $(document).ready(function() {
-            $('#siswaTable').DataTable({
+            $('#alumniTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('siswa.data') }}",
+                ajax: "{{ route('alumni.data') }}",
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',

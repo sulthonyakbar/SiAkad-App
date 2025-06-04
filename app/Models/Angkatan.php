@@ -23,4 +23,9 @@ class Angkatan extends Model
     {
         return $this->hasMany(Siswa::class, 'angkatan_id');
     }
+
+    public function semester()
+    {
+        return $this->hasMany(Semester::class, 'angkatan_id');
+    }
 }
