@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('presensis', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->enum('status', ['hadir', 'izin', 'sakit', 'alpa']);
-            $table->uuid('semester_id');
-            $table->foreign('semester_id')->references('id')->on('semesters')->onDelete('cascade');
             $table->timestamps();
         });
     }

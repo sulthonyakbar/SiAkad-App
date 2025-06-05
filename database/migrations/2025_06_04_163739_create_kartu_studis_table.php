@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
             $table->uuid('presensi_id')->nullable();
             $table->foreign('presensi_id')->references('id')->on('presensis')->onDelete('cascade');
+            $table->uuid('semester_id');
+            $table->foreign('semester_id')->references('id')->on('semesters')->onDelete('cascade');
             $table->timestamps();
         });
     }

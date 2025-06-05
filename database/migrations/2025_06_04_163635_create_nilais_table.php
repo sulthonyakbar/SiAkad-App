@@ -17,8 +17,6 @@ return new class extends Migration
             $table->integer('nilai_uts')->default(0);
             $table->integer('nilai_uas')->default(0);
             $table->integer('nilai_akhir')->default(0);
-            $table->uuid('semester_id');
-            $table->foreign('semester_id')->references('id')->on('semesters')->onDelete('cascade');
             $table->timestamps();
         });
     }
