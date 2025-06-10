@@ -31,7 +31,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="nama_mapel">Mata Pelajaran<span class="text-danger">*</span></label>
-                                <input id="nama_mapel" type="text" class="form-control" name="nama_mapel" required>
+                                <input id="nama_mapel" type="text" class="form-control" name="nama_mapel" autofocus>
                             </div>
 
                         </div>
@@ -65,32 +65,4 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    {{-- <script>
-        $(document).ready(function() {
-            $('#guru_id').select2({
-                placeholder: 'Pilih Pengajar',
-                ajax: {
-                    url: '{{ route('search.guru') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            q: params.term // search term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.NIP + ' - ' + item.nama_guru
-                                }
-                            })
-                        };
-                    },
-                    cache: true
-                }
-            });
-        });
-    </script> --}}
 @endpush
