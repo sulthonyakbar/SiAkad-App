@@ -37,11 +37,13 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\EnsureAcademicYearExists::class,
+            \App\Http\Middleware\SemesterAktif::class,
+
         ],
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -69,5 +71,6 @@ class Kernel extends HttpKernel
         'role.admin' => \App\Http\Middleware\CheckRole::class . ':admin',
         'role.orangtua' => \App\Http\Middleware\CheckRole::class . ':orangtua',
         'tahun.ajaran' => \App\Http\Middleware\EnsureAcademicYearExists::class,
+        'semester' => \App\Http\Middleware\SemesterAktif::class,
     ];
 }

@@ -99,6 +99,14 @@ class KartuStudiController extends Controller
         ]);
 
         foreach ($request->siswa_id as $siswaId) {
+            $exists = KartuStudi::where('kelas_id', $request->kelas_id)
+                ->where('siswa_id', $siswaId)
+                ->exists();
+
+            if ($exists) {
+                return back()->withErrors(['siswaId' => 'Siswa sudah ditempatkan di kelas ini.'])->withInput();
+            }
+
             KartuStudi::create([
                 'siswa_id' => $siswaId,
                 'kelas_id' => $request->kelas_id,
@@ -172,10 +180,12 @@ class KartuStudiController extends Controller
      */
     public function edit(string $id)
     {
-        $kelas = Kelas::with('siswa')->findOrFail($id);
-        $kartuStudi = KartuStudi::where('kelas_id', $id)->get();
+        $kelas = Kelas::with('kartuStudi.siswa')->findOrFail($id);
 
-        return view('pages.admin.kartu_studi.edit', compact('kartuStudi'));
+        $angkatanId = session('angkatan_aktif');
+        $siswaTersedia = Siswa::where('angkatan_id', $angkatanId)->get();
+
+        return view('pages.admin.kartu_studi.edit', compact('kelas', 'siswaTersedia'));
     }
 
     /**
@@ -183,7 +193,24 @@ class KartuStudiController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'siswa_id' => 'required|array',
+            'siswa_id.*' => 'exists:siswas,id',
+        ]);
+
+        KartuStudi::where('kelas_id', $id)->delete();
+
+        foreach ($request->siswa_id as $siswaId) {
+            KartuStudi::create([
+                'siswa_id' => $siswaId,
+                'kelas_id' => $id,
+                'nilai_id' => null,
+                'presensi_id' => null,
+                'semester_id' => null
+            ]);
+        }
+
+        return redirect()->route('kartu.studi.index')->with('success', 'Penentuan Kelas berhasil diperbarui.');
     }
 
     /**

@@ -32,7 +32,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/', [AuthController::class, 'loginPost'])->name('login.post');
 });
 
-Route::group(['middleware' => ['role.admin', 'tahun.ajaran']], function () {
+Route::group(['middleware' => ['role.admin', 'tahun.ajaran', 'semester']], function () {
     Route::get('/a/dashboard', [DashboardController::class, 'dashboardAdmin'])->name('admin.dashboard');
 
     Route::get('/a/pegawai/create', [GuruController::class, 'create'])->name('pegawai.create');
@@ -130,7 +130,7 @@ Route::group(['middleware' => ['role.admin', 'tahun.ajaran']], function () {
     Route::delete('/a/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
 });
 
-Route::group(['middleware' => 'role.orangtua'], function () {
+Route::group(['middleware' => ['role.orangtua', 'tahun.ajaran', 'semester']], function () {
     Route::get('/s/dashboard', [DashboardController::class, 'dashboardSiswa'])->name('siswa.dashboard');
     Route::get('/s/profile', [SiswaController::class, 'profile'])->name('siswa.profile');
     Route::put('/s/profile', [SiswaController::class, 'update'])->name('siswa.update.profile');
@@ -145,7 +145,7 @@ Route::group(['middleware' => 'role.orangtua'], function () {
     Route::delete('/s/feedback/{id}', [FeedbackController::class, 'destroy'])->name('feedback.destroy');
 });
 
-Route::group(['middleware' => 'role.guru'], function () {
+Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], function () {
     Route::get('/g/dashboard', [DashboardController::class, 'dashboardGuru'])->name('guru.dashboard');
     Route::get('/g/profile', [GuruController::class, 'profile'])->name('guru.profile');
     Route::put('/g/profile', [GuruController::class, 'updateProfile'])->name('guru.update.profile');
