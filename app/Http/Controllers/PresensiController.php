@@ -36,14 +36,7 @@ class PresensiController extends Controller
                 <a href="' . route('presensi.detail', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
-                <a href="' . route('presensi.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                <form id="delete-form-' . $row->id . '" action="' . route('presensi.destroy', $row->id) . '" method="POST" class="d-inline">
-                    ' . csrf_field() . '
-                    ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-danger btn-action" data-toggle="tooltip" title="Hapus" onclick="confirmDelete(event, \'delete-form-' . $row->id . '\')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>';
+                <a href="' . route('presensi.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -120,6 +113,8 @@ class PresensiController extends Controller
             'status' => 'required|array',
         ]);
 
+        $semesterId = session('semester_aktif');
+
         foreach ($request->siswa_id as $index => $siswa_id) {
             $status = $request->status[$siswa_id];
 
@@ -141,6 +136,16 @@ class PresensiController extends Controller
                     // Update kartu studi dengan id presensi
                     $kartuStudi->update([
                         'presensi_id' => $presensi->id,
+                        'semester_id' => $semesterId,
+                    ]);
+                } else {
+                    // Jika sudah ada presensi hari ini, update statusnya
+                    $presensi = Presensi::whereDate('created_at', now()->toDateString())
+                        ->where('id', $kartuStudi->presensi_id)
+                        ->first();
+
+                    $presensi->update([
+                        'status' => $status,
                     ]);
                 }
             }
@@ -154,7 +159,16 @@ class PresensiController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $presensi = Presensi::findOrFail($id);
+
+        // Ambil data siswa yang terkait dengan presensi ini
+        $kartuStudi = KartuStudi::where('presensi_id', $presensi->id)->with('siswa')->get();
+
+        if ($kartuStudi->isEmpty()) {
+            return redirect()->route('presensi.index')->with('error', 'Data presensi tidak ditemukan.');
+        }
+
+        return view('pages.guru.presensi.detail', compact('presensi', 'kartuStudi'));
     }
 
     /**

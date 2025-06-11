@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Data Aktivitas Harian Siswa')
+@section('title', 'Tambah Data Presensi Siswa')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -9,7 +9,7 @@
 @section('main')
     <section class="section">
         <div class="section-header">
-            <h1>Tambah Data Aktivitas Harian Siswa</h1>
+            <h1>Tambah Data Presensi Siswa</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('guru.dashboard') }}">Dashboard</a></div>
                 <div class="breadcrumb-item"><a href="{{ route('presensi.index') }}">Data Presensi Siswa</a></div>
