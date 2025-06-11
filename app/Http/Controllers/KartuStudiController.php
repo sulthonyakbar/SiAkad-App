@@ -104,6 +104,7 @@ class KartuStudiController extends Controller
                 'kelas_id' => $request->kelas_id,
                 'nilai_id' => null,
                 'presensi_id' => null,
+                'semester_id' => null
             ]);
         }
 

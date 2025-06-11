@@ -18,9 +18,4 @@ class Presensi extends Model
     {
         return $this->hasOne(KartuStudi::class, 'presensi_id');
     }
-
-    public function semester()
-    {
-        return $this->belongsTo(Semester::class, 'semester_id');
-    }
 }

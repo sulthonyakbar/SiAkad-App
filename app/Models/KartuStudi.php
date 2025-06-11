@@ -15,6 +15,7 @@ class KartuStudi extends Model
         'nilai_id',
         'kelas_id',
         'presensi_id',
+        'semester_id',
     ];
 
     public function siswa()
@@ -35,5 +36,10 @@ class KartuStudi extends Model
     public function presensi()
     {
         return $this->belongsTo(Presensi::class, 'presensi_id');
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class, 'semester_id');
     }
 }
