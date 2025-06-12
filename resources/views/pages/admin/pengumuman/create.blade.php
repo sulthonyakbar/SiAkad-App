@@ -31,7 +31,7 @@
 
                             <div class="form-group">
                                 <label for="judul">Judul<span class="text-danger">*</span></label>
-                                <input id="judul" type="text" class="form-control" name="judul">
+                                <input id="judul" type="text" class="form-control" name="judul" autofocus>
                             </div>
 
                             <div class="form-group">
