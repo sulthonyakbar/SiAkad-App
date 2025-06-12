@@ -31,12 +31,12 @@
 
                             <div class="form-group">
                                 <label for="judul">Judul<span class="text-danger">*</span></label>
-                                <input id="judul" type="text" class="form-control" name="judul" required>
+                                <input id="judul" type="text" class="form-control" name="judul">
                             </div>
 
                             <div class="form-group">
                                 <label for="isi">Isi <span class="text-danger">*</span></label>
-                                <textarea id="isi" class="form-control" name="isi" required></textarea>
+                                <textarea id="isi" class="form-control" name="isi"></textarea>
                             </div>
 
                         </div>
