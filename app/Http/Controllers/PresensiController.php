@@ -22,7 +22,7 @@ class PresensiController extends Controller
 
     public function getPresensiData()
     {
-        $presensi = Presensi::select('id', 'created_at')->get();
+        $presensi = Presensi::with(['kartuStudi.kelas'])->get();
 
         return DataTables::of($presensi)
             ->addColumn('hari', function ($row) {
@@ -32,8 +32,9 @@ class PresensiController extends Controller
                 return Carbon::parse($row->created_at)->translatedFormat('d F Y');
             })
             ->addColumn('aksi', function ($row) {
+                 $kelasId = optional(optional($row->kartuStudi)->kelas)->id;
                 return '
-                <a href="' . route('presensi.detail', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
+                <a href="' . route('presensi.detail', ['kelas_id' => $kelasId]) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
                 <a href="' . route('presensi.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
@@ -157,18 +158,17 @@ class PresensiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $kelas_id)
     {
-        $presensi = Presensi::findOrFail($id);
+        $semesterId = session('semester_aktif');
 
-        // Ambil data siswa yang terkait dengan presensi ini
-        $kartuStudi = KartuStudi::where('presensi_id', $presensi->id)->with('siswa')->get();
+        // Ambil semua siswa di kelas ini dan semester aktif
+        $kartuStudi = KartuStudi::with(['siswa', 'presensi'])
+            ->where('kelas_id', $kelas_id)
+            ->where('semester_id', $semesterId)
+            ->get();
 
-        if ($kartuStudi->isEmpty()) {
-            return redirect()->route('presensi.index')->with('error', 'Data presensi tidak ditemukan.');
-        }
-
-        return view('pages.guru.presensi.detail', compact('presensi', 'kartuStudi'));
+        return view('pages.guru.presensi.detail', compact('kartuStudi'));
     }
 
     /**

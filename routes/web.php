@@ -165,7 +165,7 @@ Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], functi
     Route::get('/g/presensi/create', [PresensiController::class, 'create'])->name('presensi.create');
     Route::get('/g/presensi/create/data', [PresensiController::class, 'createPresensiData'])->name('presensi.create.data');
     Route::post('/g/presensi/store', [PresensiController::class, 'store'])->name('presensi.store');
-    Route::get('/g/presensi/{id}/detail', [PresensiController::class, 'show'])->name('presensi.detail');
+    Route::get('/g/presensi/{kelas_id}/detail', [PresensiController::class, 'show'])->name('presensi.detail');
     Route::get('/g/presensi/{id}/edit', [PresensiController::class, 'edit'])->name('presensi.edit');
     Route::put('/g/presensi/{id}', [PresensiController::class, 'update'])->name('presensi.update');
     Route::delete('/g/presensi/{id}', [PresensiController::class, 'destroy'])->name('presensi.destroy');
