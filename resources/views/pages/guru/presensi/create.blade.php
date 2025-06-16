@@ -33,7 +33,7 @@
                                     <th>No</th>
                                     <th>NISN</th>
                                     <th>Nama</th>
-                                    <th>Action</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                         </table>

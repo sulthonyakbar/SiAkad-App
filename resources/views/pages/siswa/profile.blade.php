@@ -12,13 +12,13 @@
         <div class="section-header">
             <h1>Profile Siswa</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="/siswa/dashboard">Dashboard</a></div>
+                <div class="breadcrumb-item active"><a href="{{ route('siswa.dashboard') }}">Dashboard</a></div>
             </div>
         </div>
 
         <div class="card card-primary">
             <div class="card-header">
-                <a class="btn btn-primary" href="/siswa/dashboard" role="button"><i
+                <a class="btn btn-primary" href="{{ route('siswa.dashboard') }}" role="button"><i
                         class="fa-solid fa-chevron-left"></i></a>
             </div>
 
@@ -209,7 +209,8 @@
                                 <div class="input-group">
                                     <input id="penghasilan_ayah" type="text" class="form-control"
                                         name="penghasilan_ayah"
-                                        value="{{ old('penghasilan_ayah', $siswa->orang_tuas->penghasilan_ayah) }}" required>
+                                        value="{{ old('penghasilan_ayah', $siswa->orang_tuas->penghasilan_ayah) }}"
+                                        required>
                                     <div class="input-group-append">
                                         <span class="input-group-text">/ Bulan</span>
                                     </div>
@@ -277,7 +278,8 @@
                                 <div class="input-group">
                                     <input id="penghasilan_ibu" type="text" class="form-control"
                                         name="penghasilan_ibu"
-                                        value="{{ old('penghasilan_ibu', $siswa->orang_tuas->penghasilan_ibu) }}" required>
+                                        value="{{ old('penghasilan_ibu', $siswa->orang_tuas->penghasilan_ibu) }}"
+                                        required>
                                     <div class="input-group-append">
                                         <span class="input-group-text">/ Bulan</span>
                                     </div>

@@ -86,17 +86,6 @@
                                 <label for="foto">Foto </span></label>
                                 <input id="foto" type="file" class="form-control" name="foto">
                             </div>
-                            {{-- <div class="form-group row align-items-center">
-                                <label class="form-control-label col-sm-3 text-md-right">Foto</label>
-                                <div class="col-sm-6 col-md-9">
-                                    <div class="custom-file">
-                                        <input type="file" name="site_logo" class="custom-file-input" id="site-logo">
-                                        <label class="custom-file-label">Choose File</label>
-                                    </div>
-                                    <div class="form-text text-muted">The image must have a maximum size of 1MB
-                                    </div>
-                                </div>
-                            </div> --}}
 
                             <div class="form-group">
                                 <label for="tamatan">Tamatan dari <span class="text-danger">*</span></label>

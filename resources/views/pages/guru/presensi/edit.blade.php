@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Data Penentuan Kelas')
+@section('title', 'Edit Data Presensi Siswa')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -11,45 +11,43 @@
 @section('main')
     <section class="section">
         <div class="section-header">
-            <h1>Edit Data Penentuan Kelas</h1>
+            <h1>Edit Data Presensi Siswa </h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="/admin/dashboard">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="/admin/penentuan-kelas">Data Penentuan Kelas</a></div>
+                <div class="breadcrumb-item active"><a href="{{ route('guru.dashboard') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('presensi.index') }}">Data Presensi Siswa</a></div>
             </div>
         </div>
 
         <div class="card card-primary">
             <div class="card-header">
-                <a class="btn btn-primary" href="/admin/penentuan-kelas" role="button"><i
+                <a class="btn btn-primary" href="{{ route('presensi.index') }}" role="button"><i
                         class="fa-solid fa-chevron-left"></i></a>
             </div>
 
             <div class="card-body">
-                <form method="POST" action="{{ route('penentuan.kelas.update', $kelas->id) }}"
-                    enctype="multipart/form-data">
+                <form method="POST" action="{{ route('presensi.update') }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-                    <input type="hidden" name="id" value="{{ $kelas->id }}" required>
 
-                    <h5>Kelas: <span class="text-primary">{{ $kelas->nama_kelas }} </span> - Ruang {{ $kelas->ruang }}</h5>
+                    <div class="table-responsive">
+                        <table class="table-striped table-md table" id="editPresensiTable">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>NISN</th>
+                                    <th>Nama</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                        </table>
 
-                    <div class="form-group">
-                        <label for="siswa_id">Pilih Siswa</label>
-                        <select name="siswa_id[]" id="siswa_id" class="form-control select2" multiple>
-                            @foreach ($siswaTersedia as $s)
-                                <option value="{{ $s->id }}"
-                                    {{ $kelas->siswa->pluck('id')->contains($s->id) ? 'selected' : '' }}>
-                                    {{ $s->NISN . ' - ' . $s->nama_siswa }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                Edit Data Presensi Siswa
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">
-                            Edit Data Penentuan Kelas
-                        </button>
-                    </div>
                 </form>
             </div>
         </div>
@@ -68,59 +66,45 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
+        const kelas_id = "{{ $kelas_id }}"; // <- ini dari controller edit()
+    </script>
+
+    <script>
         $(document).ready(function() {
-            let selectedData = {!! json_encode($kelas->siswa->pluck('id')) !!};
-
-            $('#siswa_id').select2({
-                placeholder: 'Pilih Siswa',
-                allowClear: true,
-                ajax: {
-                    url: '{{ route('search.siswa') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            q: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        let results = $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.NISN + ' - ' + item.nama_siswa
-                            };
-                        });
-
-                        // Hanya tambahkan siswa yang belum ada di dropdown
-                        selectedData.forEach(id => {
-                            if (!$('#siswa_id option[value="' + id + '"]').length) {
-                                let existing = $('#siswa_id option[value="' + id + '"]').text();
-                                if (existing) {
-                                    results.unshift({
-                                        id: id,
-                                        text: existing
-                                    });
-                                }
-                            }
-                        });
-
-                        return {
-                            results: results
-                        };
-                    },
-                    cache: true
+            $('#editPresensiTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('presensi.edit.data') }}",
+                data: function(d) {
+                    d.kelas_id = kelas_id;
                 }
-            });
-
-            // Pastikan tidak menambahkan opsi duplikat saat inisialisasi
-            selectedData.forEach(id => {
-                if (!$('#siswa_id option[value="' + id + '"]').length) {
-                    let existing = $('#siswa_id option[value="' + id + '"]').text();
-                    if (existing) {
-                        let newOption = new Option(existing, id, true, true);
-                        $('#siswa_id').append(newOption).trigger('change');
+                columns: [{
+                        data: null,
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'NISN',
+                        name: 'NISN',
+                    },
+                    {
+                        data: 'nama_siswa',
+                        name: 'nama_siswa',
+                    },
+                    {
+                        data: 'aksi',
+                        name: 'aksi',
+                        orderable: false,
+                        searchable: false
+                    } // Tidak bisa dicari
+                ],
+                columnDefs: [{
+                    targets: 0,
+                    render: function(data, type, row, meta) {
+                        return meta.row + 1; // Menampilkan nomor urut
                     }
-                }
+                }],
             });
         });
     </script>

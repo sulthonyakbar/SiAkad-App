@@ -135,6 +135,9 @@ Route::group(['middleware' => ['role.orangtua', 'tahun.ajaran', 'semester']], fu
     Route::get('/s/profile', [SiswaController::class, 'profile'])->name('siswa.profile');
     Route::put('/s/profile', [SiswaController::class, 'update'])->name('siswa.update.profile');
 
+    Route::get('/s/akun', [AuthController::class, 'editAkun'])->name('akun.edit.siswa');
+    Route::put('/s/akun', [AuthController::class, 'updateAkun'])->name('akun.update.siswa');
+
     Route::get('/s/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
     Route::get('/s/feedback/data', [FeedbackController::class, 'getFeedbackData'])->name('feedback.data');
     Route::get('/s/feedback/create/{aktivitas_id}', [FeedbackController::class, 'create'])->name('feedback.create');
@@ -143,12 +146,16 @@ Route::group(['middleware' => ['role.orangtua', 'tahun.ajaran', 'semester']], fu
     Route::get('/s/feedback/{id}/edit', [FeedbackController::class, 'edit'])->name('feedback.edit');
     Route::put('/s/feedback/{id}', [FeedbackController::class, 'update'])->name('feedback.update');
     Route::delete('/s/feedback/{id}', [FeedbackController::class, 'destroy'])->name('feedback.destroy');
+
 });
 
 Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], function () {
     Route::get('/g/dashboard', [DashboardController::class, 'dashboardGuru'])->name('guru.dashboard');
     Route::get('/g/profile', [GuruController::class, 'profile'])->name('guru.profile');
     Route::put('/g/profile', [GuruController::class, 'updateProfile'])->name('guru.update.profile');
+
+    Route::get('/g/akun', [AuthController::class, 'editAkun'])->name('akun.edit.guru');
+    Route::put('/g/akun', [AuthController::class, 'updateAkun'])->name('akun.update.guru');
 
     Route::get('/g/aktivitas', [AktivitasController::class, 'index'])->name('aktivitas.index');
     Route::get('/g/aktivitas/data', [AktivitasController::class, 'getAktivitasData'])->name('aktivitas.data');
@@ -166,9 +173,9 @@ Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], functi
     Route::get('/g/presensi/create/data', [PresensiController::class, 'createPresensiData'])->name('presensi.create.data');
     Route::post('/g/presensi/store', [PresensiController::class, 'store'])->name('presensi.store');
     Route::get('/g/presensi/{kelas_id}/detail', [PresensiController::class, 'show'])->name('presensi.detail');
-    Route::get('/g/presensi/{id}/edit', [PresensiController::class, 'edit'])->name('presensi.edit');
-    Route::put('/g/presensi/{id}', [PresensiController::class, 'update'])->name('presensi.update');
-    Route::delete('/g/presensi/{id}', [PresensiController::class, 'destroy'])->name('presensi.destroy');
+    Route::get('/g/presensi/{kelas_id}/edit', [PresensiController::class, 'edit'])->name('presensi.edit');
+    Route::get('/g/presensi/edit/data', [PresensiController::class, 'editPresensiData'])->name('presensi.edit.data');
+    Route::put('/g/presensi/update', [PresensiController::class, 'update'])->name('presensi.update');
 
     Route::get('/g/nilai', [NilaiController::class, 'index'])->name('nilai.index');
     Route::get('/g/nilai/data', [NilaiController::class, 'getNilaiData'])->name('nilai.data');

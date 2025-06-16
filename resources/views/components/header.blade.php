@@ -142,7 +142,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 @if (auth()->user()->role === 'orangtua')
-                <form action="" method="GET">
+                <form action="{{ route('akun.edit.siswa') }}" method="GET">
                     <button type="submit" class="dropdown-item">
                         <i class="fas fa-cog mr-2"></i> Setting Akun
                     </button>
@@ -153,7 +153,7 @@
                         <i class="fas fa-user mr-2"></i> Profile
                     </button>
                 </form>
-                <form action="" method="GET">
+                <form action="{{ route('akun.edit.guru') }}" method="GET">
                     <button type="submit" class="dropdown-item">
                         <i class="fas fa-cog mr-2"></i> Setting Akun
                     </button>

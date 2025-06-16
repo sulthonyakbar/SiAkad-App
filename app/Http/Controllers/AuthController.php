@@ -20,34 +20,34 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->login)
-            ->orWhere('username', $request->login)
-            ->first();
+        $isEmail = filter_var($request->login, FILTER_VALIDATE_EMAIL);
 
-        if ($user && Auth::guard('web')->attempt(['email' => $user->email, 'password' => $request->password])) {
+        $user = $isEmail
+            ? User::where('email', $request->login)->first()
+            : User::where('username', $request->login)->first();
 
-            if ($user->role === 'admin' || $user->role === 'guru') {
-                $nama_pengguna = $user->guru->nama_guru;
-            } elseif ($user->role === 'orangtua') {
-                $nama_pengguna = $user->siswa->nama_siswa;
-            }
-
-            session()->flash('success', 'Login berhasil! Selamat datang, ' . $nama_pengguna);
-
-            switch ($user->role) {
-                case 'admin':
-                    return redirect()->route('admin.dashboard');
-                case 'guru':
-                    return redirect()->route('guru.dashboard');
-                case 'orangtua':
-                    return redirect()->route('siswa.dashboard');
-                default:
-                    Auth::logout();
-                    return back()->with('error', 'Role tidak dikenali');
-            }
+        if (!$user) {
+            $errorMessage = $isEmail ? 'Email tidak ditemukan.' : 'Username tidak ditemukan.';
+            return back()->with('error', $errorMessage);
         }
 
-        return back()->with('error', 'Username atau Password salah');
+        if (!Auth::guard('web')->attempt(['email' => $user->email, 'password' => $request->password])) {
+            return back()->with('error', 'Password yang Anda masukkan salah.');
+        }
+
+        $nama_pengguna = match ($user->role) {
+            'admin', 'guru' => $user->guru->nama_guru ?? 'Pengguna',
+            'orangtua' => $user->siswa->nama_siswa ?? 'Pengguna',
+            default => 'Pengguna',
+        };
+
+        session()->flash('success', 'Login berhasil! Selamat datang, ' . $nama_pengguna);
+
+        return match ($user->role) {
+            'admin' => redirect()->route('admin.dashboard'),
+            'guru' => redirect()->route('guru.dashboard'),
+            'orangtua' => redirect()->route('siswa.dashboard'),
+        };
     }
 
     public function logout()
@@ -82,5 +82,42 @@ class AuthController extends Controller
         $user->save();
 
         return redirect()->route('siswa.akun.index')->with('success', 'Akun berhasil diperbarui.');
+    }
+
+    public function editAkun()
+    {
+        $user = auth()->user();
+        if ($user->role === 'guru') {
+            return view('pages.guru.akun', compact('user'));
+        } elseif ($user->role === 'orangtua') {
+            return view('pages.siswa.akun', compact('user'));
+        }
+    }
+
+    public function updateAkun(Request $request)
+    {
+        $authUser = auth()->user();
+        $user = User::find($authUser->id);
+
+        $request->validate([
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $user->username = $request->username;
+        $user->email = $request->email;
+
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save();
+
+        if ($authUser->role === 'guru') {
+            return redirect()->route('guru.dashboard')->with('success', 'Akun berhasil diperbarui.');
+        } else if ($authUser->role === 'orangtua') {
+            return redirect()->route('siswa.dashboard')->with('success', 'Akun berhasil diperbarui.');
+        }
     }
 }
