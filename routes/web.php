@@ -187,7 +187,7 @@ Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], functi
 
     Route::get('/g/bobot', [BobotController::class, 'index'])->name('bobot.index');
     Route::get('/g/bobot/data', [BobotController::class, 'getBobotData'])->name('bobot.data');
-    Route::get('/g/bobot/search-mapel', [BobotController::class, 'searchMapel'])->name('bobot.search.mapel');
+    Route::get('/g/bobot/search-mapel', [BobotController::class, 'searchMapel'])->name('search.mapel');
     Route::get('/g/bobot/create', [BobotController::class, 'create'])->name('bobot.create');
     Route::post('/g/bobot/store', [BobotController::class, 'store'])->name('bobot.store');
     Route::get('/g/bobot/{id}/detail', [BobotController::class, 'show'])->name('bobot.detail');
