@@ -15,4 +15,9 @@ class BobotPenilaian extends Model
         'bobot_uts',
         'bobot_uas',
     ];
+
+    public function mapel()
+    {
+        return $this->hasOne(MataPelajaran::class, 'bobot_id');
+    }
 }

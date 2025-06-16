@@ -8,6 +8,8 @@ use App\Models\JadwalPelajaran;
 use App\Models\Kelas;
 use App\Models\Nilai;
 use App\Models\Siswa;
+use App\Models\BobotPenilaian;
+use App\Models\MataPelajaran;
 use Yajra\DataTables\Facades\DataTables;
 
 class NilaiController extends Controller
@@ -23,8 +25,6 @@ class NilaiController extends Controller
     public function getNilaiData()
     {
         $guru = auth()->user()->guru;
-
-        $siswaList = collect();
 
         if ($guru) {
             $kelas = Kelas::where('guru_id', $guru->id)->first();
@@ -59,14 +59,7 @@ class NilaiController extends Controller
                 <a href="' . route('nilai.detail', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
-                <a href="' . route('nilai.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                <form id="delete-form-' . $row->id . '" action="' . route('nilai.destroy', $row->id) . '" method="POST" class="d-inline">
-                    ' . csrf_field() . '
-                    ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-danger btn-action" data-toggle="tooltip" title="Hapus" onclick="confirmDelete(event, \'delete-form-' . $row->id . '\')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>';
+                <a href="' . route('nilai.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
             })
             ->rawColumns(['aksi_nilai', 'aksi'])
             ->make(true);
@@ -78,34 +71,35 @@ class NilaiController extends Controller
     public function create($id)
     {
         $guru = auth()->user()->guru;
-        $angkatanId = session('angkatan_aktif');
 
-        // Ambil kelas yang diajar guru
+        $semesterId = session('semester_aktif');
+
+        $siswa = Siswa::findOrFail($id);
+
+        // Cek kelas yang diajar guru
         $kelas = Kelas::where('guru_id', $guru->id)->first();
 
         if (!$kelas) {
             return back()->with('error', 'Guru tidak memiliki kelas.');
         }
 
-        // Cek apakah siswa terdaftar dalam kelas guru di angkatan aktif
-        $kartuStudis = KartuStudi::with(['siswa', 'kelas', 'nilai'])
-            ->whereHas('kelas', function ($query) use ($kelas, $angkatanId) {
-                $query->where('id', $kelas->id)->where('angkatan_id', $angkatanId);
-            })
-            ->where('siswa_id', $id)
-            ->get();
+        // Ambil kartu studi siswa untuk semester dan kelas ini
+        $kartuStudi = KartuStudi::where('siswa_id', $id)
+            ->where('kelas_id', $kelas->id)
+            ->where('semester_id', $semesterId)
+            ->first();
 
-        if ($kartuStudis->isEmpty()) {
-            return back()->with('error', 'Siswa tidak ditemukan dalam kelas guru.');
+        if (!$kartuStudi) {
+            return back()->with('error', 'Siswa belum terdaftar pada semester aktif.');
         }
 
-        // Ambil satu jadwal (untuk header info saja, misalnya kelas dan mapel pertama)
-        $jadwal = $kartuStudis->first();
+        // Ambil semua mapel yg diajar guru di kelas ini (misal berdasarkan jadwal atau relasi khusus)
+        $mapels = MataPelajaran::whereHas('jadwalPelajaran', function ($query) use ($kelas, $guru) {
+            $query->where('kelas_id', $kelas->id)
+                ->where('guru_id', $guru->id);
+        })->with('bobotPenilaian')->get();
 
-        return view('pages.guru.nilai.create', [
-            'kartuStudis' => $kartuStudis,
-            'jadwal' => $jadwal,
-        ]);
+        return view('pages.guru.nilai.create', compact('mapels', 'kartuStudi', 'siswa'));
     }
 
     /**
@@ -113,40 +107,32 @@ class NilaiController extends Controller
      */
     public function store(Request $request)
     {
-        foreach ($request->nilai as $ks_id => $data) {
-            $kartuStudi = KartuStudi::find($ks_id);
+        $request->validate([
+            'kartu_studi_id' => 'required|exists:kartu_studis,id',
+            'nilai' => 'required|array',
+        ]);
 
-            if (!$kartuStudi) continue;
-
-            $nilai = $kartuStudi->nilai;
-
-            if (!$nilai) {
-                // Jika belum ada nilai, buat baru
-                $nilai = Nilai::create([
-                    'nilai_uh' => $data['uh'],
-                    'nilai_uts' => $data['uts'],
-                    'nilai_uas' => $data['uas'],
-                    'nilai_akhir' => $this->hitungNilaiAkhir($data, $kartuStudi),
-                ]);
-                $kartuStudi->nilai_id = $nilai->id;
-                $kartuStudi->save();
-            } else {
-                // Jika sudah ada nilai, update
-                $nilai->update([
-                    'nilai_uh' => $data['uh'],
-                    'nilai_uts' => $data['uts'],
-                    'nilai_uas' => $data['uas'],
-                    'nilai_akhir' => $this->hitungNilaiAkhir($data, $kartuStudi),
-                ]);
-            }
+        foreach ($request->nilai as $mapel_id => $nilaiData) {
+            $nilai = Nilai::updateOrCreate(
+                [
+                    'kartu_studi_id' => $request->kartu_studi_id,
+                    'mapel_id' => $mapel_id,
+                ],
+                [
+                    'nilai_uh' => $nilaiData['uh'],
+                    'nilai_uts' => $nilaiData['uts'],
+                    'nilai_uas' => $nilaiData['uas'],
+                    'nilai_akhir' => $this->hitungNilaiAkhir($nilaiData, $mapel_id),
+                ]
+            );
         }
 
-        return back()->with('success', 'Nilai berhasil disimpan atau diperbarui.');
+        return redirect()->route('nilai.index')->with('success', 'Nilai berhasil disimpan.');
     }
 
-    private function hitungNilaiAkhir($data, $kartuStudi)
+    private function hitungNilaiAkhir($data, $mapel_id)
     {
-        $bobot = $kartuStudi->nilai->mapel->bobot ?? null;
+        $bobot = BobotPenilaian::where('mapel_id', $mapel_id)->first();
         if (!$bobot) return 0;
 
         return (

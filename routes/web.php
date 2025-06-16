@@ -15,6 +15,7 @@ use App\Http\Controllers\PengumumanController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\BobotController;
 
 /*
 |--------------------------------------------------------------------------
@@ -146,7 +147,6 @@ Route::group(['middleware' => ['role.orangtua', 'tahun.ajaran', 'semester']], fu
     Route::get('/s/feedback/{id}/edit', [FeedbackController::class, 'edit'])->name('feedback.edit');
     Route::put('/s/feedback/{id}', [FeedbackController::class, 'update'])->name('feedback.update');
     Route::delete('/s/feedback/{id}', [FeedbackController::class, 'destroy'])->name('feedback.destroy');
-
 });
 
 Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], function () {
@@ -184,7 +184,15 @@ Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], functi
     Route::get('/g/nilai/{id}/detail', [NilaiController::class, 'show'])->name('nilai.detail');
     Route::get('/g/nilai/{id}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');
     Route::put('/g/nilai/{id}', [NilaiController::class, 'update'])->name('nilai.update');
-    Route::delete('/g/nilai/{id}', [NilaiController::class, 'destroy'])->name('nilai.destroy');
+
+    Route::get('/g/bobot', [BobotController::class, 'index'])->name('bobot.index');
+    Route::get('/g/bobot/data', [BobotController::class, 'getBobotData'])->name('bobot.data');
+    Route::get('/g/bobot/search-mapel', [BobotController::class, 'searchMapel'])->name('bobot.search.mapel');
+    Route::get('/g/bobot/create', [BobotController::class, 'create'])->name('bobot.create');
+    Route::post('/g/bobot/store', [BobotController::class, 'store'])->name('bobot.store');
+    Route::get('/g/bobot/{id}/detail', [BobotController::class, 'show'])->name('bobot.detail');
+    Route::get('/g/bobot/{id}/edit', [BobotController::class, 'edit'])->name('bobot.edit');
+    Route::put('/g/bobot/{id}', [BobotController::class, 'update'])->name('bobot.update');
 });
 
 Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');

@@ -256,10 +256,16 @@
                 </li>
 
                 {{-- Bobot Penilaian --}}
-                <li class="nav-item">
-                    <a href="" class="nav-link text-dark">
-                        <i class="fas fa-clipboard-list"></i><span>Bobot Penilaian</span>
+                <li class="nav-item {{ request()->routeIs('bobot.*') ? 'active' : '' }}">
+                    <a href="#" class="nav-link has-dropdown text-dark">
+                        <i class="fas fa-balance-scale"></i><span>Data Bobot Penilaian</span>
                     </a>
+                    <ul class="dropdown-menu" style="{{ request()->routeIs('bobot.*') ? 'display: block;' : '' }}">
+                        <li><a class="nav-link {{ request()->routeIs('bobot.index') ? 'active' : '' }}"
+                                href="{{ route('bobot.index') }}">Daftar Bobot Penilaian</a></li>
+                        <li><a class="nav-link {{ request()->routeIs('bobot.create') ? 'active' : '' }}"
+                                href="{{ route('bobot.create') }}">Tambah Bobot Penilaian</a></li>
+                    </ul>
                 </li>
             @endif
 
