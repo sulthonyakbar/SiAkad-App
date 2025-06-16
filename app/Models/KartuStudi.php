@@ -12,9 +12,7 @@ class KartuStudi extends Model
 
     protected $fillable = [
         'siswa_id',
-        'nilai_id',
         'kelas_id',
-        'presensi_id',
         'semester_id',
     ];
 
@@ -23,23 +21,18 @@ class KartuStudi extends Model
         return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 
-    public function nilai()
-    {
-        return $this->belongsTo(Nilai::class, 'nilai_id');
-    }
-
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
-    public function presensi()
-    {
-        return $this->belongsTo(Presensi::class, 'presensi_id');
-    }
-
     public function semester()
     {
         return $this->belongsTo(Semester::class, 'semester_id');
+    }
+
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class, 'ks_id');
     }
 }

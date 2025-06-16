@@ -98,6 +98,8 @@ class KartuStudiController extends Controller
             'siswa_id.*' => 'exists:siswas,id',
         ]);
 
+        $semesterId = session('semester_aktif');
+
         foreach ($request->siswa_id as $siswaId) {
             $exists = KartuStudi::where('kelas_id', $request->kelas_id)
                 ->where('siswa_id', $siswaId)
@@ -110,9 +112,7 @@ class KartuStudiController extends Controller
             KartuStudi::create([
                 'siswa_id' => $siswaId,
                 'kelas_id' => $request->kelas_id,
-                'nilai_id' => null,
-                'presensi_id' => null,
-                'semester_id' => null
+                'semester_id' => $semesterId
             ]);
         }
 

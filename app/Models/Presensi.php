@@ -11,11 +11,13 @@ class Presensi extends Model
     use HasFactory, HasUuids;
 
     protected $fillable = [
-        'status',
+        'tanggal',
+        'kelas_id',
     ];
 
-    public function kartuStudi()
+    public function kelas()
     {
-        return $this->hasOne(KartuStudi::class, 'presensi_id');
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
+
 }

@@ -14,7 +14,6 @@ class MataPelajaran extends Model
         'nama_mapel',
         'deskripsi',
         'bobot_id',
-        'nilai_id',
     ];
 
     public function jadwalPelajaran()
@@ -27,8 +26,4 @@ class MataPelajaran extends Model
         return $this->belongsTo(BobotPenilaian::class, 'bobot_id');
     }
 
-    public function nilai()
-    {
-        return $this->hasMany(Nilai::class, 'nilai_id');
-    }
 }

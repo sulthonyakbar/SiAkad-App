@@ -14,16 +14,18 @@ class Nilai extends Model
         'nilai_uh',
         'nilai_uts',
         'nilai_uas',
-        'nilai_akhir'
+        'nilai_akhir',
+        'ks_id',
+        'mapel_id',
     ];
 
     public function kartuStudi()
     {
-        return $this->hasOne(KartuStudi::class, 'nilai_id');
+        return $this->belongsTo(KartuStudi::class, 'ks_id');
     }
 
     public function mataPelajaran()
     {
-        return $this->belongsTo(MataPelajaran::class, 'nilai_id');
+        return $this->belongsTo(MataPelajaran::class, 'mapel_id');
     }
 }
