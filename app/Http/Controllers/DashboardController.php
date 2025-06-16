@@ -8,6 +8,8 @@ use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\JadwalPelajaran;
 use App\Models\Pengumuman;
+use App\Models\Presensi;
+use App\Models\DetailPresensi;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -100,6 +102,31 @@ class DashboardController extends Controller
         };
 
         $events = $this->mapJadwalToCalendarEvents($jadwal, $titleFormatter);
+
+        if ($guru) {
+            $kelasWali = Kelas::where('guru_id', $guru->id)->first();
+            if ($kelasWali) {
+
+                $angkatanId = session('angkatan_aktif');
+
+                // 2. Ambil jumlah siswa di kelasnya pada angkatan aktif
+                $jumlahSiswa = Siswa::whereHas('kartuStudi', function ($query) use ($kelasWali, $angkatanId) {
+                    $query->where('kelas_id', $kelasWali->id)
+                        ->where('angkatan_id', $angkatanId);
+                })->count();
+
+                // 3. Ambil rekap presensi hari ini untuk kelas wali
+                $presensiHariIni = Presensi::where('kelas_id', $kelasWali->id)
+                    ->whereDate('tanggal', Carbon::today())
+                    ->first();
+
+                if ($presensiHariIni) {
+                    $rekapPresensi['hadir'] = DetailPresensi::where('presensi_id', $presensiHariIni->id)
+                        ->where('status', 'Hadir')
+                        ->count();
+                }
+            }
+        }
 
         return view('pages.guru.dashboard', compact('pengumuman', 'events'));
     }

@@ -20,4 +20,8 @@ class Presensi extends Model
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
+    public function detailPresensi()
+    {
+        return $this->hasMany(DetailPresensi::class, 'presensi_id');
+    }
 }

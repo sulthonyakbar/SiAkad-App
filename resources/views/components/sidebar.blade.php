@@ -214,6 +214,8 @@
                     </a>
                 </li>
 
+                <li class="menu-header text-dark">Non Akademik</li>
+
                 {{-- Data Aktivitas Siswa --}}
                 <li class="nav-item dropdown {{ request()->routeIs('aktivitas.*') ? 'active show' : '' }}">
                     <a href="#" class="nav-link has-dropdown text-dark">
@@ -227,6 +229,8 @@
                                 href="{{ route('aktivitas.create') }}">Tambah Aktivitas Harian</a></li>
                     </ul>
                 </li>
+
+                <li class="menu-header text-dark">Akademik</li>
 
                 {{-- Presensi --}}
                 <li class="nav-item {{ request()->routeIs('presensi.*') ? 'active' : '' }}">
@@ -290,6 +294,8 @@
                                 href="">Tambah Nilai</a></li> --}}
                     </ul>
                 </li>
+
+
             @endif
         </ul>
     </aside>

@@ -25,36 +25,36 @@
             <div class="card-body">
                 <h5>
                     Kelas:
-                    <span class="text-primary">{{ $kartuStudi->first()->kelas->nama_kelas ?? '-' }}</span>
+                    <span class="text-primary">{{ $presensi->first()->kelas->nama_kelas ?? '-' }}</span>
                     | Ruang
-                    <span class="text-primary">{{ $kartuStudi->first()->kelas->ruang ?? '-' }}</span>
+                    <span class="text-primary">{{ $presensi->first()->kelas->ruang ?? '-' }}</span>
+                    | Tanggal Presensi:
+                    <span class="text-primary">
+                        {{ \Carbon\Carbon::parse($presensi->first()->tanggal)->translatedFormat('d F Y') }}
+                    </span>
                 </h5>
-                <div class="row">
-                    <div class="col-md-12">
-
-                        <input type="hidden" name="kelas_id" value="{{ $kartuStudi->first()->kelas_id ?? '' }}" required>
-
-                        <table class="table mt-3">
+                @foreach ($presensi as $data)
+                    <div class="mt-4">
+                        <table class="table table-bordered mt-2">
                             <thead>
                                 <tr>
                                     <th>NISN</th>
                                     <th>Nama Siswa</th>
-                                    <th>Status Presensi</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($kartuStudi as $data)
+                                @foreach ($data->detailPresensi as $detail)
                                     <tr>
-                                        <td>{{ $data->siswa->NISN }}</td>
-                                        <td>{{ $data->siswa->nama_siswa }}</td>
-                                        <td>{{ ucfirst($data->presensi->status ?? '-') }}</td>
+                                        <td>{{ $detail->siswa->NISN ?? '-' }}</td>
+                                        <td>{{ $detail->siswa->nama_siswa ?? '-' }}</td>
+                                        <td>{{ ucfirst($detail->status) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
-
                     </div>
-                </div>
+                @endforeach
             </div>
     </section>
 @endsection

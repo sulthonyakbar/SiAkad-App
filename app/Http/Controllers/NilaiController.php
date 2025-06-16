@@ -146,7 +146,6 @@ class NilaiController extends Controller
                     'mapel_id' => $mapel_id,
                 ],
                 [
-                    // Data untuk di-create atau di-update
                     'nilai_uh'    => $nilaiData['uh'],
                     'nilai_uts'   => $nilaiData['uts'],
                     'nilai_uas'   => $nilaiData['uas'],

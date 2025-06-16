@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use App\Models\KartuStudi;
 use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\DetailPresensi;
+use Illuminate\Support\Facades\DB;
 
 class PresensiController extends Controller
 {
@@ -22,21 +24,25 @@ class PresensiController extends Controller
 
     public function getPresensiData()
     {
-        $presensi = Presensi::with(['kartuStudi.kelas'])->get();
+        $guru = auth()->user()->guru;
+
+        $presensi = Presensi::whereHas('kelas', function ($query) use ($guru) {
+            $query->where('guru_id', $guru->id);
+        })->with('kelas')->get();
 
         return DataTables::of($presensi)
             ->addColumn('hari', function ($row) {
-                return Carbon::parse($row->created_at)->translatedFormat('l');
+                return Carbon::parse($row->tanggal)->translatedFormat('l');
             })
             ->addColumn('tanggal', function ($row) {
-                return Carbon::parse($row->created_at)->translatedFormat('d F Y');
+                return Carbon::parse($row->tanggal)->translatedFormat('d F Y');
             })
             ->addColumn('aksi', function ($row) {
                 return '
-                <a href="' . route('presensi.detail', ['kelas_id' => $row->kartuStudi->kelas_id]) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
+                <a href="' . route('presensi.detail', ['kelas_id' => $row->kelas_id]) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
-                <a href="' . route('presensi.edit', ['kelas_id' => $row->kartuStudi->kelas_id]) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                <a href="' . route('presensi.edit', ['kelas_id' => $row->kelas_id]) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -47,25 +53,31 @@ class PresensiController extends Controller
      */
     public function create()
     {
-        return view('pages.guru.presensi.create');
+        $guru = auth()->user()->guru;
+        $kelas = Kelas::where('guru_id', $guru->id)->first();
+        if (!$kelas) {
+            return redirect()->route('presensi.index')->withErrors(['error' => 'Hanya wali kelas yang dapat membuat presensi harian.']);
+        }
+        return view('pages.guru.presensi.create', compact('kelas'));
     }
 
     public function createPresensiData()
     {
         $guru = auth()->user()->guru;
 
+        $siswaList = collect();
+
         if ($guru) {
             $kelas = Kelas::where('guru_id', $guru->id)->first();
 
             if ($kelas) {
                 $angkatanId = session('angkatan_aktif');
-
-                $siswaList = Siswa::whereHas('kartuStudi', function ($query) use ($kelas, $angkatanId) {
-                    $query->whereHas('kelas', function ($subQuery) use ($kelas, $angkatanId) {
-                        $subQuery->where('id', $kelas->id)
+                if ($angkatanId) {
+                    $siswaList = Siswa::whereHas('kartuStudi', function ($query) use ($kelas, $angkatanId) {
+                        $query->where('kelas_id', $kelas->id)
                             ->where('angkatan_id', $angkatanId);
-                    });
-                })->get();
+                    })->get();
+                }
             }
         }
 
@@ -107,51 +119,39 @@ class PresensiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'siswa_id' => 'required|array',
-            'status' => 'required|array',
+            'kelas_id'  => 'required|exists:kelas,id',
+            'tanggal'   => 'required|date',
+            'status'    => 'required|array',
         ]);
 
-        $semesterId = session('semester_aktif');
+        DB::beginTransaction();
+        try {
+            $presensi = Presensi::firstOrCreate(
+                [
+                    'kelas_id' => $request->kelas_id,
+                    'tanggal'  => Carbon::parse($request->tanggal)->toDateString(),
+                ]
+            );
 
-        foreach ($request->siswa_id as $siswa_id) {
-            $status = $request->status[$siswa_id];
+            foreach ($request->status as $siswa_id => $statusValue) {
 
-            // Cari kartu studi aktif milik siswa
-            $kartuStudi = KartuStudi::where('siswa_id', $siswa_id)
-                ->where('semester_id', $semesterId)
-                ->latest()->first();
-
-            if ($kartuStudi) {
-                // Cek apakah sudah ada presensi untuk hari ini
-                $alreadyPresensiToday = Presensi::whereDate('created_at', now()->toDateString())
-                    ->where('id', $kartuStudi->presensi_id)
-                    ->exists();
-
-                if (!$alreadyPresensiToday) {
-                    // Buat presensi baru
-                    $presensi = Presensi::create([
-                        'status' => $status,
-                    ]);
-
-                    // Update kartu studi dengan id presensi
-                    $kartuStudi->update([
+                DetailPresensi::updateOrCreate(
+                    [
                         'presensi_id' => $presensi->id,
-                        'semester_id' => $semesterId,
-                    ]);
-                } else {
-                    // Jika sudah ada presensi hari ini, update statusnya
-                    $presensi = Presensi::whereDate('created_at', now()->toDateString())
-                        ->where('id', $kartuStudi->presensi_id)
-                        ->first();
-
-                    $presensi->update([
-                        'status' => $status,
-                    ]);
-                }
+                        'siswa_id'    => $siswa_id,
+                    ],
+                    [
+                        'status'      => $statusValue,
+                    ]
+                );
             }
-        }
 
-        return redirect()->route('presensi.index')->with('success', 'Presensi berhasil disimpan.');
+            DB::commit();
+            return redirect()->route('presensi.index')->with('success', 'Presensi berhasil disimpan.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan presensi: ' . $e->getMessage())->withInput();
+        }
     }
 
     /**
@@ -161,12 +161,13 @@ class PresensiController extends Controller
     {
         $semesterId = session('semester_aktif');
 
-        $kartuStudi = KartuStudi::with(['siswa', 'presensi'])
-            ->where('kelas_id', $kelas_id)
-            ->where('semester_id', $semesterId)
-            ->get();
+        $presensi = Presensi::where('kelas_id', $kelas_id)
+            ->whereHas('detailPresensi.siswa.kartuStudi', function ($query) use ($semesterId, $kelas_id) {
+                $query->where('semester_id', $semesterId)
+                    ->where('kelas_id', $kelas_id);
+            })->get();
 
-        return view('pages.guru.presensi.detail', compact('kartuStudi'));
+        return view('pages.guru.presensi.detail', compact('presensi'));
     }
 
     /**
@@ -181,42 +182,42 @@ class PresensiController extends Controller
     public function editPresensiData(Request $request)
     {
         $kelas_id = $request->kelas_id;
+        $angkatanId = session('angkatan_aktif');
+        $semesterId = session('semester_aktif');
 
-        $guru = auth()->user()->guru;
+        // Ambil presensi hari ini berdasarkan kelas
+        $presensi = Presensi::where('kelas_id', $kelas_id)
+            ->whereDate('tanggal', now()->toDateString())
+            ->first();
 
-        if ($guru) {
-            $kelas = Kelas::where('guru_id', $guru->id)->first();
-
-            if ($kelas) {
-                $angkatanId = session('angkatan_aktif');
-                $semesterId = session('semester_aktif');
-
-                $siswaList = Siswa::whereHas('kartuStudi', function ($query) use ($kelas, $angkatanId, $semesterId) {
-                    $query->whereHas('kelas', function ($subQuery) use ($kelas, $angkatanId) {
-                        $subQuery->where('id', $kelas->id)
-                            ->where('angkatan_id', $angkatanId);
-                    })->where('semester_id', $semesterId);
-                })->with(['kartuStudi.presensi' => function ($q) {
-                    $q->whereDate('created_at', now()->toDateString());
-                }])->get();
-            }
+        if (!$presensi) {
+            return DataTables::of([])->make(true); // return kosong kalau presensi belum ada
         }
 
+        // Ambil siswa dari kelas_id dan angkatan aktif
+        $siswaList = Siswa::whereHas('kartuStudi', function ($query) use ($kelas_id, $angkatanId, $semesterId) {
+            $query->where('kelas_id', $kelas_id)
+                ->where('angkatan_id', $angkatanId)
+                ->where('semester_id', $semesterId);
+        })
+            ->with(['detailPresensi' => function ($q) use ($presensi) {
+                $q->where('presensi_id', $presensi->id);
+            }])
+            ->get();
+
         return DataTables::of($siswaList)
-            ->addColumn('NISN', function ($row) {
-                return $row->NISN;
-            })
-            ->addColumn('nama_siswa', function ($row) {
-                return $row->nama_siswa;
-            })
-            ->addColumn('aksi', function ($row) {
-                $status = optional($row->kartuStudi->presensi)->status ?? 'hadir';
+            ->addColumn('NISN', fn($row) => $row->NISN)
+            ->addColumn('nama_siswa', fn($row) => $row->nama_siswa)
+            ->addColumn('aksi', function ($row) use ($presensi) {
+                $status = optional($row->detailPresensi->first())->status ?? 'Hadir';
+
                 $html = '<input type="hidden" name="siswa_id[]" value="' . $row->id . '">';
                 foreach (['hadir', 'izin', 'sakit', 'alfa'] as $val) {
                     $checked = $status === $val ? 'checked' : '';
                     $html .= '<div class="form-check form-check-inline">';
-                    $html .= '<input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="' . $val . '" ' . $checked . '> ';
-                    $html .= '<label class="form-check-label">' . ucfirst($val) . '</label></div>';
+                    $html .= '<input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="' . $val . '" ' . $checked . '>';
+                    $html .= '<label class="form-check-label">' . ucfirst($val) . '</label>';
+                    $html .= '</div>';
                 }
                 return $html;
             })
@@ -227,31 +228,33 @@ class PresensiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $kelas_id)
     {
         $request->validate([
             'siswa_id' => 'required|array',
-            'status' => 'required|array',
+            'status'   => 'required|array',
         ]);
 
-        $semesterId = session('semester_aktif');
+        $presensi = Presensi::where('kelas_id', $kelas_id)
+            ->whereDate('tanggal', now()->toDateString())
+            ->first();
+
+        if (!$presensi) {
+            return redirect()->back()->with('error', 'Data presensi tidak ditemukan.');
+        }
 
         foreach ($request->siswa_id as $siswa_id) {
             $status = $request->status[$siswa_id];
 
-            $kartuStudi = KartuStudi::where('siswa_id', $siswa_id)
-                ->where('semester_id', $semesterId)
-                ->latest()->first();
-
-            if ($kartuStudi) {
-                $presensi = Presensi::where('kartu_studi_id', $kartuStudi->id)
-                    ->whereDate('created_at', now()->toDateString())
-                    ->first();
-
-                if ($presensi) {
-                    $presensi->update(['status' => $status]);
-                }
-            }
+            DetailPresensi::updateOrCreate(
+                [
+                    'presensi_id' => $presensi->id,
+                    'siswa_id'    => $siswa_id,
+                ],
+                [
+                    'status'      => $status,
+                ]
+            );
         }
 
         return redirect()->route('presensi.index')->with('success', 'Presensi berhasil diperbarui.');

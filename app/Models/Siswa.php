@@ -56,4 +56,9 @@ class Siswa extends Model
     {
         return $this->hasMany(KartuStudi::class, 'siswa_id');
     }
+
+    public function detailPresensi()
+    {
+        return $this->hasMany(DetailPresensi::class, 'siswa_id');
+    }
 }

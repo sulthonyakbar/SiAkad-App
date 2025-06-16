@@ -21,10 +21,10 @@
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
-                            <h4>Total Anggota</h4>
+                            <h4>Wali Kelas</h4>
                         </div>
                         <div class="card-body">
-
+                            {{ $kelasWali->nama_kelas ?? 'Bukan Wali Kelas' }}
                         </div>
                     </div>
                 </div>
@@ -36,10 +36,10 @@
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
-                            <h4>Total Pengajuan Anggota</h4>
+                            <h4>Jumlah Siswa</h4>
                         </div>
                         <div class="card-body">
-
+                            {{ $jumlahSiswa ?? 0 }}
                         </div>
                     </div>
                 </div>
@@ -66,10 +66,10 @@
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
-                            <h4>Total Pinjaman</h4>
+                            <h4>Kehadiran Hari Ini</h4>
                         </div>
                         <div class="card-body">
-
+                            {{ $rekapPresensi['hadir'] ?? 0 }} / {{ $jumlahSiswa ?? 0 }} Hadir
                         </div>
                     </div>
                 </div>
