@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('presensis', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->enum('status', ['hadir', 'izin', 'sakit', 'alpa']);
+            $table->date('tanggal');
+            $table->uuid('kelas_id');
+            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
             $table->timestamps();
         });
     }

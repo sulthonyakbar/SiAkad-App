@@ -113,33 +113,33 @@ class NilaiController extends Controller
         ]);
 
         foreach ($request->nilai as $mapel_id => $nilaiData) {
-            $nilai = Nilai::updateOrCreate(
-                [
-                    'kartu_studi_id' => $request->kartu_studi_id,
-                    'mapel_id' => $mapel_id,
-                ],
-                [
-                    'nilai_uh' => $nilaiData['uh'],
-                    'nilai_uts' => $nilaiData['uts'],
-                    'nilai_uas' => $nilaiData['uas'],
-                    'nilai_akhir' => $this->hitungNilaiAkhir($nilaiData, $mapel_id),
-                ]
+            $bobot = MataPelajaran::with('bobotPenilaian')->find($mapel_id)?->bobotPenilaian;
+
+            if (!$bobot) {
+                return redirect()->back()
+                    ->withErrors(['error' => 'Bobot penilaian untuk mata pelajaran ini belum diatur.']);
+            }
+
+            $nilaiAkhir = (
+                $nilaiData['uh'] * $bobot->bobot_uh / 100 +
+                $nilaiData['uts'] * $bobot->bobot_uts / 100 +
+                $nilaiData['uas'] * $bobot->bobot_uas / 100
             );
+
+            $nilai = Nilai::create([
+                'mapel_id'     => $mapel_id,
+                'nilai_uh'     => $nilaiData['uh'],
+                'nilai_uts'    => $nilaiData['uts'],
+                'nilai_uas'    => $nilaiData['uas'],
+                'nilai_akhir'  => $nilaiAkhir,
+            ]);
+
+            // Hubungkan nilai ini ke kartu studi
+            KartuStudi::where('id', $request->kartu_studi_id)
+                ->update(['nilai_id' => $nilai->id]);
         }
 
         return redirect()->route('nilai.index')->with('success', 'Nilai berhasil disimpan.');
-    }
-
-    private function hitungNilaiAkhir($data, $mapel_id)
-    {
-        $bobot = BobotPenilaian::where('mapel_id', $mapel_id)->first();
-        if (!$bobot) return 0;
-
-        return (
-            $data['uh'] * $bobot->bobot_uh / 100 +
-            $data['uts'] * $bobot->bobot_uts / 100 +
-            $data['uas'] * $bobot->bobot_uas / 100
-        );
     }
 
     /**

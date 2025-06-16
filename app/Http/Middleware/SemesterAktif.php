@@ -18,7 +18,7 @@ class SemesterAktif
      */
     public function handle(Request $request, Closure $next): Response
     {
-          $now = Carbon::now();
+        $now = Carbon::now();
 
         $semesterName = $now->month >= 7 ? 'Ganjil' : 'Genap';
 

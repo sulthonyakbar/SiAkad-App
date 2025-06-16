@@ -17,6 +17,10 @@ return new class extends Migration
             $table->integer('nilai_uts')->default(0);
             $table->integer('nilai_uas')->default(0);
             $table->integer('nilai_akhir')->default(0);
+            $table->uuid('ks_id');
+            $table->foreign('ks_id')->references('id')->on('kartu_studis')->onDelete('cascade');
+            $table->uuid('mapel_id');
+            $table->foreign('mapel_id')->references('id')->on('mata_pelajarans')->onDelete('cascade');
             $table->timestamps();
         });
     }

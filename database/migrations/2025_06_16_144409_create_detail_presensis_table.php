@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kartu_studis', function (Blueprint $table) {
+        Schema::create('detail_presensis', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->enum('status', ['Hadir', 'Sakit', 'Izin', 'Alpa'])->default('Hadir');
+            $table->uuid('presensi_id');
+            $table->foreign('presensi_id')->references('id')->on('presensis')->onDelete('cascade');
             $table->uuid('siswa_id');
             $table->foreign('siswa_id')->references('id')->on('siswas')->onDelete('cascade');
-            $table->uuid('kelas_id');
-            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
-            $table->uuid('semester_id');
-            $table->foreign('semester_id')->references('id')->on('semesters')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kartu_studis');
+        Schema::dropIfExists('detail_presensis');
     }
 };
