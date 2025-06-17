@@ -62,14 +62,7 @@ class KartuStudiController extends Controller
                 <a href="' . route('kartu.studi.detail', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
-                <a href="' . route('kartu.studi.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                <form id="delete-form-' . $row->id . '" action="' . route('kartu.studi.destroy', $row->id) . '" method="POST" class="d-inline">
-                    ' . csrf_field() . '
-                    ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-danger btn-action" data-toggle="tooltip" title="Hapus" onclick="confirmDelete(event, \'delete-form-' . $row->id . '\')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>';
+                <a href="' . route('kartu.studi.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -161,13 +154,16 @@ class KartuStudiController extends Controller
         $siswa = Siswa::with([
             'kartuStudi.kelas.angkatan',
             'kartuStudi.kelas.jadwalPelajaran.mapel',
-            'kartuStudi.nilai'
+            'kartuStudi.nilai.mapel'
         ])->findOrFail($id);
 
         foreach ($siswa->kartuStudi as $ks) {
             $ks->uniqueMapel = $ks->kelas->jadwalPelajaran
                 ->pluck('mapel')
-                ->unique('id');
+                ->unique('id')
+                ->values();
+
+            $ks->nilaiByMapel = $ks->nilai->keyBy('mapel_id');
         }
 
         $kartuStudi = $siswa->kartuStudi;
@@ -183,9 +179,9 @@ class KartuStudiController extends Controller
         $kelas = Kelas::with('kartuStudi.siswa')->findOrFail($id);
 
         $angkatanId = session('angkatan_aktif');
-        $siswaTersedia = Siswa::where('angkatan_id', $angkatanId)->get();
+        $siswa = Siswa::where('angkatan_id', $angkatanId)->get();
 
-        return view('pages.admin.kartu_studi.edit', compact('kelas', 'siswaTersedia'));
+        return view('pages.admin.kartu_studi.edit', compact('kelas', 'siswa'));
     }
 
     /**
@@ -194,9 +190,11 @@ class KartuStudiController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'siswa_id' => 'required|array',
+            'siswa_id' => 'nullable|array',
             'siswa_id.*' => 'exists:siswas,id',
         ]);
+
+        $semesterId = session('semester_aktif');
 
         KartuStudi::where('kelas_id', $id)->delete();
 
@@ -204,9 +202,7 @@ class KartuStudiController extends Controller
             KartuStudi::create([
                 'siswa_id' => $siswaId,
                 'kelas_id' => $id,
-                'nilai_id' => null,
-                'presensi_id' => null,
-                'semester_id' => null
+                'semester_id' => $semesterId
             ]);
         }
 

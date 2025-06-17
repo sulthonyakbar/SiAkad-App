@@ -281,6 +281,8 @@
                     </a>
                 </li>
 
+                <li class="menu-header text-dark">Non Akademik</li>
+
                 {{-- Feedback --}}
                 <li class="nav-item {{ request()->routeIs('feedback.*') ? 'active' : '' }}">
                     <a href="#" class="nav-link has-dropdown text-dark">
@@ -295,7 +297,31 @@
                     </ul>
                 </li>
 
+                <li class="menu-header text-dark">Akademik</li>
 
+                {{-- Presensi --}}
+                <li class="{{ request()->routeIs('siswa.presensi.*') ? 'active' : '' }}">
+                    <a href="#" class="nav-link has-dropdown text-dark">
+                        <i class="fas fa-user-check"></i><span>Data Presensi Siswa</span>
+                    </a>
+                    <ul class="dropdown-menu"
+                        style="{{ request()->routeIs('siswa.presensi.*') ? 'display: block;' : '' }}">
+                        <li><a class="nav-link {{ request()->routeIs('siswa.presensi.index') ? 'active' : '' }}"
+                                href="{{ route('siswa.presensi.index') }}">Daftar Presensi</a></li>
+                    </ul>
+                </li>
+
+                {{-- Nilai --}}
+                <li class="{{ request()->routeIs('siswa.nilai.*') ? 'active' : '' }}">
+                    <a href="#" class="nav-link has-dropdown text-dark">
+                        <i class="fas fa-chart-bar"></i><span>Data Nilai Siswa</span>
+                    </a>
+                    <ul class="dropdown-menu"
+                        style="{{ request()->routeIs('siswa.nilai.*') ? 'display: block;' : '' }}">
+                        <li><a class="nav-link {{ request()->routeIs('siswa.nilai.index') ? 'active' : '' }}"
+                                href="{{ route('siswa.nilai.index') }}">Daftar Nilai</a></li>
+                    </ul>
+                </li>
             @endif
         </ul>
     </aside>

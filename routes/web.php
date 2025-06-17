@@ -16,6 +16,7 @@ use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\BobotController;
+use App\Models\Presensi;
 
 /*
 |--------------------------------------------------------------------------
@@ -147,6 +148,12 @@ Route::group(['middleware' => ['role.orangtua', 'tahun.ajaran', 'semester']], fu
     Route::get('/s/feedback/{id}/edit', [FeedbackController::class, 'edit'])->name('feedback.edit');
     Route::put('/s/feedback/{id}', [FeedbackController::class, 'update'])->name('feedback.update');
     Route::delete('/s/feedback/{id}', [FeedbackController::class, 'destroy'])->name('feedback.destroy');
+
+    Route::get('/s/presensi', [PresensiController::class, 'indexPresensiSiswa'])->name('siswa.presensi.index');
+    Route::get('/s/presensi/data', [PresensiController::class, 'getPresensiSiswaData'])->name('siswa.presensi.data');
+
+    Route::get('/s/nilai', [NilaiController::class, 'indexNilaiSiswa'])->name('siswa.nilai.index');
+    Route::get('/s/nilai/data', [NilaiController::class, 'getNilaiSiswaData'])->name('siswa.nilai.data');
 });
 
 Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], function () {

@@ -26,4 +26,9 @@ class MataPelajaran extends Model
         return $this->belongsTo(BobotPenilaian::class, 'bobot_id');
     }
 
+    public function nilai()
+    {
+        return $this->hasMany(Nilai::class, 'mapel_id');
+    }
+
 }

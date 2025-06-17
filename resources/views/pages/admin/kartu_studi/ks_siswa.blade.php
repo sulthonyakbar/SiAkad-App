@@ -49,12 +49,15 @@
                             </thead>
                             <tbody>
                                 @forelse ($item->uniqueMapel as $mapel)
+                                    @php
+                                        $nilaiMapel = $item->nilai->firstWhere('mapel_id', $mapel->id);
+                                    @endphp
                                     <tr>
                                         <td>{{ $mapel->nama_mapel ?? '-' }}</td>
-                                        <td>{{ $item->nilai->nilai_uh ?? '-' }}</td>
-                                        <td>{{ $item->nilai->nilai_uts ?? '-' }}</td>
-                                        <td>{{ $item->nilai->nilai_uas ?? '-' }}</td>
-                                        <td>{{ $item->nilai->nilai_akhir ?? '-' }}</td>
+                                        <td>{{ $nilaiMapel->nilai_uh ?? '-' }}</td>
+                                        <td>{{ $nilaiMapel->nilai_uts ?? '-' }}</td>
+                                        <td>{{ $nilaiMapel->nilai_uas ?? '-' }}</td>
+                                        <td>{{ $nilaiMapel->nilai_akhir ?? '-' }}</td>
                                     </tr>
                                 @empty
                                     <tr>
