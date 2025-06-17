@@ -269,11 +269,48 @@ class PresensiController extends Controller
         //
     }
 
+    public function indexPresensiAdmin()
+    {
+        return view('pages.admin.presensi.index');
+    }
+
+    public function getPresensiAdminData(Request $request)
+    {
+        $detailPresensi = DetailPresensi::with([
+            'siswa',
+            'presensi.kelas'
+        ])->get();
+
+        $presensi = $detailPresensi->sortByDesc(function ($item) {
+            return $item->presensi->tanggal ?? now();
+        })->values();
+
+
+        return DataTables::of($presensi)
+            ->addColumn('NISN', function ($row) {
+                return $row->siswa->NISN ?? '-';
+            })
+            ->addColumn('nama_siswa', function ($row) {
+                return $row->siswa->nama_siswa ?? '-';
+            })
+            ->addColumn('kelas', function ($row) {
+                return $row->presensi->kelas->nama_kelas ?? '-';
+            })
+            ->addColumn('hari', function ($row) {
+                return Carbon::parse($row->created_at)->translatedFormat('l');
+            })
+            ->addColumn('tanggal', function ($row) {
+                return Carbon::parse($row->created_at)->translatedFormat('d F Y');
+            })
+            ->addColumn('status', function ($row) {
+                return $row->status ?? '-';
+            })
+            ->make(true);
+    }
+
     public function indexPresensiSiswa()
     {
-        $semesters = Semester::orderBy('nama_semester', 'desc')->get();
-        $angkatans = Angkatan::orderBy('tahun_ajaran', 'desc')->get();
-        return view('pages.siswa.presensi.index', compact('semesters', 'angkatans'));
+        return view('pages.siswa.presensi.index');
     }
 
     public function getPresensiSiswaData(Request $request)

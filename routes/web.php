@@ -130,6 +130,12 @@ Route::group(['middleware' => ['role.admin', 'tahun.ajaran', 'semester']], funct
     Route::get('/a/kategori/{id}/edit', [KategoriController::class, 'edit'])->name('kategori.edit');
     Route::put('/a/kategori/{id}', [KategoriController::class, 'update'])->name('kategori.update');
     Route::delete('/a/kategori/{id}', [KategoriController::class, 'destroy'])->name('kategori.destroy');
+
+    Route::get('/a/presensi', [PresensiController::class, 'indexPresensiAdmin'])->name('admin.presensi.index');
+    Route::get('/a/presensi/data', [PresensiController::class, 'getPresensiAdminData'])->name('admin.presensi.data');
+
+    Route::get('/a/nilai', [NilaiController::class, 'indexNilaiAdmin'])->name('admin.nilai.index');
+    Route::get('/a/nilai/data', [NilaiController::class, 'getNilaiAdminData'])->name('admin.nilai.data');
 });
 
 Route::group(['middleware' => ['role.orangtua', 'tahun.ajaran', 'semester']], function () {

@@ -11,8 +11,8 @@
         <div class="section-header">
             <h1>Data Nilai Siswa</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('siswa.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('siswa.nilai.index') }}">Data Nilai Siswa</a></div>
+                <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('admin.nilai.index') }}">Data Nilai Siswa</a></div>
             </div>
         </div>
 
@@ -26,11 +26,14 @@
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
-                        <table class="table-striped table-md table" id="nilaiSiswaTable">
+                        <table class="table-striped table-md table" id="nilaiAdminTable">
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Tahun Ajaran</th>
                                     <th>Semester</th>
+                                    <th>Nama Siswa</th>
+                                    <th>NISN</th>
                                     <th>Mata Pelajaran</th>
                                     <th>Nilai UH</th>
                                     <th>Nilai UTS</th>
@@ -56,10 +59,10 @@
 
     <script>
         $(document).ready(function() {
-            $('#nilaiSiswaTable').DataTable({
+            $('#nilaiAdminTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('siswa.nilai.data') }}",
+                ajax: "{{ route('admin.nilai.data') }}",
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',
@@ -67,8 +70,20 @@
                         searchable: false
                     },
                     {
+                        data: 'angkatan',
+                        name: 'angkatan',
+                    },
+                    {
                         data: 'semester',
                         name: 'semester',
+                    },
+                    {
+                        data: 'nama_siswa',
+                        name: 'nama_siswa',
+                    },
+                    {
+                        data: 'nisn',
+                        name: 'nisn',
                     },
                     {
                         data: 'nama_mapel',

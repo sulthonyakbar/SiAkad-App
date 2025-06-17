@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Nilai Siswa')
+@section('title', 'Data Presensi Siswa')
 
 @push('style')
     <!-- CSS Libraries -->
@@ -9,10 +9,10 @@
 @section('main')
     <section class="section">
         <div class="section-header">
-            <h1>Data Nilai Siswa</h1>
+            <h1>Data Presensi Siswa</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('siswa.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('siswa.nilai.index') }}">Data Nilai Siswa</a></div>
+                <div class="breadcrumb-item active"><a href="{{ route('admin.dashboard') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('admin.presensi.index') }}">Data Presensi Siswa</a></div>
             </div>
         </div>
 
@@ -26,17 +26,16 @@
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
-                        <table class="table-striped table-md table" id="nilaiSiswaTable">
+                        <table class="table-striped table-md table" id="presensiAdminTable">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Semester</th>
-                                    <th>Mata Pelajaran</th>
-                                    <th>Nilai UH</th>
-                                    <th>Nilai UTS</th>
-                                    <th>Nilai UAS</th>
-                                    <th>Nilai Akhir</th>
-                                    <th>Action</th>
+                                    <th>NISN</th>
+                                    <th>Nama Siswa</th>
+                                    <th>Kelas</th>
+                                    <th>Hari</th>
+                                    <th>Tanggal</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                         </table>
@@ -56,10 +55,10 @@
 
     <script>
         $(document).ready(function() {
-            $('#nilaiSiswaTable').DataTable({
+            $('#presensiAdminTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('siswa.nilai.data') }}",
+                ajax: "{{ route('admin.presensi.data') }}",
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',
@@ -67,34 +66,39 @@
                         searchable: false
                     },
                     {
-                        data: 'semester',
-                        name: 'semester',
+                        data: 'NISN',
+                        name: 'NISN',
                     },
                     {
-                        data: 'nama_mapel',
-                        name: 'nama_mapel',
+                        data: 'nama_siswa',
+                        name: 'nama_siswa',
                     },
                     {
-                        data: 'nilai_uh',
-                        name: 'nilai_uh',
+                        data: 'kelas',
+                        name: 'kelas',
                     },
                     {
-                        data: 'nilai_uts',
-                        name: 'nilai_uts',
+                        data: 'hari',
+                        name: 'hari',
                     },
                     {
-                        data: 'nilai_uas',
-                        name: 'nilai_uas',
+                        data: 'tanggal',
+                        name: 'tanggal',
                     },
                     {
-                        data: 'nilai_akhir',
-                        name: 'nilai_akhir',
-                    },
-                    {
-                        data: 'aksi',
-                        name: 'aksi',
-                        orderable: false,
-                        searchable: false
+                        data: 'status',
+                        name: 'status',
+                        render: function(data, type, row) {
+                            if (data === 'Hadir') {
+                                return '<span class="badge badge-success">Hadir</span>';
+                            } else if (data === 'Sakit') {
+                                return '<span class="badge badge-info">Sakit</span>';
+                            } else if (data === 'Izin') {
+                                return '<span class="badge badge-warning">Izin</span>';
+                            } else {
+                                return '<span class="badge badge-danger">Alpa</span>';
+                            }
+                        }
                     } // Tidak bisa dicari
                 ],
                 columnDefs: [{

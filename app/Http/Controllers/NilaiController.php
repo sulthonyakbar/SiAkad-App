@@ -10,6 +10,7 @@ use App\Models\Nilai;
 use App\Models\Siswa;
 use App\Models\BobotPenilaian;
 use App\Models\MataPelajaran;
+use App\Models\Semester;
 use Yajra\DataTables\Facades\DataTables;
 
 class NilaiController extends Controller
@@ -248,6 +249,59 @@ class NilaiController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function indexNilaiAdmin()
+    {
+        $semesters = Semester::with('angkatan')->orderByDesc('nama_semester')->get();
+        return view('pages.admin.nilai.index');
+    }
+
+    public function getNilaiAdminData(Request $request)
+    {
+        $query = Nilai::with([
+            'kartuStudi.siswa',
+            'kartuStudi.semester.angkatan',
+            'mapel'
+        ]);
+
+        if ($request->filled('semester_id')) {
+            $query->whereHas('kartuStudi', function ($q) use ($request) {
+                $q->where('semester_id', $request->semester_id);
+            });
+        }
+
+        $nilai = $query->get();
+
+        return DataTables::of($nilai)
+            ->addColumn('angkatan', function ($row) {
+                return $row->kartuStudi->semester->angkatan->nama_angkatan ?? '-';
+            })
+            ->addColumn('semester', function ($row) {
+                return $row->kartuStudi->semester->nama_semester ?? '-';
+            })
+            ->addColumn('nama_siswa', function ($row) {
+                return $row->kartuStudi->siswa->nama_siswa ?? '-';
+            })
+            ->addColumn('NISN', function ($row) {
+                return $row->kartuStudi->siswa->NISN ?? '-';
+            })
+            ->addColumn('mapel', function ($row) {
+                return $row->mapel->nama_mapel ?? '-';
+            })
+            ->addColumn('nilai_uh', function ($row) {
+                return $row->nilai_uh ?? '-';
+            })
+            ->addColumn('nilai_uts', function ($row) {
+                return $row->nilai_uts ?? '-';
+            })
+            ->addColumn('nilai_uas', function ($row) {
+                return $row->nilai_uas ?? '-';
+            })
+            ->addColumn('nilai_akhir', function ($row) {
+                return $row->nilai_akhir ?? '-';
+            })
+            ->make(true);
     }
 
     public function indexNilaiSiswa()
