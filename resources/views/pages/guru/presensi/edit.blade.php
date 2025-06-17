@@ -25,7 +25,7 @@
             </div>
 
             <div class="card-body">
-                <form method="POST" action="{{ route('presensi.update') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('presensi.update', $kelas_id) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -66,18 +66,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
-        const kelas_id = "{{ $kelas_id }}"; // <- ini dari controller edit()
-    </script>
+        const presensi_id = "{{ $presensi_id }}";
 
-    <script>
         $(document).ready(function() {
             $('#editPresensiTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('presensi.edit.data') }}",
-                data: function(d) {
-                    d.kelas_id = kelas_id;
-                }
+                ajax: {
+                    url: "{{ route('presensi.edit.data') }}",
+                    data: d => {
+                        d.presensi_id = presensi_id
+                    }
+                },
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',

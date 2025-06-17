@@ -90,32 +90,43 @@ class DashboardController extends Controller
     public function dashboardGuru()
     {
         $pengumuman = Pengumuman::latest()->take(4)->get();
-
         $guru = auth()->user()->guru;
 
-        $jadwal = JadwalPelajaran::with(['mapel', 'kelas'])
-            ->where('guru_id', $guru->id)
-            ->get();
-
-        $titleFormatter = function ($item) {
-            return $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas;
-        };
-
-        $events = $this->mapJadwalToCalendarEvents($jadwal, $titleFormatter);
+        // $events = collect();
+        // $kelasWali = null;
+        // $jumlahSiswa = 0;
+        // $rekapPresensi = ['Hadir' => 0];
+        // $jumlahKelasAmpu = 0;
+        // $jumlahMapelAmpu = 0;
 
         if ($guru) {
-            $kelasWali = Kelas::where('guru_id', $guru->id)->first();
-            if ($kelasWali) {
+            // Ambil semua jadwal guru
+            $jadwal = JadwalPelajaran::with(['mapel', 'kelas'])
+                ->where('guru_id', $guru->id)
+                ->get();
 
+            // Untuk kalender
+            $titleFormatter = function ($item) {
+                return $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas;
+            };
+            $events = $this->mapJadwalToCalendarEvents($jadwal, $titleFormatter);
+
+            // Hitung jumlah mapel yang diampu
+            $jumlahMapelAmpu = $jadwal->pluck('mapel_id')->unique()->count();
+
+            // Cek apakah guru adalah wali kelas
+            $kelasWali = Kelas::where('guru_id', $guru->id)->first();
+
+            if ($kelasWali) {
                 $angkatanId = session('angkatan_aktif');
 
-                // 2. Ambil jumlah siswa di kelasnya pada angkatan aktif
+                // Ambil jumlah siswa di kelas wali
                 $jumlahSiswa = Siswa::whereHas('kartuStudi', function ($query) use ($kelasWali, $angkatanId) {
                     $query->where('kelas_id', $kelasWali->id)
                         ->where('angkatan_id', $angkatanId);
                 })->count();
 
-                // 3. Ambil rekap presensi hari ini untuk kelas wali
+                // Rekap presensi hari ini
                 $presensiHariIni = Presensi::where('kelas_id', $kelasWali->id)
                     ->whereDate('tanggal', Carbon::today())
                     ->first();
@@ -128,7 +139,7 @@ class DashboardController extends Controller
             }
         }
 
-        return view('pages.guru.dashboard', compact('pengumuman', 'events'));
+        return view('pages.guru.dashboard', compact('pengumuman', 'events', 'kelasWali', 'jumlahSiswa', 'rekapPresensi', 'jumlahMapelAmpu'));
     }
 
     public function dashboardSiswa()
@@ -136,6 +147,20 @@ class DashboardController extends Controller
         $pengumuman = Pengumuman::latest()->take(4)->get();
 
         $siswa = auth()->user()->siswa;
+
+        $angkatan = session('angkatan_aktif');
+
+        // Ambil data kelas aktif siswa berdasarkan kartu studi
+        $kartuStudi = $siswa->kartuStudi()
+            ->whereHas('kelas', function ($query) use ($angkatan) {
+                $query->where('angkatan_id', $angkatan);
+            })
+            ->with('kelas')
+            ->first();
+
+        $kelasAktif = $kartuStudi?->kelas;
+        $kelas = $kelasAktif?->nama_kelas ?? 'Belum Ditentukan';
+        $ruang = $kelasAktif?->ruang ?? '-';
 
         $jadwal = JadwalPelajaran::with(['mapel', 'kelas', 'gurus'])
             ->whereHas('kelas', function ($query) use ($siswa) {
@@ -150,6 +175,14 @@ class DashboardController extends Controller
 
         $events = $this->mapJadwalToCalendarEvents($jadwal, $titleFormatter);
 
-        return view('pages.siswa.dashboard', compact('pengumuman', 'events'));
+        // Cek status presensi hari ini
+        $statusPresensi = DetailPresensi::whereHas('presensi', function ($q) use ($kelasAktif) {
+            $q->where('kelas_id', $kelasAktif?->id)
+                ->whereDate('tanggal', \Carbon\Carbon::today());
+        })
+            ->where('siswa_id', $siswa->id)
+            ->value('status');
+
+        return view('pages.siswa.dashboard', compact('pengumuman', 'events', 'kelas', 'ruang', 'statusPresensi'));
     }
 }

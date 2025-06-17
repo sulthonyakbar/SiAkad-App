@@ -40,7 +40,7 @@ class PresensiController extends Controller
             })
             ->addColumn('aksi', function ($row) {
                 return '
-                <a href="' . route('presensi.detail', ['kelas_id' => $row->kelas_id]) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
+                <a href="' . route('presensi.detail', ['kelas_id' => $row->kelas_id, 'tanggal' => $row->tanggal]) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
                 <a href="' . route('presensi.edit', ['kelas_id' => $row->kelas_id]) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
@@ -184,26 +184,22 @@ class PresensiController extends Controller
     {
         $kelas_id = $request->kelas_id;
         $angkatanId = session('angkatan_aktif');
-        $semesterId = session('semester_aktif');
 
         // Ambil presensi hari ini berdasarkan kelas
         $presensi = Presensi::where('kelas_id', $kelas_id)
-            ->whereDate('tanggal', now()->toDateString())
+            ->latest('tanggal')
             ->first();
 
         if (!$presensi) {
-            return DataTables::of([])->make(true); // return kosong kalau presensi belum ada
+            return DataTables::of([])->make(true);
         }
 
         // Ambil siswa dari kelas_id dan angkatan aktif
-        $siswaList = Siswa::whereHas('kartuStudi', function ($query) use ($kelas_id, $angkatanId, $semesterId) {
-            $query->where('kelas_id', $kelas_id)
-                ->where('angkatan_id', $angkatanId)
-                ->where('semester_id', $semesterId);
+        $siswaList = Siswa::whereHas('kartuStudi', function ($q) use ($kelas_id, $angkatanId) {
+            $q->where('kelas_id', $kelas_id)
+                ->where('angkatan_id', $angkatanId);
         })
-            ->with(['detailPresensi' => function ($q) use ($presensi) {
-                $q->where('presensi_id', $presensi->id);
-            }])
+            ->with(['detailPresensi' => fn($q) => $q->where('presensi_id', $presensi->id)])
             ->get();
 
         return DataTables::of($siswaList)
@@ -211,14 +207,14 @@ class PresensiController extends Controller
             ->addColumn('nama_siswa', fn($row) => $row->nama_siswa)
             ->addColumn('aksi', function ($row) use ($presensi) {
                 $status = optional($row->detailPresensi->first())->status ?? 'Hadir';
-
                 $html = '<input type="hidden" name="siswa_id[]" value="' . $row->id . '">';
+
                 foreach (['hadir', 'izin', 'sakit', 'alfa'] as $val) {
                     $checked = $status === $val ? 'checked' : '';
-                    $html .= '<div class="form-check form-check-inline">';
-                    $html .= '<input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="' . $val . '" ' . $checked . '>';
-                    $html .= '<label class="form-check-label">' . ucfirst($val) . '</label>';
-                    $html .= '</div>';
+                    $html   .= '<label class="form-check form-check-inline mb-0">';
+                    $html   .= '<input class="form-check-input" type="radio"
+                                name="status[' . $row->id . ']" value="' . $val . '" ' . $checked . '> '
+                        . ucfirst($val) . '</label>';
                 }
                 return $html;
             })

@@ -27,6 +27,8 @@
                 <form action="{{ route('nilai.store') }}" method="POST">
                     @csrf
 
+                    <input type="hidden" name="kartu_studi_id" value="{{ $kartuStudi->id }}">
+
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -43,17 +45,17 @@
                                     <td>
                                         <input type="number" name="nilai[{{ $mapel->id }}][uh]"
                                             value="{{ old("nilai.{$mapel->id}.uh") }}" min="0" max="100"
-                                            class="form-control">
+                                            class="form-control" required>
                                     </td>
                                     <td>
                                         <input type="number" name="nilai[{{ $mapel->id }}][uts]"
                                             value="{{ old("nilai.{$mapel->id}.uts") }}" min="0" max="100"
-                                            class="form-control">
+                                            class="form-control" required>
                                     </td>
                                     <td>
                                         <input type="number" name="nilai[{{ $mapel->id }}][uas]"
                                             value="{{ old("nilai.{$mapel->id}.uas") }}" min="0" max="100"
-                                            class="form-control">
+                                            class="form-control" required>
                                     </td>
                                 </tr>
                             @endforeach

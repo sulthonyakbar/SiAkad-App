@@ -130,6 +130,23 @@
                 }
             });
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const requiredInputs = document.querySelectorAll(
+                "input[required], textarea[required], select[required]");
+
+            requiredInputs.forEach(input => {
+                input.addEventListener("invalid", function(event) {
+                    if (event.target.validity.valueMissing) {
+                        event.target.setCustomValidity("Kolom ini wajib diisi.");
+                    }
+                });
+
+                input.addEventListener("input", function(event) {
+                    event.target.setCustomValidity("");
+                });
+            });
+        });
     </script>
 
     @stack('scripts')

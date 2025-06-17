@@ -17,29 +17,39 @@
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
                     <div class="card-icon bg-primary">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-check-circle"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
-                            <h4>Total Anggota</h4>
+                            <h4>Presensi Hari Ini</h4>
                         </div>
                         <div class="card-body">
+                            @php
+                                $badgeColor = match ($statusPresensi) {
+                                    'Hadir' => 'success',
+                                    'Sakit' => 'primary',
+                                    'Izin' => 'warning',
+                                    'Alpa' => 'danger',
+                                    default => 'secondary',
+                                };
+                            @endphp
 
+                            <h4><span class="badge badge-{{ $badgeColor }}">{{ $statusPresensi }}</span></h4>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
-                    <div class="card-icon bg-danger">
-                        <i class="fas fa-users"></i>
+                    <div class="card-icon bg-info">
+                        <i class="fas fa-chalkboard-teacher"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
-                            <h4>Total Pengajuan Anggota</h4>
+                            <h4>Kelas</h4>
                         </div>
                         <div class="card-body">
-
+                            {{ $kelas ?? 'Belum Ditentukan' }}
                         </div>
                     </div>
                 </div>
@@ -47,19 +57,19 @@
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
                     <div class="card-icon bg-warning">
-                        <i class="fas fa-money-check"></i>
+                        <i class="fas fa-door-open"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
-                            <h4>Total Simpanan</h4>
+                            <h4>Ruang</h4>
                         </div>
                         <div class="card-body">
-
+                            {{ $ruang ?? 'Belum Ditentukan' }}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+            {{-- <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
                     <div class="card-icon bg-success">
                         <i class="fas fa-sack-dollar"></i>
@@ -73,7 +83,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <h2 class="section-title">Jadwal Minggu Ini</h2>

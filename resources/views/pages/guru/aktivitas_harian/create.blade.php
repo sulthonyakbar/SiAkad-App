@@ -30,7 +30,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="siswa_id">Pilih Siswa <span class="text-danger">*</span></label>
-                                <select id="siswa_id" class="form-control" name="siswa_id"></select>
+                                <select id="siswa_id" class="form-control" name="siswa_id" required></select>
                             </div>
 
                             <div class="form-group">

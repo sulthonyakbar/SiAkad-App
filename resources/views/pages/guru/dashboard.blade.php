@@ -17,7 +17,7 @@
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
                     <div class="card-icon bg-primary">
-                        <i class="fas fa-user"></i>
+                        <i class="fas fa-chalkboard-teacher"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
@@ -31,7 +31,7 @@
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
-                    <div class="card-icon bg-danger">
+                    <div class="card-icon bg-info">
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="card-wrap">
@@ -47,14 +47,14 @@
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
                     <div class="card-icon bg-warning">
-                        <i class="fas fa-money-check"></i>
+                        <i class="fas fa-book"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
-                            <h4>Total Simpanan</h4>
+                            <h4>Mata Pelajaran yang Diampu </h4>
                         </div>
                         <div class="card-body">
-
+                            {{ $jumlahMapelAmpu }} Mapel
                         </div>
                     </div>
                 </div>
@@ -62,14 +62,14 @@
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1">
                     <div class="card-icon bg-success">
-                        <i class="fas fa-sack-dollar"></i>
+                        <i class="fas fa-check-circle"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Kehadiran Hari Ini</h4>
                         </div>
                         <div class="card-body">
-                            {{ $rekapPresensi['hadir'] ?? 0 }} / {{ $jumlahSiswa ?? 0 }} Hadir
+                            {{ $rekapPresensi['Hadir'] ?? 0 }} / {{ $jumlahSiswa ?? 0 }} Hadir
                         </div>
                     </div>
                 </div>

@@ -26,7 +26,7 @@
                 <h5>
                     NISN:
                     <span class="text-primary">{{ $kartuStudi->first()->siswa->NISN ?? '-' }}</span>
-                    | Nama Siswa
+                    | Nama Siswa :
                     <span class="text-primary">{{ $kartuStudi->first()->siswa->nama_siswa ?? '-' }}</span>
                     | Semester:
                     <span class="text-primary">{{ $kartuStudi->first()->semester->nama_semester ?? '-' }}</span>
