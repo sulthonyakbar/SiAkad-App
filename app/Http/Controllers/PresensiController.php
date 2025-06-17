@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\Presensi;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
-use App\Models\KartuStudi;
+use App\Models\Angkatan;
 use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\DetailPresensi;
+use App\Models\Semester;
 use Illuminate\Support\Facades\DB;
 
 class PresensiController extends Controller
@@ -270,7 +271,9 @@ class PresensiController extends Controller
 
     public function indexPresensiSiswa()
     {
-        return view('pages.siswa.presensi.index');
+        $semesters = Semester::orderBy('nama_semester', 'desc')->get();
+        $angkatans = Angkatan::orderBy('tahun_ajaran', 'desc')->get();
+        return view('pages.siswa.presensi.index', compact('semesters', 'angkatans'));
     }
 
     public function getPresensiSiswaData(Request $request)

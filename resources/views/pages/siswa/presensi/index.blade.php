@@ -23,6 +23,21 @@
                         {{-- <a class="btn btn-primary" href="{{ route('aktivitas.create') }}" role="button"><i
                                 class="fa-solid fa-plus"></i></a> --}}
                     </div>
+                    <div class="form-inline ml-auto">
+                        <select class="form-control mr-2" name="angkatan_id" id="angkatanFilter">
+                            <option value="">Semua Tahun Ajaran</option>
+                            @foreach ($angkatans as $angkatan)
+                                <option value="{{ $angkatan->id }}">{{ $angkatan->tahun_ajaran }}</option>
+                            @endforeach
+                        </select>
+
+                        <select class="form-control" name="semester_id" id="semesterFilter">
+                            <option value="">Semua Semester</option>
+                            @foreach ($semesters as $semester)
+                                <option value="{{ $semester->id }}">{{ $semester->semester }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
@@ -56,6 +71,10 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('siswa.presensi.data') }}",
+                data: function(d) {
+                    d.semester_id = $('#semesterFilter').val();
+                    d.angkatan_id = $('#angkatanFilter').val();
+                },
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',
@@ -93,6 +112,10 @@
                     }
                 }],
             });
+        });
+
+        $('#semesterFilter, #angkatanFilter').change(function() {
+            $('#presensiSiswaTable').DataTable().ajax.reload();
         });
     </script>
 @endpush
