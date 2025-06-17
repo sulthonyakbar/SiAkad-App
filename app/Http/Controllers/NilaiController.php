@@ -249,4 +249,41 @@ class NilaiController extends Controller
     {
         //
     }
+
+    public function indexNilaiSiswa()
+    {
+        return view('pages.siswa.nilai.index');
+    }
+
+    public function getNilaiSiswaData(Request $request)
+    {
+        $user = auth()->user()->siswa;
+
+        $nilai = Nilai::whereHas('kartuStudi', function ($query) use ($user) {
+            $query->where('siswa_id', $user->id);
+        })
+            ->with(['mapel', 'kartuStudi.semester'])
+            ->get();
+
+        return DataTables::of($nilai)
+            ->addColumn('semester', function ($row) {
+                return $row->kartuStudi->semester->nama_semester ?? '-';
+            })
+            ->addColumn('mapel', function ($row) {
+                return $row->mapel->nama_mapel ?? '-';
+            })
+            ->addColumn('nilai_uh', function ($row) {
+                return $row->nilai_uh ?? '-';
+            })
+            ->addColumn('nilai_uts', function ($row) {
+                return $row->nilai_uts ?? '-';
+            })
+            ->addColumn('nilai_uas', function ($row) {
+                return $row->nilai_uas ?? '-';
+            })
+            ->addColumn('nilai_akhir', function ($row) {
+                return $row->nilai_akhir ?? '-';
+            })
+            ->make(true);
+    }
 }

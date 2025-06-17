@@ -267,4 +267,34 @@ class PresensiController extends Controller
     {
         //
     }
+
+    public function indexPresensiSiswa()
+    {
+        return view('pages.siswa.presensi.index');
+    }
+
+    public function getPresensiSiswaData(Request $request)
+    {
+        $user = auth()->user()->siswa;
+
+        $presensi = DetailPresensi::with('presensi')
+            ->where('siswa_id', $user->id)
+            ->get()
+            ->sortByDesc(function ($item) {
+                return $item->presensi->tanggal ?? now();
+            })
+            ->values();
+
+        return DataTables::of($presensi)
+            ->addColumn('hari', function ($row) {
+                return Carbon::parse($row->created_at)->translatedFormat('l');
+            })
+            ->addColumn('tanggal', function ($row) {
+                return Carbon::parse($row->created_at)->translatedFormat('d F Y');
+            })
+            ->addColumn('status', function ($row) {
+                return $row->status ?? '-';
+            })
+            ->make(true);
+    }
 }
