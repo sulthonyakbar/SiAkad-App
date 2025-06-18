@@ -25,36 +25,37 @@
             <div class="card-body">
                 <h5>
                     Kelas:
-                    <span class="text-primary">{{ $presensi->first()->kelas->nama_kelas ?? '-' }}</span>
+                    <span class="text-primary">{{ $presensi->kelas->nama_kelas ?? '-' }}</span>
                     | Ruang
-                    <span class="text-primary">{{ $presensi->first()->kelas->ruang ?? '-' }}</span>
+                    <span class="text-primary">{{ $presensi->kelas->ruang ?? '-' }}</span>
                     | Tanggal Presensi:
                     <span class="text-primary">
-                        {{ \Carbon\Carbon::parse($presensi->first()->tanggal)->translatedFormat('d F Y') }}
+                        {{ \Carbon\Carbon::parse($presensi->tanggal)->translatedFormat('d F Y') }}
                     </span>
                 </h5>
-                @foreach ($presensi as $data)
-                    <div class="mt-4">
-                        <table class="table table-bordered mt-2">
-                            <thead>
-                                <tr>
-                                    <th>NISN</th>
-                                    <th>Nama Siswa</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($data->detailPresensi as $detail)
-                                    <tr>
-                                        <td>{{ $detail->siswa->NISN ?? '-' }}</td>
-                                        <td>{{ $detail->siswa->nama_siswa ?? '-' }}</td>
-                                        <td>{{ ucfirst($detail->status) }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endforeach
+                <div class="mt-4">
+                    <table class="table table-bordered mt-2">
+                        <thead>
+                            <tr>
+                                <th>NISN</th>
+                                <th>Nama Siswa</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        @forelse ($presensi->detailPresensi as $detail)
+                            <tr>
+                                <td>{{ $detail->siswa->NISN ?? '-' }}</td>
+                                <td>{{ $detail->siswa->nama_siswa ?? '-' }}</td>
+                                <td>{{ $detail->status }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="text-center">Tidak ada data detail presensi untuk tanggal ini.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </table>
+                </div>
             </div>
     </section>
 @endsection

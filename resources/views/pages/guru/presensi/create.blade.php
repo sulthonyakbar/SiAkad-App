@@ -87,8 +87,8 @@
                         name: 'nama_siswa',
                     },
                     {
-                        data: 'aksi',
-                        name: 'aksi',
+                        data: 'status',
+                        name: 'status',
                         orderable: false,
                         searchable: false
                     } // Tidak bisa dicari

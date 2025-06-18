@@ -92,12 +92,12 @@ class DashboardController extends Controller
         $pengumuman = Pengumuman::latest()->take(4)->get();
         $guru = auth()->user()->guru;
 
-        // $events = collect();
-        // $kelasWali = null;
-        // $jumlahSiswa = 0;
-        // $rekapPresensi = ['Hadir' => 0];
-        // $jumlahKelasAmpu = 0;
-        // $jumlahMapelAmpu = 0;
+        $events = collect();
+        $kelasWali = null;
+        $jumlahSiswa = 0;
+        $rekapPresensi = ['Hadir' => 0];
+        $jumlahKelasAmpu = 0;
+        $jumlahMapelAmpu = 0;
 
         if ($guru) {
             // Ambil semua jadwal guru
@@ -132,14 +132,14 @@ class DashboardController extends Controller
                     ->first();
 
                 if ($presensiHariIni) {
-                    $rekapPresensi['hadir'] = DetailPresensi::where('presensi_id', $presensiHariIni->id)
+                    $rekapPresensi['Hadir'] = DetailPresensi::where('presensi_id', $presensiHariIni->id)
                         ->where('status', 'Hadir')
                         ->count();
                 }
             }
         }
 
-        return view('pages.guru.dashboard', compact('pengumuman', 'events', 'kelasWali', 'jumlahSiswa', 'rekapPresensi', 'jumlahMapelAmpu'));
+        return view('pages.guru.dashboard', compact('pengumuman', 'events', 'kelasWali', 'jumlahSiswa', 'jumlahMapelAmpu', 'presensiHariIni', 'rekapPresensi', 'jumlahKelasAmpu'));
     }
 
     public function dashboardSiswa()

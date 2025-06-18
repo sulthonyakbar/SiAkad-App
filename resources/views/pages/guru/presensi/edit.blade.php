@@ -25,7 +25,7 @@
             </div>
 
             <div class="card-body">
-                <form method="POST" action="{{ route('presensi.update', $kelas_id) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('presensi.update', $presensi->id) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -66,7 +66,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
-        const presensi_id = "{{ $presensi_id }}";
+        const presensi_id = "{{ $presensi->id }}";
 
         $(document).ready(function() {
             $('#editPresensiTable').DataTable({
@@ -93,8 +93,8 @@
                         name: 'nama_siswa',
                     },
                     {
-                        data: 'aksi',
-                        name: 'aksi',
+                        data: 'status',
+                        name: 'status',
                         orderable: false,
                         searchable: false
                     } // Tidak bisa dicari

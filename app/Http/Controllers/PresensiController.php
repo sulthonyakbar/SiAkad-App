@@ -43,7 +43,7 @@ class PresensiController extends Controller
                 <a href="' . route('presensi.detail', ['kelas_id' => $row->kelas_id, 'tanggal' => $row->tanggal]) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
-                <a href="' . route('presensi.edit', ['kelas_id' => $row->kelas_id]) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                <a href="' . route('presensi.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -89,7 +89,7 @@ class PresensiController extends Controller
             ->addColumn('nama_siswa', function ($row) {
                 return $row->nama_siswa;
             })
-            ->addColumn('aksi', function ($row) {
+            ->addColumn('status', function ($row) {
                 return '
                     <input type="hidden" name="siswa_id[]" value="' . $row->id . '">
                     <div class="form-check form-check-inline">
@@ -110,7 +110,7 @@ class PresensiController extends Controller
                     </div>
                 ';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['status'])
             ->make(true);
     }
 
@@ -158,15 +158,12 @@ class PresensiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $kelas_id)
+    public function show(string $kelas_id, string $tanggal)
     {
-        $semesterId = session('semester_aktif');
-
         $presensi = Presensi::where('kelas_id', $kelas_id)
-            ->whereHas('detailPresensi.siswa.kartuStudi', function ($query) use ($semesterId, $kelas_id) {
-                $query->where('semester_id', $semesterId)
-                    ->where('kelas_id', $kelas_id);
-            })->get();
+            ->whereDate('tanggal', $tanggal)
+            ->with(['kelas', 'detailPresensi.siswa'])
+            ->firstOrFail();
 
         return view('pages.guru.presensi.detail', compact('presensi'));
     }
@@ -174,87 +171,85 @@ class PresensiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $kelas_id)
+    public function edit(Presensi $presensi)
     {
-        $kelas = Kelas::findOrFail($kelas_id);
-        return view('pages.guru.presensi.edit', compact('kelas_id'));
+        // $guru = auth()->user()->guru;
+
+        // if (!$guru || $presensi->kelas->guru->guru_id != $guru->id) {
+        //     abort(403, 'Anda tidak memiliki hak untuk mengedit presensi ini.');
+        // }
+
+        return view('pages.guru.presensi.edit', compact('presensi'));
     }
 
     public function editPresensiData(Request $request)
     {
-        $kelas_id = $request->kelas_id;
-        $angkatanId = session('angkatan_aktif');
+        $request->validate(['presensi_id' => 'required|exists:presensis,id']);
 
-        // Ambil presensi hari ini berdasarkan kelas
-        $presensi = Presensi::where('kelas_id', $kelas_id)
-            ->latest('tanggal')
-            ->first();
+        $presensi = Presensi::with('kelas')->findOrFail($request->presensi_id);
 
-        if (!$presensi) {
-            return DataTables::of([])->make(true);
-        }
+        $semesterId = session('semester_aktif');
 
-        // Ambil siswa dari kelas_id dan angkatan aktif
-        $siswaList = Siswa::whereHas('kartuStudi', function ($q) use ($kelas_id, $angkatanId) {
-            $q->where('kelas_id', $kelas_id)
-                ->where('angkatan_id', $angkatanId);
+        $siswaList = Siswa::whereHas('kartuStudi', function ($q) use ($presensi, $semesterId) {
+            $q->where('kelas_id', $presensi->kelas_id)
+                ->where('semester_id', $semesterId);
         })
-            ->with(['detailPresensi' => fn($q) => $q->where('presensi_id', $presensi->id)])
+            ->with(['detailPresensi' => function ($q) use ($presensi) {
+                $q->where('presensi_id', $presensi->id);
+            }])
             ->get();
 
         return DataTables::of($siswaList)
             ->addColumn('NISN', fn($row) => $row->NISN)
             ->addColumn('nama_siswa', fn($row) => $row->nama_siswa)
-            ->addColumn('aksi', function ($row) use ($presensi) {
+            ->addColumn('status', function ($row) use ($presensi) {
                 $status = optional($row->detailPresensi->first())->status ?? 'Hadir';
-                $html = '<input type="hidden" name="siswa_id[]" value="' . $row->id . '">';
+                $html = '';
 
-                foreach (['hadir', 'izin', 'sakit', 'alfa'] as $val) {
-                    $checked = $status === $val ? 'checked' : '';
-                    $html   .= '<label class="form-check form-check-inline mb-0">';
-                    $html   .= '<input class="form-check-input" type="radio"
-                                name="status[' . $row->id . ']" value="' . $val . '" ' . $checked . '> '
-                        . ucfirst($val) . '</label>';
+                // Loop untuk membuat radio button dan tandai yang sesuai
+                foreach (['Hadir', 'Sakit', 'Izin', 'Alpha'] as $val) {
+                    $checked = strtolower($status) === strtolower($val) ? 'checked' : '';
+                    $html .= '
+                        <label class="selectgroup-item">
+                            <input type="radio" name="status[' . $row->id . ']" value="' . $val . '" class="selectgroup-input" ' . $checked . '>
+                            <span class="selectgroup-button">' . $val . '</span>
+                        </label>';
                 }
-                return $html;
+                return '<div class="selectgroup w-100">' . $html . '</div>';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['status'])
             ->make(true);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $kelas_id)
+    public function update(Request $request, Presensi $presensi)
     {
         $request->validate([
-            'siswa_id' => 'required|array',
             'status'   => 'required|array',
         ]);
 
-        $presensi = Presensi::where('kelas_id', $kelas_id)
-            ->whereDate('tanggal', now()->toDateString())
-            ->first();
+        DB::beginTransaction();
+        try {
+            foreach ($request->status as $siswa_id => $statusValue) {
+                DetailPresensi::updateOrCreate(
+                    [
+                        'presensi_id' => $presensi->id,
+                        'siswa_id'    => $siswa_id,
+                    ],
+                    [
+                        'status'      => $statusValue,
+                    ]
+                );
+            }
 
-        if (!$presensi) {
-            return redirect()->back()->with('error', 'Data presensi tidak ditemukan.');
+            DB::commit();
+            return redirect()->route('presensi.index')->with('success', 'Presensi berhasil diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat memperbarui presensi.')->withInput();
         }
-
-        foreach ($request->siswa_id as $siswa_id) {
-            $status = $request->status[$siswa_id];
-
-            DetailPresensi::updateOrCreate(
-                [
-                    'presensi_id' => $presensi->id,
-                    'siswa_id'    => $siswa_id,
-                ],
-                [
-                    'status'      => $status,
-                ]
-            );
-        }
-
-        return redirect()->route('presensi.index')->with('success', 'Presensi berhasil diperbarui.');
     }
 
     /**
