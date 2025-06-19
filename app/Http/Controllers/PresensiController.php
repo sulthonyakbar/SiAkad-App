@@ -173,12 +173,6 @@ class PresensiController extends Controller
      */
     public function edit(Presensi $presensi)
     {
-        // $guru = auth()->user()->guru;
-
-        // if (!$guru || $presensi->kelas->guru->guru_id != $guru->id) {
-        //     abort(403, 'Anda tidak memiliki hak untuk mengedit presensi ini.');
-        // }
-
         return view('pages.guru.presensi.edit', compact('presensi'));
     }
 
@@ -204,17 +198,16 @@ class PresensiController extends Controller
             ->addColumn('nama_siswa', fn($row) => $row->nama_siswa)
             ->addColumn('status', function ($row) use ($presensi) {
                 $status = optional($row->detailPresensi->first())->status ?? 'Hadir';
-                $html = '';
+                $html = '<input type="hidden" name="siswa_id[]" value="' . $row->id . '">';
 
-                // Loop untuk membuat radio button dan tandai yang sesuai
                 foreach (['Hadir', 'Sakit', 'Izin', 'Alpha'] as $val) {
                     $checked = strtolower($status) === strtolower($val) ? 'checked' : '';
-                    $html .= '
-                        <label class="selectgroup-item">
-                            <input type="radio" name="status[' . $row->id . ']" value="' . $val . '" class="selectgroup-input" ' . $checked . '>
-                            <span class="selectgroup-button">' . $val . '</span>
-                        </label>';
+                    $html .= '<label class="selectgroup-item mb-0">
+                    <input type="radio" name="status[' . $row->id . ']" value="' . $val . '" class="selectgroup-input" ' . $checked . '>
+                    <span class="selectgroup-button">' . $val . '</span>
+                  </label>';
                 }
+
                 return '<div class="selectgroup w-100">' . $html . '</div>';
             })
             ->rawColumns(['status'])

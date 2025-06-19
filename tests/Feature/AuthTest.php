@@ -78,15 +78,51 @@ class AuthTest extends TestCase
                 'password' => 'wrongpassword',
             ]);
 
-            $route = match ($role) {
-                'admin' => route('admin.dashboard'),
-                'guru' => route('guru.dashboard'),
-                'orangtua' => route('siswa.dashboard'),
-            };
+            $response->assertRedirect(route('login'));
+
+            $response->assertSessionHas('error', 'Password yang Anda masukkan salah.');
+
+            $this->assertGuest();
+        }
+    }
+
+    public function testLoginWithNonExistentUsername()
+    {
+        $this->withoutMiddleware();
+
+        foreach (['admin', 'guru', 'orangtua'] as $role) {
+            $password = $role . '123';
+            $user = $this->createUser($role, $role, $password);
+
+            $response = $this->post('/', [
+                'login' => 'nonexistentuser',
+                'password' => $password,
+            ]);
 
             $response->assertRedirect(route('login'));
 
-            $response->assertSessionHas('error', 'Username atau Password salah');
+            $response->assertSessionHas('error', 'Username tidak ditemukan.');
+
+            $this->assertGuest();
+        }
+    }
+
+    public function testLoginWithNonExistentEmail()
+    {
+        $this->withoutMiddleware();
+
+        foreach (['admin', 'guru', 'orangtua'] as $role) {
+            $password = $role . '123';
+            $user = $this->createUser($role, $role, $password);
+
+            $response = $this->post('/', [
+                'login' => 'nonexistentemail@example.com',
+                'password' => $password,
+            ]);
+
+            $response->assertRedirect(route('login'));
+
+            $response->assertSessionHas('error', 'Email tidak ditemukan.');
 
             $this->assertGuest();
         }
@@ -110,7 +146,7 @@ class AuthTest extends TestCase
             ]);
             $response->assertRedirect(route('login'));
 
-            $response->assertSessionHas('error', 'Username atau Password salah');
+            $response->assertSessionHas('error', 'Username tidak ditemukan.');
 
             $this->assertGuest();
         }

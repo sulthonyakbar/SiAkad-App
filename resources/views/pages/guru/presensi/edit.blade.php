@@ -74,8 +74,9 @@
                 serverSide: true,
                 ajax: {
                     url: "{{ route('presensi.edit.data') }}",
-                    data: d => {
-                        d.presensi_id = presensi_id
+                    type: 'GET',
+                    data: function(d) {
+                        d.presensi_id = presensi_id;
                     }
                 },
                 columns: [{

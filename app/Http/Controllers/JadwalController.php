@@ -39,14 +39,7 @@ class JadwalController extends Controller
             })
             ->addColumn('aksi', function ($row) {
                 return '
-                <a href="' . route('jadwal.edit', $row->id) . '" class="btn btn-warning btn-action"><i class="fas fa-pencil-alt"></i></a>
-                <form id="delete-form-' . $row->id . '" action="' . route('jadwal.destroy', $row->id) . '" method="POST" class="d-inline">
-                    ' . csrf_field() . '
-                    ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-danger btn-action" onclick="confirmDelete(event, \'delete-form-' . $row->id . '\')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>';
+                <a href="' . route('jadwal.edit', $row->id) . '" class="btn btn-warning btn-action"><i class="fas fa-pencil-alt"></i></a>';
             })
             ->rawColumns(['aksi'])
             ->make(true);
