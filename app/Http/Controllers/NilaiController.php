@@ -50,7 +50,6 @@ class NilaiController extends Controller
                 return $row->nama_siswa;
             })
             ->addColumn('aksi_nilai', function ($row) {
-
                 return '
                    <a href="' . route('nilai.create', $row->id) . '" class="btn btn-primary btn-action" data-toggle="tooltip" title="Input Nilai">
                     <i class="fa-solid fa-plus"></i>

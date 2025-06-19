@@ -20,20 +20,31 @@
             <div class="card">
                 <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center">
                     <div class="mb-2 mr-auto mb-md-0">
-                        {{-- <a class="btn btn-primary" href="{{ route('siswa.create') }}" role="button"><i
-                                class="fa-solid fa-plus"></i></a> --}}
-                    </div>
-                    {{-- <form action="{{ route('guru.index') }}" method="GET" class="form-inline ml-auto">
-                        <div class="input-group" style="width: 320px;">
-                            <input type="text" name="search" class="form-control rounded" placeholder="Search"
-                                value="{{ $search ?? '' }}" style="height: 42px;">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary rounded" type="submit"><i
-                                        class="fas fa-search"></i></button>
-                            </div>
+                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#importSection">
+                            <i class="fas fa-file-import"></i> Import
+                        </button>
+
+                        <div class="collapse mt-3" id="importSection">
+                            <form action="{{ route('siswa.import') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="form-row align-items-end">
+                                    <div class="col-md-8">
+                                        <div class="form-group mb-0">
+                                            <label for="file">File Excel/CSV</label>
+                                            <input type="file" name="file" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-success btn-block mt-4">
+                                            <i class="fas fa-upload"></i> Upload
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </form> --}}
+                    </div>
                 </div>
+
                 <div class="card-body px-4">
                     <div class="table-responsive">
                         <table class="table-striped table-md table" id="siswaTable">
@@ -49,63 +60,9 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            {{-- <?php $no = ($siswa->currentPage() - 1) * $siswa->perPage() + 1; ?>
-                            @foreach ($siswa as $s)
-                                <tr>
-                                    <td>{{ $no }}</td>
-                                    <td>{{ $s->NISN }}</td>
-                                    <td>{{ $s->nama_siswa }}</td>
-                                    <td>{{ $s->kelas->nama_kelas ?? '-' }}</td>
-                                    <td>{{ $s->orang_tuas->nama_ayah ?? '-' }}</td>
-                                    <td>{{ $s->orang_tuas->nama_ibu ?? '-' }}</td>
-                                    <td class="row">
-                                        <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-action mr-1"
-                                            data-toggle="tooltip" title="Detail">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('siswa.edit', $s->id) }}" class="btn btn-success btn-action mr-1"
-                                            data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                                        <form id="delete-form-{{ $s->id }}"
-                                            action="{{ route('siswa.destroy', $s->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="confirmDelete(event, 'delete-form-{{ $s->id }}')"><i
-                                                    class="fa-solid fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <?php $no++; ?>
-                            @endforeach --}}
                         </table>
                     </div>
                 </div>
-
-                {{-- <div class="card-footer text-right">
-                    <nav class="d-inline-block">
-                        <ul class="pagination mb-0">
-                            <!-- Tombol Sebelumnya -->
-                            <li class="page-item {{ $siswa->currentPage() <= 1 ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $siswa->previousPageUrl() ?? '#' }}" tabindex="-1"><i
-                                        class="fas fa-chevron-left"></i></a>
-                            </li>
-
-                            <!-- Halaman-halaman -->
-                            @for ($i = 1; $i <= $siswa->lastPage(); $i++)
-                                <li class="page-item {{ $i === $siswa->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="?page={{ $i }}">{{ $i }} <span
-                                            class="sr-only">(current)</span></a>
-                                </li>
-                            @endfor
-
-                            <!-- Tombol Berikutnya -->
-                            <li class="page-item {{ $siswa->currentPage() >= $siswa->lastPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $siswa->nextPageUrl() ?? '#' }}"><i
-                                        class="fas fa-chevron-right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div> --}}
             </div>
         </div>
     </section>

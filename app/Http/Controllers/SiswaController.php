@@ -10,8 +10,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-use PHPUnit\Framework\Attributes\Before;
 use Yajra\DataTables\Facades\DataTables;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\SiswaImport;
 
 class SiswaController extends Controller
 {
@@ -149,6 +150,18 @@ class SiswaController extends Controller
             })
             ->rawColumns(['aksi'])
             ->make(true);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate(['file' => 'required|mimes:xlsx,csv']);
+
+        try {
+            Excel::import(new SiswaImport, $request->file('file'));
+            return back()->with('success', 'Data siswa berhasil di‑import.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal import: ' . $e->getMessage());
+        }
     }
 
     /**

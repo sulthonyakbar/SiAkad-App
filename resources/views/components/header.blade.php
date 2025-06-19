@@ -127,7 +127,7 @@
                 @if (auth()->user()->role === 'orangtua' && auth()->user()->siswa->foto)
                 <img alt="Foto Profile" src="{{ asset(Auth::user()->siswa->foto) }}" class="rounded-circle mr-1"
                     style="max-width: 30px; max-height: 35px;">
-                @elseif (auth()->user()->role === 'guru' || auth()->user()->role === 'admin' && auth()->user()->guru->foto)
+                @elseif (auth()->user()->role === 'guru' && auth()->user()->guru->foto || auth()->user()->role === 'admin' && auth()->user()->guru->foto)
                 <img alt="Foto Profile" src="{{ asset(Auth::user()->guru->foto) }}" class="rounded-circle mr-1"
                     style="max-width: 30px; max-height: 35px;">
                 @else

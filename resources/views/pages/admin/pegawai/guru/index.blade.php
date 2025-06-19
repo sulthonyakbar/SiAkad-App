@@ -20,19 +20,29 @@
             <div class="card">
                 <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center">
                     <div class="mb-2 mr-auto mb-md-0">
-                        {{-- <a class="btn btn-primary" href="{{ route('pegawai.create') }}" role="button"><i
-                                class="fa-solid fa-plus"></i></a> --}}
-                    </div>
-                    {{-- <form action="{{ route('guru.index') }}" method="GET" class="form-inline ml-auto">
-                        <div class="input-group" style="width: 320px;">
-                            <input type="text" name="search" class="form-control rounded" placeholder="Search"
-                                value="{{ $search ?? '' }}" style="height: 42px;">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary rounded" type="submit"><i
-                                        class="fas fa-search"></i></button>
-                            </div>
+                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#importSection">
+                            <i class="fas fa-file-import"></i> Import
+                        </button>
+
+                        <div class="collapse mt-3" id="importSection">
+                            <form action="{{ route('pegawai.import', 'guru') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="form-row align-items-end">
+                                    <div class="col-md-8">
+                                        <div class="form-group mb-0">
+                                            <label for="file">File Excel/CSV</label>
+                                            <input type="file" name="file" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-success btn-block mt-4">
+                                            <i class="fas fa-upload"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                    </form> --}}
+                    </div>
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">

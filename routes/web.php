@@ -16,7 +16,6 @@ use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\BobotController;
-use App\Models\Presensi;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,9 +49,12 @@ Route::group(['middleware' => ['role.admin', 'tahun.ajaran', 'semester']], funct
     Route::get('/a/pegawai/admin', [GuruController::class, 'indexAdmin'])->name('pegawai.admin.index');
     Route::get('/a/pegawai/admin/data', [GuruController::class, 'getAdminData'])->name('admin.data');
 
+    Route::post('/a/pegawai/{role}', [GuruController::class, 'import'])->name('pegawai.import');
+
     Route::get('/a/alumni', [SiswaController::class, 'indexAlumni'])->name('alumni.index');
     Route::get('/a/alumni/data', [SiswaController::class, 'getAlumniData'])->name('alumni.data');
 
+    Route::post('/a/siswa/import', [SiswaController::class, 'import'])->name('siswa.import');
     Route::get('/a/siswa', [SiswaController::class, 'index'])->name('siswa.index');
     Route::get('/a/siswa/data', [SiswaController::class, 'getSiswaData'])->name('siswa.data');
     Route::get('/a/siswa/create', [SiswaController::class, 'create'])->name('siswa.create');
@@ -200,7 +202,7 @@ Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], functi
 
     Route::get('/g/bobot', [BobotController::class, 'index'])->name('bobot.index');
     Route::get('/g/bobot/data', [BobotController::class, 'getBobotData'])->name('bobot.data');
-    Route::get('/g/bobot/search-mapel', [BobotController::class, 'searchMapel'])->name('search.mapel');
+    Route::get('/g/bobot/search-mapel', [BobotController::class, 'searchMapel'])->name('bobot.search.mapel');
     Route::get('/g/bobot/create', [BobotController::class, 'create'])->name('bobot.create');
     Route::post('/g/bobot/store', [BobotController::class, 'store'])->name('bobot.store');
     Route::get('/g/bobot/{id}/detail', [BobotController::class, 'show'])->name('bobot.detail');

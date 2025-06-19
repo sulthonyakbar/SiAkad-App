@@ -18,40 +18,26 @@ class DashboardController extends Controller
     private function mapJadwalToCalendarEvents(Collection $jadwal, callable $titleFormatter): Collection
     {
         return $jadwal->map(function ($item) use ($titleFormatter) {
-            // Get today's date
             $today = Carbon::now();
 
-            // Determine the start of the current week (Monday)
             $startOfWeek = $today->copy()->startOfWeek(Carbon::MONDAY);
 
-            // Define the order of days in a week
             $dayNames = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
 
-            // Find the index of the schedule's day
             $dayIndex = array_search($item->hari, $dayNames);
 
-            // If the day name is not valid, skip this item
             if ($dayIndex === false) {
-                // Optionally log an error or handle this case
-                // error_log("Invalid day name: " . $item->hari . " for jadwal ID: " . $item->id);
                 return null;
             }
 
-            // Calculate the date for the event based on the day of the current week
             $eventDate = $startOfWeek->copy()->addDays($dayIndex)->toDateString();
 
-            // Ensure related models are loaded to prevent N+1 issues if not eager loaded before
-            // This is a safeguard; ideally, $jadwal should already have these eager loaded.
             $item->loadMissing(['mapel', 'kelas', 'gurus']);
 
-            // Check if mapel, kelas, or gurus (for admin/siswa) are null to prevent errors
             if (!$item->mapel || !$item->kelas) {
-                // error_log("Missing mapel or kelas for jadwal ID: " . $item->id);
                 return null;
             }
-            // For admin/siswa, gurus relation is also expected
             if (str_contains($titleFormatter($item), 'Pengajar') && !$item->gurus) {
-                // error_log("Missing gurus for jadwal ID: " . $item->id . " when Pengajar is expected in title.");
                 return null;
             }
 
@@ -96,37 +82,32 @@ class DashboardController extends Controller
         $kelasWali = null;
         $jumlahSiswa = 0;
         $rekapPresensi = ['Hadir' => 0];
+        $presensiHariIni = null;
         $jumlahKelasAmpu = 0;
         $jumlahMapelAmpu = 0;
 
         if ($guru) {
-            // Ambil semua jadwal guru
             $jadwal = JadwalPelajaran::with(['mapel', 'kelas'])
                 ->where('guru_id', $guru->id)
                 ->get();
 
-            // Untuk kalender
             $titleFormatter = function ($item) {
                 return $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas;
             };
             $events = $this->mapJadwalToCalendarEvents($jadwal, $titleFormatter);
 
-            // Hitung jumlah mapel yang diampu
             $jumlahMapelAmpu = $jadwal->pluck('mapel_id')->unique()->count();
 
-            // Cek apakah guru adalah wali kelas
             $kelasWali = Kelas::where('guru_id', $guru->id)->first();
 
             if ($kelasWali) {
                 $angkatanId = session('angkatan_aktif');
 
-                // Ambil jumlah siswa di kelas wali
                 $jumlahSiswa = Siswa::whereHas('kartuStudi', function ($query) use ($kelasWali, $angkatanId) {
                     $query->where('kelas_id', $kelasWali->id)
                         ->where('angkatan_id', $angkatanId);
                 })->count();
 
-                // Rekap presensi hari ini
                 $presensiHariIni = Presensi::where('kelas_id', $kelasWali->id)
                     ->whereDate('tanggal', Carbon::today())
                     ->first();

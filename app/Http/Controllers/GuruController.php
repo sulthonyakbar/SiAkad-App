@@ -8,8 +8,9 @@ use App\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Hash;
+use App\Imports\GuruImport;
 
 class GuruController extends Controller
 {
@@ -100,6 +101,24 @@ class GuruController extends Controller
     public function getAkunAdminData()
     {
         return $this->getAkunData('admin');
+    }
+
+    public function import(Request $request, $role)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv,xls',
+        ]);
+
+        if (!in_array($role, ['guru', 'admin'])) {
+            return redirect()->back()->with('error', 'Role tidak valid');
+        }
+
+        try {
+            Excel::import(new GuruImport($role), $request->file('file'));
+            return redirect()->back()->with('success', 'Data berhasil diimport sebagai ' . ucfirst($role));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal import: ' . $e->getMessage());
+        }
     }
 
     /**
