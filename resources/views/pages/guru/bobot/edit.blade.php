@@ -44,7 +44,7 @@
                                     <div class="form-group">
                                         <label>Bobot UH (%) <span class="text-danger">*</span></label>
                                         <input type="number" name="bobot_uh" class="form-control"
-                                            value="{{ old('bobot_uh', $bobot->bobot_uh) }}">
+                                            value="{{ old('bobot_uh', $bobot->bobot_uh) }}" required>
                                     </div>
                                 </div>
 
@@ -52,7 +52,7 @@
                                     <div class="form-group">
                                         <label>Bobot UTS (%) <span class="text-danger">*</span></label>
                                         <input type="number" name="bobot_uts" class="form-control"
-                                            value="{{ old('bobot_uts', $bobot->bobot_uts) }}">
+                                            value="{{ old('bobot_uts', $bobot->bobot_uts) }}" required>
                                     </div>
                                 </div>
 
@@ -60,7 +60,7 @@
                                     <div class="form-group">
                                         <label>Bobot UAS (%) <span class="text-danger">*</span></label>
                                         <input type="number" name="bobot_uas" class="form-control"
-                                            value="{{ old('bobot_uas', $bobot->bobot_uas) }}">
+                                            value="{{ old('bobot_uas', $bobot->bobot_uas) }} " required>
                                     </div>
                                 </div>
 

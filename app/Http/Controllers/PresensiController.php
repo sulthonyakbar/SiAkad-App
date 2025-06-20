@@ -173,45 +173,18 @@ class PresensiController extends Controller
      */
     public function edit(Presensi $presensi)
     {
-        return view('pages.guru.presensi.edit', compact('presensi'));
-    }
-
-    public function editPresensiData(Request $request)
-    {
-        $request->validate(['presensi_id' => 'required|exists:presensis,id']);
-
-        $presensi = Presensi::with('kelas')->findOrFail($request->presensi_id);
-
         $semesterId = session('semester_aktif');
 
-        $siswaList = Siswa::whereHas('kartuStudi', function ($q) use ($presensi, $semesterId) {
-            $q->where('kelas_id', $presensi->kelas_id)
+        $siswaList = Siswa::whereHas('kartuStudi', function ($query) use ($presensi, $semesterId) {
+            $query->where('kelas_id', $presensi->kelas_id)
                 ->where('semester_id', $semesterId);
         })
-            ->with(['detailPresensi' => function ($q) use ($presensi) {
-                $q->where('presensi_id', $presensi->id);
+            ->with(['detailPresensi' => function ($query) use ($presensi) {
+                $query->where('presensi_id', $presensi->id);
             }])
             ->get();
 
-        return DataTables::of($siswaList)
-            ->addColumn('NISN', fn($row) => $row->NISN)
-            ->addColumn('nama_siswa', fn($row) => $row->nama_siswa)
-            ->addColumn('status', function ($row) use ($presensi) {
-                $status = optional($row->detailPresensi->first())->status ?? 'Hadir';
-                $html = '<input type="hidden" name="siswa_id[]" value="' . $row->id . '">';
-
-                foreach (['Hadir', 'Sakit', 'Izin', 'Alpha'] as $val) {
-                    $checked = strtolower($status) === strtolower($val) ? 'checked' : '';
-                    $html .= '<label class="selectgroup-item mb-0">
-                    <input type="radio" name="status[' . $row->id . ']" value="' . $val . '" class="selectgroup-input" ' . $checked . '>
-                    <span class="selectgroup-button">' . $val . '</span>
-                  </label>';
-                }
-
-                return '<div class="selectgroup w-100">' . $html . '</div>';
-            })
-            ->rawColumns(['status'])
-            ->make(true);
+        return view('pages.guru.presensi.edit', compact('presensi', 'siswaList'));
     }
 
     /**
@@ -220,12 +193,15 @@ class PresensiController extends Controller
     public function update(Request $request, Presensi $presensi)
     {
         $request->validate([
+            'siswa_id' => 'required|array',
             'status'   => 'required|array',
         ]);
 
         DB::beginTransaction();
         try {
-            foreach ($request->status as $siswa_id => $statusValue) {
+            foreach ($request->siswa_id as $siswa_id) {
+                $statusValue = $request->status[$siswa_id] ?? 'Hadir';
+
                 DetailPresensi::updateOrCreate(
                     [
                         'presensi_id' => $presensi->id,

@@ -189,7 +189,6 @@ Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], functi
     Route::post('/g/presensi/store', [PresensiController::class, 'store'])->name('presensi.store');
     Route::get('/g/presensi/{kelas_id}/detail/{tanggal}', [PresensiController::class, 'show'])->name('presensi.detail');
     Route::get('/g/presensi/{presensi}/edit', [PresensiController::class, 'edit'])->name('presensi.edit');
-    Route::get('/g/presensi/edit/data', [PresensiController::class, 'editPresensiData'])->name('presensi.edit.data');
     Route::put('/g/presensi/update/{presensi}', [PresensiController::class, 'update'])->name('presensi.update');
 
     Route::get('/g/nilai', [NilaiController::class, 'index'])->name('nilai.index');

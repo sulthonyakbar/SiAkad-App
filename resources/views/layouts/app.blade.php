@@ -147,6 +147,12 @@
                 });
             });
         });
+
+        $(document).ready(function() {
+            if ($(window).width() <= 768) {
+                $("body").addClass("sidebar-gone");
+            }
+        });
     </script>
 
     @stack('scripts')

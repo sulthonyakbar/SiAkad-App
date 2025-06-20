@@ -41,21 +41,21 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Bobot UH (%) <span class="text-danger">*</span></label>
-                                        <input type="number" name="bobot_uh" class="form-control" autofocus>
+                                        <input type="number" name="bobot_uh" class="form-control" required autofocus>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Bobot UTS (%) <span class="text-danger">*</span></label>
-                                        <input type="number" name="bobot_uts" class="form-control">
+                                        <input type="number" name="bobot_uts" class="form-control" required>
                                     </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Bobot UAS (%) <span class="text-danger">*</span></label>
-                                        <input type="number" name="bobot_uas" class="form-control">
+                                        <input type="number" name="bobot_uas" class="form-control" required>
                                     </div>
                                 </div>
 

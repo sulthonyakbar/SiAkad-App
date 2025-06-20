@@ -25,29 +25,51 @@
             </div>
 
             <div class="card-body">
-                <form method="POST" action="{{ route('presensi.update', $presensi->id) }}" enctype="multipart/form-data">
+                <form action="{{ route('presensi.update', $presensi->id) }}" method="POST">
                     @csrf
                     @method('PUT')
 
-                    <div class="table-responsive">
-                        <table class="table-striped table-md table" id="editPresensiTable">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>NISN</th>
-                                    <th>Nama</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                        </table>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>NISN</th>
+                                        <th>Nama Siswa</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($siswaList as $index => $siswa)
+                                        @php
+                                            $status = optional($siswa->detailPresensi->first())->status ?? 'Hadir';
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $siswa->NISN }}</td>
+                                            <td>{{ $siswa->nama_siswa }}</td>
+                                            <td>
+                                                <input type="hidden" name="siswa_id[]" value="{{ $siswa->id }}">
+                                                @foreach (['Hadir', 'Izin', 'Sakit', 'Alpa'] as $val)
+                                                    <label class="mr-3">
+                                                        <input type="radio" name="status[{{ $siswa->id }}]"
+                                                            value="{{ $val }}"
+                                                            {{ $status === $val ? 'checked' : '' }}> {{ $val }}
+                                                    </label>
+                                                @endforeach
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
 
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-lg btn-block">
-                                Edit Data Presensi Siswa
-                            </button>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-lg btn-block">
+                                    Edit Data Presensi Siswa</button>
+                            </div>
                         </div>
                     </div>
-
                 </form>
             </div>
         </div>
@@ -64,49 +86,4 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-
-    <script>
-        const presensi_id = "{{ $presensi->id }}";
-
-        $(document).ready(function() {
-            $('#editPresensiTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('presensi.edit.data') }}",
-                    type: 'GET',
-                    data: function(d) {
-                        d.presensi_id = presensi_id;
-                    }
-                },
-                columns: [{
-                        data: null,
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'NISN',
-                        name: 'NISN',
-                    },
-                    {
-                        data: 'nama_siswa',
-                        name: 'nama_siswa',
-                    },
-                    {
-                        data: 'status',
-                        name: 'status',
-                        orderable: false,
-                        searchable: false
-                    } // Tidak bisa dicari
-                ],
-                columnDefs: [{
-                    targets: 0,
-                    render: function(data, type, row, meta) {
-                        return meta.row + 1; // Menampilkan nomor urut
-                    }
-                }],
-            });
-        });
-    </script>
 @endpush

@@ -71,7 +71,7 @@
 
                     <div class="form-group">
                         <label for="pesan">Pesan Feedback </label>
-                        <textarea id="pesan" class="form-control" name="pesan"></textarea>
+                        <textarea id="pesan" class="form-control" name="pesan" style="height: 150px;"></textarea>
                     </div>
 
                     <div class="form-group">

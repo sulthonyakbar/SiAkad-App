@@ -284,12 +284,12 @@
                 {{-- Feedback --}}
                 <li class="nav-item dropdown {{ request()->routeIs('feedback.*') ? 'active' : '' }}">
                     <a href="#" class="nav-link has-dropdown text-dark">
-                        <i class="fas fa-comments"></i><span>Data Feedback</span>
+                        <i class="fas fa-comments"></i><span>Data Aktivitas Harian</span>
                     </a>
                     <ul class="dropdown-menu"
                         style="{{ request()->routeIs('feedback.*') ? 'display: block;' : '' }}">
                         <li><a class="nav-link {{ request()->routeIs('feedback.index') ? 'active' : '' }}"
-                                href="{{ route('feedback.index') }}">Daftar Feedback</a></li>
+                                href="{{ route('feedback.index') }}">Daftar Aktivitas Harian</a></li>
                         {{-- <li><a class="nav-link {{ request()->routeIs('nilai.create') ? 'active' : '' }}"
                                 href="">Tambah Nilai</a></li> --}}
                     </ul>

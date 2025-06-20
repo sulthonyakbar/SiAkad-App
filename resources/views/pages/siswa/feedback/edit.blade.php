@@ -72,7 +72,7 @@
 
                     <div class="form-group">
                         <label for="pesan">Pesan Feedback </label>
-                        <textarea id="pesan" class="form-control" name="pesan">{{ old('pesan', $aktivitas->feedback->pesan ?? '') }}</textarea>
+                        <textarea id="pesan" class="form-control" style="height: 150px;" name="pesan">{{ old('pesan', $aktivitas->feedback->pesan ?? '') }} </textarea>
                     </div>
 
                     <div class="form-group">

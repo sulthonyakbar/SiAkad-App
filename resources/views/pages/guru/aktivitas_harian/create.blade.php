@@ -35,48 +35,12 @@
 
                             <div class="form-group">
                                 <label for="kegiatan">Kegiatan<span class="text-danger">*</span></label>
-                                <select id="kegiatan" class="form-control select2" name="kegiatan" required>
-                                    <option value="">Pilih Kegiatan</option>
-                                    <option value="Belajar Membaca">Belajar Membaca</option>
-                                    <option value="Belajar Menulis">Belajar Menulis</option>
-                                    <option value="Mengerjakan Soal Matematika">Mengerjakan Soal Matematika</option>
-                                    <option value="Mengenal Huruf dan Angka">Mengenal Huruf dan Angka</option>
-                                    <option value="Mengenal Warna dan Bentuk">Mengenal Warna dan Bentuk</option>
-                                    <option value="Menyusun Puzzle">Menyusun Puzzle</option>
-                                    <option value="Melatih Konsentrasi">Melatih Konsentrasi</option>
-                                    <option value="Bermain Edukatif">Bermain Edukatif</option>
-                                    <option value="Membaca Buku Cerita">Membaca Buku Cerita</option>
-                                    <option value="Menari dan Bernyanyi">Menari dan Bernyanyi</option>
-                                    <option value="Menggambar dan Mewarnai">Menggambar dan Mewarnai</option>
-                                    <option value="Olahraga Ringan">Olahraga Ringan</option>
-                                    <option value="Latihan Motorik Halus">Latihan Motorik Halus</option>
-                                    <option value="Latihan Motorik Kasar">Latihan Motorik Kasar</option>
-                                    <option value="Belajar Bersosialisasi">Belajar Bersosialisasi</option>
-                                    <option value="Melatih Kemandirian">Melatih Kemandirian</option>
-                                    <option value="Makan Bersama">Makan Bersama</option>
-                                </select>
+                                <input id="kegiatan" type="text" class="form-control" name="kegiatan" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="kendala">Kendala<span class="text-danger">*</span></label>
-                                <select id="kendala" class="form-control select2" name="kendala" required>
-                                    <option value="">Pilih Kendala</option>
-                                    <option value="Kurang Fokus">Kurang Fokus</option>
-                                    <option value="Sulit Menghafal">Sulit Menghafal</option>
-                                    <option value="Kesulitan Menulis">Kesulitan Menulis</option>
-                                    <option value="Sulit Mengenali Huruf dan Angka">Sulit Mengenali Huruf dan Angka</option>
-                                    <option value="Kurang Percaya Diri">Kurang Percaya Diri</option>
-                                    <option value="Kesulitan Bersosialisasi">Kesulitan Bersosialisasi</option>
-                                    <option value="Mudah Lelah atau Mengantuk">Mudah Lelah atau Mengantuk</option>
-                                    <option value="Kurang Koordinasi Motorik">Kurang Koordinasi Motorik</option>
-                                    <option value="Kesulitan Mengikuti Arahan">Kesulitan Mengikuti Arahan</option>
-                                    <option value="Sulit Berkomunikasi dengan Teman">Sulit Berkomunikasi dengan Teman
-                                    </option>
-                                    <option value="Kurang Minat dalam Kegiatan">Kurang Minat dalam Kegiatan</option>
-                                    <option value="Mudah Terdistraksi">Mudah Terdistraksi</option>
-                                    <option value="Kesulitan Mengontrol Emosi">Kesulitan Mengontrol Emosi</option>
-                                    <option value="Tidak Ada Kendala">Tidak Ada Kendala</option>
-                                </select>
+                                <input id="kendala" type="text" class="form-control" name="kendala" required>
                             </div>
                         </div>
 
