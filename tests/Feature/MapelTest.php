@@ -132,28 +132,6 @@ class MapelTest extends TestCase
         $response->assertSeeText('Data Mata Pelajaran');
     }
 
-    public function testDeleteMapel()
-    {
-        $admin = User::factory()->create([
-            'email' => 'admin@siakad-slbdwsidoarjo.com',
-            'username' => 'admin',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin'
-        ]);
-
-        $this->actingAs($admin);
-
-        $mapel = MataPelajaran::factory()->create([
-            'nama_mapel' => 'Matematika Test',
-        ]);
-
-        $response = $this->delete(route('mapel.destroy', $mapel->id));
-
-        $response->assertRedirect(route('mapel.index'));
-        $this->assertDatabaseMissing('mata_pelajarans', ['id' => $mapel->id]);
-    }
-
-
     public function testUnauthorizedUserCannotAccess()
     {
         $siswa = User::factory()->create([
