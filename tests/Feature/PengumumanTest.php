@@ -27,6 +27,11 @@ class PengumumanTest extends TestCase
             'role' => 'admin'
         ]);
 
+        $guru = Guru::factory()->create([
+            'user_id' => $admin->id,
+            'nama_guru' => 'Admin Sebagai Guru'
+        ]);
+
         $this->actingAs($admin);
 
         $kategori = Kategori::factory()->create();
@@ -35,8 +40,8 @@ class PengumumanTest extends TestCase
             'judul' => 'Pengumuman Test',
             'isi' => 'Ini adalah isi pengumuman test.',
             'gambar' => UploadedFile::fake()->image('foto-pengumuman.png'),
-            'guru_id' => $admin->id,
             'kategori_id' => $kategori->id,
+            'guru_id' => $guru->id,
         ])->toArray();
 
         $response = $this->post(route('pengumuman.store'), $pengumumanData);
@@ -45,8 +50,8 @@ class PengumumanTest extends TestCase
 
         $this->assertDatabaseHas('pengumumen', [
             'judul' => 'Pengumuman Test',
-            'guru_id' => $admin->id,
             'kategori_id' => $kategori->id,
+            'guru_id' => $guru->id,
         ]);
     }
 
@@ -59,6 +64,11 @@ class PengumumanTest extends TestCase
             'role' => 'admin'
         ]);
 
+        $guru = Guru::factory()->create([
+            'user_id' => $admin->id,
+            'nama_guru' => 'Admin Sebagai Guru'
+        ]);
+
         $this->actingAs($admin);
 
         $kategori = Kategori::factory()->create();
@@ -67,8 +77,8 @@ class PengumumanTest extends TestCase
             'judul' => 'Pengumuman Test',
             'isi' => 'Ini adalah isi pengumuman test.',
             'gambar' => UploadedFile::fake()->image('foto-pengumuman.jpg'),
-            'guru_id' => $admin->id,
             'kategori_id' => $kategori->id,
+            'guru_id' => $guru->id,
         ])->toArray();
 
         $response = $this->post(route('pengumuman.store'), $pengumumanData);
@@ -76,127 +86,89 @@ class PengumumanTest extends TestCase
         $response->assertSessionHasErrors(['gambar']);
     }
 
-    // public function testEditPengumumanValid()
-    // {
-    //     $admin = User::factory()->create([
-    //         'email' => 'admin@siakad-slbdwsidoarjo.com',
-    //         'username' => 'admin',
-    //         'password' => Hash::make('admin123'),
-    //         'role' => 'admin'
-    //     ]);
+    public function testEditPengumumanValid()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
 
-    //     $this->actingAs($admin);
+        $guru = Guru::factory()->create([
+            'user_id' => $admin->id,
+            'nama_guru' => 'Admin Sebagai Guru'
+        ]);
 
-    //     $user = User::factory()->create([
-    //         'username' => 'Guru Wali Kelas',
-    //         'email' => 'guru@example.com',
-    //         'password' => Hash::make('guru123'),
-    //         'role' => 'guru',
-    //     ]);
+        $this->actingAs($admin);
 
-    //     $guru = Guru::factory()->create([
-    //         'user_id' => $user->id,
-    //     ]);
+        $kategori = Kategori::factory()->create();
 
-    //     $angkatan = Angkatan::factory()->create();
+        $pengumuman = Pengumuman::factory()->create([
+            'judul' => 'Pengumuman Test',
+            'isi' => 'Ini adalah isi pengumuman test.',
+            'gambar' => UploadedFile::fake()->image('foto-pengumuman.png'),
+            'kategori_id' => $kategori->id,
+            'guru_id' => $guru->id,
+        ]);
 
-    //     $kelas = Kelas::factory()->create([
-    //         'nama_kelas' => 'D1 Test',
-    //         'ruang' => 'Ruang A',
-    //         'guru_id' => $guru->id,
-    //         'angkatan_id' => $angkatan->id,
-    //     ]);
+        $updatePengumuman = [
+            'judul' => 'Pengumuman Updated',
+            'isi' => 'Ini adalah isi pengumuman updated.',
+            'gambar' => UploadedFile::fake()->image('foto-pengumuman-updated.png'),
+            'kategori_id' => $kategori->id,
+            'guru_id' => $guru->id,
+        ];
 
-    //     session(['angkatan_aktif' => $angkatan->id]);
+        $response = $this->put(route('pengumuman.update', $pengumuman->id), $updatePengumuman);
 
-    //     $newUser = User::factory()->create([
-    //         'username' => 'Guru Wali Kelas Baru',
-    //         'email' => 'gurubaru@example.com',
-    //         'password' => Hash::make('guru123'),
-    //         'role' => 'guru',
-    //     ]);
+        $response->assertRedirect(route('pengumuman.index'));
 
-    //     $newGuru = Guru::factory()->create([
-    //         'user_id' => $newUser->id,
-    //     ]);
+        $this->assertDatabaseHas('pengumumen', [
+            'id' => $pengumuman->id,
+            'judul' => 'Pengumuman Updated',
+            'isi' => 'Ini adalah isi pengumuman updated.',
+            'kategori_id' => $kategori->id,
+            'guru_id' => $guru->id,
+        ]);
+    }
 
-    //     $updateKelas = [
-    //         'nama_kelas' => 'D1 Updated',
-    //         'ruang' => 'Ruang B',
-    //         'guru_id' => $newGuru->id,
-    //     ];
+    public function testEditPengumumanInvalid()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
 
-    //     $response = $this->put(route('kelas.update', $kelas->id), $updateKelas);
+        $guru = Guru::factory()->create([
+            'user_id' => $admin->id,
+            'nama_guru' => 'Admin Sebagai Guru'
+        ]);
 
-    //     $response->assertRedirect(route('kelas.index'));
+        $this->actingAs($admin);
 
-    //     $this->assertDatabaseHas('kelas', [
-    //         'id' => $kelas->id,
-    //         'nama_kelas' => 'D1 Updated',
-    //         'ruang' => 'Ruang B',
-    //         'guru_id' => $newGuru->id,
-    //     ]);
-    // }
+        $kategori = Kategori::factory()->create();
 
-    // public function testEditPengumumanInvalid()
-    // {
-    //     $admin = User::factory()->create([
-    //         'email' => 'admin@siakad-slbdwsidoarjo.com',
-    //         'username' => 'admin',
-    //         'password' => Hash::make('admin123'),
-    //         'role' => 'admin'
-    //     ]);
+        $pengumuman = Pengumuman::factory()->create([
+            'judul' => 'Pengumuman Test',
+            'isi' => 'Ini adalah isi pengumuman test.',
+            'gambar' => UploadedFile::fake()->image('foto-pengumuman.png'),
+            'kategori_id' => $kategori->id,
+            'guru_id' => $guru->id,
+        ]);
 
-    //     $this->actingAs($admin);
+        $updatePengumuman = [
+            'judul' => '',
+            'isi' => '',
+            'kategori_id' => 'invalid_kategori',
+        ];
 
-    //     $userA = User::factory()->create([
-    //         'username' => 'Guru Wali Kelas A',
-    //         'email' => 'gurua@example.com',
-    //         'password' => Hash::make('guru123'),
-    //         'role' => 'guru',
-    //     ]);
+        $response = $this->put(route('pengumuman.update', $pengumuman->id), $updatePengumuman);
 
-    //     $guruB = Guru::factory()->create([
-    //         'user_id' => $userA->id,
-    //     ]);
-
-    //     $userB = User::factory()->create([
-    //         'username' => 'Guru Wali Kelas B',
-    //         'email' => 'gurub@example.com',
-    //         'password' => Hash::make('guru123'),
-    //         'role' => 'guru',
-    //     ]);
-
-    //     $guruA = Guru::factory()->create([
-    //         'user_id' => $userB->id,
-    //     ]);
-
-    //     $angkatan = Angkatan::factory()->create();
-
-    //     $kelasA = Kelas::factory()->create([
-    //         'nama_kelas' => 'A Test',
-    //         'ruang' => 'Ruang A',
-    //         'guru_id' => $guruA->id,
-    //         'angkatan_id' => $angkatan->id,
-    //     ]);
-
-    //     $kelasB = Kelas::factory()->create([
-    //         'nama_kelas' => 'B Test',
-    //         'ruang' => 'Ruang B',
-    //         'guru_id' => $guruB->id,
-    //         'angkatan_id' => $angkatan->id,
-    //     ]);
-
-    //     $updateKelas = [
-    //         'nama_kelas' => 'B Updated',
-    //         'ruang' => 'Ruang A',
-    //         'guru_id' => $guruA->id,
-    //     ];
-
-    //     $response = $this->put(route('kelas.update', $kelasB->id), $updateKelas);
-
-    //     $response->assertSessionHasErrors(['ruang']);
-    // }
+        $response->assertSessionHasErrors(['judul', 'isi', 'kategori_id']);
+    }
 
     public function testViewPengumumanList()
     {
@@ -207,13 +179,18 @@ class PengumumanTest extends TestCase
             'role' => 'admin'
         ]);
 
+        $guru = Guru::factory()->create([
+            'user_id' => $admin->id,
+            'nama_guru' => 'Admin Sebagai Guru'
+        ]);
+
         $this->actingAs($admin);
 
         $kategori = Kategori::factory()->create();
 
         Pengumuman::factory()->count(3)->create([
-            'guru_id' => $admin->id,
             'kategori_id' => $kategori->id,
+            'guru_id' => $guru->id,
         ]);
 
         $response = $this->get(route('pengumuman.index'));
@@ -221,31 +198,36 @@ class PengumumanTest extends TestCase
         $response->assertSeeText('Data Pengumuman');
     }
 
-    // public function testShowDetailPengumuman()
-    // {
-    //     $admin = User::factory()->create([
-    //         'email' => 'admin@siakad-slbdwsidoarjo.com',
-    //         'username' => 'admin',
-    //         'password' => Hash::make('admin123'),
-    //         'role' => 'admin'
-    //     ]);
+    public function testShowDetailPengumuman()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
 
-    //     $this->actingAs($admin);
+        $guru = Guru::factory()->create([
+            'user_id' => $admin->id,
+            'nama_guru' => 'Admin Sebagai Guru'
+        ]);
 
-    //     $kategori = Kategori::factory()->create();
+        $this->actingAs($admin);
 
-    //     $pengumuman = Pengumuman::factory()->create([
-    //         'judul' => 'Pengumuman Test',
-    //         'isi' => 'Ini adalah isi pengumuman test.',
-    //         'gambar' => UploadedFile::fake()->image('foto-pengumuman.png'),
-    //         'guru_id' => $admin->id,
-    //         'kategori_id' => $kategori->id,
-    //     ]);
+        $kategori = Kategori::factory()->create();
 
-    //     $response = $this->get(route('pengumuman.detail', $pengumuman->id));
+        $pengumuman = Pengumuman::factory()->create([
+            'judul' => 'Pengumuman Test',
+            'isi' => 'Ini adalah isi pengumuman test.',
+            'gambar' => UploadedFile::fake()->image('foto-pengumuman.png'),
+            'kategori_id' => $kategori->id,
+            'guru_id' => $guru->id,
+        ]);
 
-    //     $response->assertSeeText('Detail Data Pengumuman');
-    // }
+        $response = $this->get(route('pengumuman.detail', $pengumuman->id));
+
+        $response->assertSeeText('Detail Data Pengumuman');
+    }
 
     public function testUnauthorizedUserCannotAccess()
     {

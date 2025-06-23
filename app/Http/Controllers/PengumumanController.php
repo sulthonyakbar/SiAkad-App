@@ -60,7 +60,7 @@ class PengumumanController extends Controller
         ]);
 
         $data = $request->only(['judul', 'isi', 'kategori_id']);
-        $data['guru_id'] = Auth::id();
+        $data['guru_id'] = Auth::user()->guru->id;
 
         if ($request->hasFile('gambar')) {
             $image = $request->file('gambar');
@@ -116,7 +116,7 @@ class PengumumanController extends Controller
         ]);
 
         $data = $request->only(['judul', 'isi', 'kategori_id']);
-        $data['guru_id'] = Auth::id();
+        $data['guru_id'] = Auth::user()->guru->id;
 
         if ($request->hasFile('gambar')) {
             // Hapus gambar lama jika ada

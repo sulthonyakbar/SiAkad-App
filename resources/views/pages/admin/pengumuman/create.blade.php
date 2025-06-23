@@ -31,12 +31,12 @@
 
                             <div class="form-group">
                                 <label for="judul">Judul<span class="text-danger">*</span></label>
-                                <input id="judul" type="text" class="form-control" name="judul" autofocus>
+                                <input id="judul" type="text" class="form-control" name="judul" autofocus required>
                             </div>
 
                             <div class="form-group">
                                 <label for="isi">Isi <span class="text-danger">*</span></label>
-                                <textarea id="isi" class="form-control" name="isi"></textarea>
+                                <textarea id="isi" class="form-control" name="isi" required></textarea>
                             </div>
 
                         </div>
@@ -45,7 +45,7 @@
                             <div class="form-group">
                                 <label for="gambar">Gambar <span class="text-danger">* </span></label>
                                 <div class="custom-file">
-                                    <input type="file" name="gambar" class="custom-file-input" id="gambar">
+                                    <input type="file" name="gambar" class="custom-file-input" id="gambar" required>
                                     <label class="custom-file-label">Choose File</label>
                                 </div>
                                 <div class="form-text text-muted">The image must be a PNG file</div>
@@ -53,7 +53,7 @@
 
                             <div class="form-group">
                                 <label for="kategori_id">Kategori <span class="text-danger">*</span></label>
-                                <select id="kategori_id" class="form-control" name="kategori_id"></select>
+                                <select id="kategori_id" class="form-control" name="kategori_id" required></select>
                             </div>
 
                         </div>

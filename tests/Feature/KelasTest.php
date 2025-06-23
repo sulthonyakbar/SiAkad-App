@@ -28,16 +28,7 @@ class KelasTest extends TestCase
 
         $this->actingAs($admin);
 
-        $user = User::factory()->create([
-            'username' => 'Guru Wali Kelas',
-            'email' => 'guru@example.com',
-            'password' => Hash::make('guru123'),
-            'role' => 'guru',
-        ]);
-
-        $guru = Guru::factory()->create([
-            'user_id' => $user->id,
-        ]);
+        $guru = Guru::factory()->withUserRole('guru')->create();
 
         $angkatan = Angkatan::factory()->create();
 
@@ -47,8 +38,6 @@ class KelasTest extends TestCase
             'guru_id' => $guru->id,
             'angkatan_id' => $angkatan->id,
         ])->toArray();
-
-        session(['angkatan_aktif' => $angkatan->id]);
 
         $response = $this->post(route('kelas.store'), $kelasData);
 
@@ -71,16 +60,7 @@ class KelasTest extends TestCase
 
         $this->actingAs($admin);
 
-        $user = User::factory()->create([
-            'username' => 'Guru Wali Kelas',
-            'email' => 'guru@example.com',
-            'password' => Hash::make('guru123'),
-            'role' => 'guru',
-        ]);
-
-        $guru = Guru::factory()->create([
-            'user_id' => $user->id,
-        ]);
+        $guru = Guru::factory()->withUserRole('guru')->create();
 
         $angkatan = Angkatan::factory()->create();
 
@@ -90,9 +70,7 @@ class KelasTest extends TestCase
             'guru_id' => $guru->id,
             'angkatan_id' => $angkatan->id,
         ]);
-
-        session(['angkatan_aktif' => $angkatan->id]);
-
+        
         $existingKelas = Kelas::factory()->make([
             'nama_kelas' => 'D1 Test',
             'ruang' => 'Ruang A',
@@ -116,16 +94,7 @@ class KelasTest extends TestCase
 
         $this->actingAs($admin);
 
-        $user = User::factory()->create([
-            'username' => 'Guru Wali Kelas',
-            'email' => 'guru@example.com',
-            'password' => Hash::make('guru123'),
-            'role' => 'guru',
-        ]);
-
-        $guru = Guru::factory()->create([
-            'user_id' => $user->id,
-        ]);
+        $guru = Guru::factory()->withUserRole('guru')->create();
 
         $angkatan = Angkatan::factory()->create();
 
@@ -136,18 +105,7 @@ class KelasTest extends TestCase
             'angkatan_id' => $angkatan->id,
         ]);
 
-        session(['angkatan_aktif' => $angkatan->id]);
-
-        $newUser = User::factory()->create([
-            'username' => 'Guru Wali Kelas Baru',
-            'email' => 'gurubaru@example.com',
-            'password' => Hash::make('guru123'),
-            'role' => 'guru',
-        ]);
-
-        $newGuru = Guru::factory()->create([
-            'user_id' => $newUser->id,
-        ]);
+        $newGuru = Guru::factory()->withUserRole('guru')->create();
 
         $updateKelas = [
             'nama_kelas' => 'D1 Updated',
@@ -178,27 +136,9 @@ class KelasTest extends TestCase
 
         $this->actingAs($admin);
 
-        $userA = User::factory()->create([
-            'username' => 'Guru Wali Kelas A',
-            'email' => 'gurua@example.com',
-            'password' => Hash::make('guru123'),
-            'role' => 'guru',
-        ]);
+        $guruA = Guru::factory()->withUserRole('guru')->create();
 
-        $guruB = Guru::factory()->create([
-            'user_id' => $userA->id,
-        ]);
-
-        $userB = User::factory()->create([
-            'username' => 'Guru Wali Kelas B',
-            'email' => 'gurub@example.com',
-            'password' => Hash::make('guru123'),
-            'role' => 'guru',
-        ]);
-
-        $guruA = Guru::factory()->create([
-            'user_id' => $userB->id,
-        ]);
+        $guruB = Guru::factory()->withUserRole('guru')->create();
 
         $angkatan = Angkatan::factory()->create();
 
@@ -238,16 +178,7 @@ class KelasTest extends TestCase
 
         $this->actingAs($admin);
 
-        $user = User::factory()->create([
-            'username' => 'Guru Wali Kelas',
-            'email' => 'guru@example.com',
-            'password' => Hash::make('guru123'),
-            'role' => 'guru',
-        ]);
-
-        $guru = Guru::factory()->create([
-            'user_id' => $user->id,
-        ]);
+        $guru = Guru::factory()->withUserRole('guru')->create();
 
         $angkatan = Angkatan::factory()->create();
 

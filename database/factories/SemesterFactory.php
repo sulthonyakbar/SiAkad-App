@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Angkatan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MataPelajaran>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Semester>
  */
-class MataPelajaranFactory extends Factory
+class SemesterFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,9 +18,8 @@ class MataPelajaranFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama_mapel' => $this->faker->word(),
-            'deskripsi' => $this->faker->sentence(),
-            'bobot_id' => null,
+            'nama_semester' => $this->faker->word(),
+            'angkatan_id' => Angkatan::factory(),
         ];
     }
 }

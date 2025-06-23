@@ -19,16 +19,6 @@
         <div class="section-body">
             <div class="card">
                 <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center">
-                    {{-- <form action="{{ route('guru.index') }}" method="GET" class="form-inline ml-auto">
-                        <div class="input-group" style="width: 320px;">
-                            <input type="text" name="search" class="form-control rounded" placeholder="Search"
-                                value="{{ $search ?? '' }}" style="height: 42px;">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary rounded" type="submit"><i
-                                        class="fas fa-search"></i></button>
-                            </div>
-                        </div>
-                    </form> --}}
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
@@ -42,63 +32,10 @@
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            {{-- <?php $no = ($siswa->currentPage() - 1) * $siswa->perPage() + 1; ?>
-                            @foreach ($siswa as $s)
-                                <tr>
-                                    <td>{{ $no }}</td>
-                                    <td>{{ $s->NISN }}</td>
-                                    <td>{{ $s->nama_siswa }}</td>
-                                    <td>{{ $s->kelas->nama_kelas ?? '-' }}</td>
-                                    <td>{{ $s->orang_tuas->nama_ayah ?? '-' }}</td>
-                                    <td>{{ $s->orang_tuas->nama_ibu ?? '-' }}</td>
-                                    <td class="row">
-                                        <a href="{{ route('siswa.detail', $s->id) }}" class="btn btn-info btn-action mr-1"
-                                            data-toggle="tooltip" title="Detail">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('siswa.edit', $s->id) }}" class="btn btn-success btn-action mr-1"
-                                            data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                                        <form id="delete-form-{{ $s->id }}"
-                                            action="{{ route('siswa.destroy', $s->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"
-                                                onclick="confirmDelete(event, 'delete-form-{{ $s->id }}')"><i
-                                                    class="fa-solid fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <?php $no++; ?>
-                            @endforeach --}}
                         </table>
                     </div>
                 </div>
 
-                {{-- <div class="card-footer text-right">
-                    <nav class="d-inline-block">
-                        <ul class="pagination mb-0">
-                            <!-- Tombol Sebelumnya -->
-                            <li class="page-item {{ $siswa->currentPage() <= 1 ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $siswa->previousPageUrl() ?? '#' }}" tabindex="-1"><i
-                                        class="fas fa-chevron-left"></i></a>
-                            </li>
-
-                            <!-- Halaman-halaman -->
-                            @for ($i = 1; $i <= $siswa->lastPage(); $i++)
-                                <li class="page-item {{ $i === $siswa->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="?page={{ $i }}">{{ $i }} <span
-                                            class="sr-only">(current)</span></a>
-                                </li>
-                            @endfor
-
-                            <!-- Tombol Berikutnya -->
-                            <li class="page-item {{ $siswa->currentPage() >= $siswa->lastPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $siswa->nextPageUrl() ?? '#' }}"><i
-                                        class="fas fa-chevron-right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div> --}}
             </div>
         </div>
     </section>

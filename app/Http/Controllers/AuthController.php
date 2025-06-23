@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -76,12 +77,18 @@ class AuthController extends Controller
         $user->email = $request->email;
 
         if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
+            $user->password = Hash::make($request->password);
         }
 
         $user->save();
 
-        return redirect()->route('siswa.akun.index')->with('success', 'Akun berhasil diperbarui.');
+        if ($user->role === 'guru') {
+            return redirect()->route('guru.akun.index')->with('success', 'Akun berhasil diperbarui.');
+        } elseif ($user->role === 'orangtua') {
+            return redirect()->route('siswa.akun.index')->with('success', 'Akun berhasil diperbarui.');
+        } else {
+            return redirect()->route('admin.akun.index')->with('success', 'Akun berhasil diperbarui.');
+        }
     }
 
     public function editAkun()
@@ -109,7 +116,7 @@ class AuthController extends Controller
         $user->email = $request->email;
 
         if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
+            $user->password = Hash::make($request->password);
         }
 
         $user->save();
