@@ -38,14 +38,7 @@ class AktivitasController extends Controller
                 <a href="' . route('aktivitas.detail', $row->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
                     <i class="fa-solid fa-eye"></i>
                 </a>
-                <a href="' . route('aktivitas.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>
-                <form id="delete-form-' . $row->id . '" action="' . route('aktivitas.destroy', $row->id) . '" method="POST" class="d-inline">
-                    ' . csrf_field() . '
-                    ' . method_field('DELETE') . '
-                    <button type="submit" class="btn btn-danger btn-action" data-toggle="tooltip" title="Hapus" onclick="confirmDelete(event, \'delete-form-' . $row->id . '\')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </form>';
+                <a href="' . route('aktivitas.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
             })
             ->rawColumns(['aksi'])
             ->make(true);

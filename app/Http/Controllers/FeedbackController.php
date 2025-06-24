@@ -45,21 +45,12 @@ class FeedbackController extends Controller
                 if ($row->feedback) {
                     $editBtn = '
                     <a href="' . route('feedback.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
-                    $deleteForm = '
-                    <form id="delete-form-' . $row->id . '" action="' . route('feedback.destroy', $row->id) . '" method="POST" class="d-inline">
-                        ' . csrf_field() . '
-                        ' . method_field('DELETE') . '
-                        <button type="submit" class="btn btn-danger btn-action" onclick="confirmDelete(event, \'delete-form-' . $row->id . '\')" data-toggle="tooltip" title="Hapus">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </form>';
                 } else {
                     $editBtn = '
                     <button class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit" disabled><i class="fas fa-pencil-alt"></i></button>';
-                    $deleteForm = '';
                 }
 
-                return $detailBtn . $editBtn . $deleteForm;
+                return $detailBtn . $editBtn;
             })
             ->rawColumns(['aksi_feedback', 'aksi'])
             ->make(true);
