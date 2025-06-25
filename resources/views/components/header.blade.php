@@ -144,7 +144,7 @@
                 @if (auth()->user()->role === 'orangtua')
                 <form action="{{ route('akun.edit.siswa') }}" method="GET">
                     <button type="submit" class="dropdown-item">
-                        <i class="fas fa-cog mr-2"></i> Setting Akun
+                        <i class="fas fa-cog mr-2"></i> Pengaturan Akun
                     </button>
                 </form>
                 @elseif (auth()->user()->role === 'guru')
@@ -155,7 +155,7 @@
                 </form>
                 <form action="{{ route('akun.edit.guru') }}" method="GET">
                     <button type="submit" class="dropdown-item">
-                        <i class="fas fa-cog mr-2"></i> Setting Akun
+                        <i class="fas fa-cog mr-2"></i> Pengaturan Akun
                     </button>
                 </form>
                 @endif
