@@ -68,6 +68,11 @@
                                         </td>
                                     </tr>
                                 @endforeach
+                                @if ($nilaiItems->isEmpty())
+                                    <tr>
+                                        <td colspan="6" class="text-center">Nilai belum ditambahkan</td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
 

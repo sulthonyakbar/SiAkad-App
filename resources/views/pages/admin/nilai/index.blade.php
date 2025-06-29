@@ -23,6 +23,18 @@
                         {{-- <a class="btn btn-primary" href="{{ route('aktivitas.create') }}" role="button"><i
                                 class="fa-solid fa-plus"></i></a> --}}
                     </div>
+
+                    <div class="form-inline ml-auto">
+                        <select class="form-control select2" name="semester_id" id="semesterFilter">
+                            <option value="">Semua Semester</option>
+                            @foreach ($semesters as $semester)
+                                <option value="{{ $semester->id }}">
+                                    {{ $semester->angkatan->tahun_ajaran ?? '-' }} - {{ $semester->nama_semester }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
@@ -39,7 +51,7 @@
                                     <th>Nilai UTS</th>
                                     <th>Nilai UAS</th>
                                     <th>Nilai Akhir</th>
-                                    <th>Action</th>
+                                    {{-- <th>Action</th> --}}
                                 </tr>
                             </thead>
                         </table>
@@ -56,13 +68,19 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/components-table.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
         $(document).ready(function() {
             $('#nilaiAdminTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('admin.nilai.data') }}",
+                ajax: {
+                    url: "{{ route('admin.nilai.data') }}",
+                    data: function(d) {
+                        d.semester_id = $('#semesterFilter').val();
+                    }
+                },
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',
@@ -82,12 +100,12 @@
                         name: 'nama_siswa',
                     },
                     {
-                        data: 'nisn',
-                        name: 'nisn',
+                        data: 'NISN',
+                        name: 'NISN',
                     },
                     {
-                        data: 'nama_mapel',
-                        name: 'nama_mapel',
+                        data: 'mapel',
+                        name: 'mapel',
                     },
                     {
                         data: 'nilai_uh',
@@ -105,12 +123,12 @@
                         data: 'nilai_akhir',
                         name: 'nilai_akhir',
                     },
-                    {
-                        data: 'aksi',
-                        name: 'aksi',
-                        orderable: false,
-                        searchable: false
-                    } // Tidak bisa dicari
+                    // {
+                    //     data: 'aksi',
+                    //     name: 'aksi',
+                    //     orderable: false,
+                    //     searchable: false
+                    // } // Tidak bisa dicari
                 ],
                 columnDefs: [{
                     targets: 0,
@@ -119,6 +137,14 @@
                     }
                 }],
             });
+        });
+
+        $('#semesterFilter').change(function() {
+            $('#nilaiAdminTable').DataTable().ajax.reload();
+        });
+
+        $(document).ready(function() {
+            $('.select2').select2();
         });
     </script>
 @endpush

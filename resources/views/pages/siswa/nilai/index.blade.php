@@ -30,13 +30,14 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Tahun Ajaran</th>
                                     <th>Semester</th>
                                     <th>Mata Pelajaran</th>
                                     <th>Nilai UH</th>
                                     <th>Nilai UTS</th>
                                     <th>Nilai UAS</th>
                                     <th>Nilai Akhir</th>
-                                    <th>Action</th>
+                                    {{-- <th>Action</th> --}}
                                 </tr>
                             </thead>
                         </table>
@@ -67,12 +68,16 @@
                         searchable: false
                     },
                     {
+                        data: 'angkatan',
+                        name: 'angkatan',
+                    },
+                    {
                         data: 'semester',
                         name: 'semester',
                     },
                     {
-                        data: 'nama_mapel',
-                        name: 'nama_mapel',
+                        data: 'mapel',
+                        name: 'mapel',
                     },
                     {
                         data: 'nilai_uh',
@@ -90,12 +95,12 @@
                         data: 'nilai_akhir',
                         name: 'nilai_akhir',
                     },
-                    {
-                        data: 'aksi',
-                        name: 'aksi',
-                        orderable: false,
-                        searchable: false
-                    } // Tidak bisa dicari
+                    // {
+                    //     data: 'aksi',
+                    //     name: 'aksi',
+                    //     orderable: false,
+                    //     searchable: false
+                    // } // Tidak bisa dicari
                 ],
                 columnDefs: [{
                     targets: 0,

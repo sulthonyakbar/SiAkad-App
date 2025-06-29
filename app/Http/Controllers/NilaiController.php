@@ -253,7 +253,7 @@ class NilaiController extends Controller
     public function indexNilaiAdmin()
     {
         $semesters = Semester::with('angkatan')->orderByDesc('nama_semester')->get();
-        return view('pages.admin.nilai.index');
+        return view('pages.admin.nilai.index', compact('semesters'));
     }
 
     public function getNilaiAdminData(Request $request)
@@ -261,7 +261,7 @@ class NilaiController extends Controller
         $query = Nilai::with([
             'kartuStudi.siswa',
             'kartuStudi.semester.angkatan',
-            'mapel'
+            'mataPelajaran'
         ]);
 
         if ($request->filled('semester_id')) {
@@ -274,7 +274,7 @@ class NilaiController extends Controller
 
         return DataTables::of($nilai)
             ->addColumn('angkatan', function ($row) {
-                return $row->kartuStudi->semester->angkatan->nama_angkatan ?? '-';
+                return $row->kartuStudi->semester->angkatan->tahun_ajaran ?? '-';
             })
             ->addColumn('semester', function ($row) {
                 return $row->kartuStudi->semester->nama_semester ?? '-';
@@ -286,7 +286,7 @@ class NilaiController extends Controller
                 return $row->kartuStudi->siswa->NISN ?? '-';
             })
             ->addColumn('mapel', function ($row) {
-                return $row->mapel->nama_mapel ?? '-';
+                return $row->mataPelajaran->nama_mapel ?? '-';
             })
             ->addColumn('nilai_uh', function ($row) {
                 return $row->nilai_uh ?? '-';
@@ -315,15 +315,18 @@ class NilaiController extends Controller
         $nilai = Nilai::whereHas('kartuStudi', function ($query) use ($user) {
             $query->where('siswa_id', $user->id);
         })
-            ->with(['mapel', 'kartuStudi.semester'])
+            ->with(['mataPelajaran', 'kartuStudi.semester'])
             ->get();
 
         return DataTables::of($nilai)
+            ->addColumn('angkatan', function ($row) {
+                return $row->kartuStudi->semester->angkatan->tahun_ajaran ?? '-';
+            })
             ->addColumn('semester', function ($row) {
                 return $row->kartuStudi->semester->nama_semester ?? '-';
             })
             ->addColumn('mapel', function ($row) {
-                return $row->mapel->nama_mapel ?? '-';
+                return $row->mataPelajaran->nama_mapel ?? '-';
             })
             ->addColumn('nilai_uh', function ($row) {
                 return $row->nilai_uh ?? '-';
