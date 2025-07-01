@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\AktivitasHarian;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use App\Models\AktivitasHarian;
+
 use App\Models\User;
-use App\Models\MataPelajaran;
+use App\Models\Siswa;
+use Database\Factories\AktivitasFactory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\UploadedFile;
 
@@ -19,34 +21,23 @@ class AktivitasTest extends TestCase
      */
     public function testCreateAktivitasValid()
     {
-        $admin = User::factory()->create([
-            'email' => 'admin@siakad-slbdwsidoarjo.com',
-            'username' => 'admin',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin'
-        ]);
-
-        $this->actingAs($admin);
-
-        $siswa = User::factory()->create([
-            'nama_siswa' => 'Test Siswa',
-        ]);
-
         $guru = User::factory()->create([
             'email' => 'guru@siakad-slbdwsidoarjo.com',
             'username' => 'guru',
-            'password' => Hash::make('admin123'),
+            'password' => Hash::make('guru123'),
             'role' => 'guru'
         ]);
 
         $this->actingAs($guru);
+
+        $siswa = Siswa::factory()->create();
 
         $aktivitasData = AktivitasHarian::factory()->make([
             'kegiatan' => 'Belajar Matematika',
             'kendala' => 'Tidak ada',
             'deskripsi' => 'Belajar Matematika dengan baik',
             'foto' => UploadedFile::fake()->image('foto-aktivitas.jpg'),
-            'siswa_id' => 1,
+            'siswa_id' => $siswa->id,
             'feedback_id' => null,
         ])->toArray();
 
@@ -61,96 +52,131 @@ class AktivitasTest extends TestCase
         ]);
     }
 
-    // public function testCreateMapelInvalid()
-    // {
-    //     $admin = User::factory()->create([
-    //         'email' => 'admin@siakad-slbdwsidoarjo.com',
-    //         'username' => 'admin',
-    //         'password' => Hash::make('admin123'),
-    //         'role' => 'admin'
-    //     ]);
+    public function testCreateAktivitasInvalid()
+    {
+        $guru = User::factory()->create([
+            'email' => 'guru@siakad-slbdwsidoarjo.com',
+            'username' => 'guru',
+            'password' => Hash::make('guru123'),
+            'role' => 'guru'
+        ]);
 
-    //     $this->actingAs($admin);
+        $this->actingAs($guru);
 
-    //     $mapelData = MataPelajaran::factory()->make([
-    //         'nama_mapel' => '12345678',
-    //     ])->toArray();
+        $siswa = Siswa::factory()->create();
 
-    //     $response = $this->post(route('mapel.store'), $mapelData);
+        $aktivitasData = AktivitasHarian::factory()->make([
+            'kegiatan' => '',
+            'kendala' => '',
+            'deskripsi' => '',
+            'foto' => UploadedFile::fake()->image('foto-aktivitas.jpg'),
+            'siswa_id' => $siswa->id,
+            'feedback_id' => null,
+        ])->toArray();
 
-    //     $response->assertSessionHasErrors(['nama_mapel']);
-    // }
+        $response = $this->post(route('aktivitas.store'), $aktivitasData);
 
-    // public function testEditMapelValid()
-    // {
-    //     $admin = User::factory()->create([
-    //         'email' => 'admin@siakad-slbdwsidoarjo.com',
-    //         'username' => 'admin',
-    //         'password' => Hash::make('admin123'),
-    //         'role' => 'admin'
-    //     ]);
+        $response->assertSessionHasErrors(['kegiatan']);
+    }
 
-    //     $this->actingAs($admin);
+    public function testEditAktivitasValid()
+    {
+        $guru = User::factory()->create([
+            'email' => 'guru@siakad-slbdwsidoarjo.com',
+            'username' => 'guru',
+            'password' => Hash::make('guru123'),
+            'role' => 'guru'
+        ]);
 
-    //     $mapel = MataPelajaran::factory()->create([
-    //         'nama_mapel' => 'Matematika Test',
-    //     ]);
+        $this->actingAs($guru);
 
-    //     $updateData = [
-    //         'nama_mapel' => 'Matematika Updated',
-    //     ];
+        $aktivitas = AktivitasHarian::factory()->create([
+            'kegiatan' => 'Kegiatan Test',
+            'kendala' => 'Tidak ada',
+            'deskripsi' => 'Deskripsi Kegiatan Test',
+            'foto' => UploadedFile::fake()->image('foto-aktivitas.jpg'),
+            'siswa_id' => Siswa::factory()->create()->id,
+            'feedback_id' => null,
+        ]);
 
-    //     $response = $this->put(route('mapel.update', $mapel->id), $updateData);
+        $updateData = [
+            'kegiatan' => 'Kegiatan Test Updated',
+            'kendala' => 'Kendala Updated',
+            'deskripsi' => 'Deskripsi Updated',
+            'foto' => UploadedFile::fake()->image('foto-aktivitas-updated.jpg'),
+            'siswa_id' => $aktivitas->siswa_id,
+            'feedback_id' => null,
+        ];
 
-    //     $response->assertRedirect(route('mapel.index'));
+        $response = $this->put(route('aktivitas.update', $aktivitas->id), $updateData);
 
-    //     $this->assertDatabaseHas('mata_pelajarans', [
-    //         'id' => $mapel->id,
-    //         'nama_mapel' => 'Matematika Updated',
-    //     ]);
-    // }
+        $response->assertRedirect(route('aktivitas.index'));
 
-    // public function testEditMapelInvalid()
-    // {
-    //     $admin = User::factory()->create([
-    //         'email' => 'admin@siakad-slbdwsidoarjo.com',
-    //         'username' => 'admin',
-    //         'password' => Hash::make('admin123'),
-    //         'role' => 'admin'
-    //     ]);
+        $this->assertDatabaseHas('aktivitas_harians', [
+            'id' => $aktivitas->id,
+            'kegiatan' => 'Kegiatan Test Updated',
+        ]);
+    }
 
-    //     $this->actingAs($admin);
+    public function testEditAktivitasInvalid()
+    {
+        $guru = User::factory()->create([
+            'email' => 'guru@siakad-slbdwsidoarjo.com',
+            'username' => 'guru',
+            'password' => Hash::make('guru123'),
+            'role' => 'guru'
+        ]);
 
-    //     $mapel = MataPelajaran::factory()->create([
-    //         'nama_mapel' => 'Matematika Test',
-    //     ]);
+        $this->actingAs($guru);
 
-    //     $updateData = [
-    //         'nama_mapel' => 'Matematika 12345678',
-    //     ];
+        $aktivitas = AktivitasHarian::factory()->create([
+            'kegiatan' => 'Kegiatan Test',
+        ]);
 
-    //     $response = $this->put(route('mapel.update', $mapel->id), $updateData);
+        $updateData = [
+            'kegiatan' => '',
+        ];
 
-    //     $response->assertSessionHasErrors(['nama_mapel']);
-    // }
+        $response = $this->put(route('aktivitas.update', $aktivitas->id), $updateData);
 
-    // public function testViewMapelList()
-    // {
-    //     $admin = User::factory()->create([
-    //         'email' => 'admin@siakad-slbdwsidoarjo.com',
-    //         'username' => 'admin',
-    //         'password' => Hash::make('admin123'),
-    //         'role' => 'admin'
-    //     ]);
+        $response->assertSessionHasErrors(['kegiatan']);
+    }
 
-    //     $this->actingAs($admin);
+    public function testViewAktivitasList()
+    {
+        $guru = User::factory()->create([
+            'email' => 'guru@siakad-slbdwsidoarjo.com',
+            'username' => 'guru',
+            'password' => Hash::make('guru123'),
+            'role' => 'guru'
+        ]);
 
-    //     MataPelajaran::factory()->count(3)->create();
+        $this->actingAs($guru);
 
-    //     $response = $this->get(route('mapel.index'));
+        AktivitasHarian::factory()->count(3)->create();
 
-    //     $response->assertSeeText('Data Mata Pelajaran');
-    // }
+        $response = $this->get(route('aktivitas.index'));
+
+        $response->assertSeeText('Data Aktivitas Harian Siswa');
+    }
+
+    public function testShowDetailAktivitas()
+    {
+        $guru = User::factory()->create([
+            'email' => 'guru@siakad-slbdwsidoarjo.com',
+            'username' => 'guru',
+            'password' => Hash::make('guru123'),
+            'role' => 'guru'
+        ]);
+
+        $this->actingAs($guru);
+
+        $aktivitas = AktivitasHarian::factory()->create();
+
+        $response = $this->get(route('aktivitas.detail', $aktivitas->id));
+
+        $response->assertSeeText('Detail Aktivitas Harian');
+    }
 
     public function testUnauthorizedUserCannotAccess()
     {

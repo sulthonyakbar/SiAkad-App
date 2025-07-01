@@ -9,7 +9,7 @@ use App\Models\Feedback;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class AktivitasFactory extends Factory
+class AktivitasHarianFactory extends Factory
 {
     /**
      * Define the model's default state.
