@@ -23,6 +23,15 @@
                         {{-- <a class="btn btn-primary" href="{{ route('jadwal.create') }}" role="button"><i
                                 class="fa-solid fa-plus"></i></a> --}}
                     </div>
+
+                    <div class="form-inline ml-auto">
+                        <select class="form-control select2" name="angkatan_id" id="angkatanFilter">
+                            <option value="">Semua Tahun Ajaran</option>
+                            @foreach ($angkatans as $angkatan)
+                                <option value="{{ $angkatan->id }}">{{ $angkatan->tahun_ajaran }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
@@ -52,13 +61,19 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/components-table.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
         $(document).ready(function() {
             $('#jadwalTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('jadwal.data') }}",
+                ajax: {
+                    url: "{{ route('jadwal.data') }}",
+                    data: function(d) {
+                        d.angkatan_id = $('#angkatanFilter').val();
+                    }
+                },
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',
@@ -99,6 +114,15 @@
                     }
                 }],
             });
+        });
+
+
+        $('#angkatanFilter').change(function() {
+            $('#jadwalTable').DataTable().ajax.reload();
+        });
+
+        $(document).ready(function() {
+            $('.select2').select2();
         });
     </script>
 @endpush

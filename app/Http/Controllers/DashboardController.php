@@ -32,7 +32,7 @@ class DashboardController extends Controller
 
             $eventDate = $startOfWeek->copy()->addDays($dayIndex)->toDateString();
 
-            $item->loadMissing(['mapel', 'kelas', 'gurus']);
+            $item->loadMissing(['mapel', 'kelas', 'guru']);
 
             if (!$item->mapel || !$item->kelas) {
                 return null;
@@ -61,10 +61,10 @@ class DashboardController extends Controller
 
         $jadwalCount = JadwalPelajaran::count();
 
-        $jadwal = JadwalPelajaran::with(['mapel', 'kelas', 'gurus'])->get();
+        $jadwal = JadwalPelajaran::with(['mapel', 'kelas', 'guru'])->get();
 
         $titleFormatter = function ($item) {
-            $namaGuru = $item->gurus ? $item->gurus->nama_guru : 'N/A';
+            $namaGuru = $item->guru ? $item->guru->nama_guru : 'N/A';
             return $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas . ' - Pengajar ' . $namaGuru;
         };
 

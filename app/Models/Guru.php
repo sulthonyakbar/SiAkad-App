@@ -41,7 +41,7 @@ class Guru extends Model
 
     public function jadwalPelajaran()
     {
-        return $this->hasOne(JadwalPelajaran::class, 'guru_id');
+        return $this->hasOne(JadwalPelajaran::class);
     }
 
     public function pengumuman()

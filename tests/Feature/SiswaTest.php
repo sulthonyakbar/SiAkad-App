@@ -232,6 +232,7 @@ class SiswaTest extends TestCase
         ]);
 
         $this->actingAs($admin);
+
         $ortu = OrangTua::factory()->create([
             'nama_ayah' => 'Ayah Detail',
             'nama_ibu' => 'Ibu Detail',

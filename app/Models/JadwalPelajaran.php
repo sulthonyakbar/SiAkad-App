@@ -29,7 +29,7 @@ class JadwalPelajaran extends Model
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 
-    public function gurus()
+    public function guru()
     {
         return $this->belongsTo(Guru::class, 'guru_id');
     }

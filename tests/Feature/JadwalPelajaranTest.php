@@ -63,7 +63,7 @@ class JadwalPelajaranTest extends TestCase
         $this->assertDatabaseHas('jadwal_pelajarans', [
             'hari' => 'Senin',
             'jam_mulai' => '08:00:00',
-            'jam_selesai' => '10:00:00',
+            'jam_selesai' => '09:30:00',
             'mapel_id' => $mapel->id,
             'kelas_id' => $kelas->id,
             'guru_id' => $guru->id,

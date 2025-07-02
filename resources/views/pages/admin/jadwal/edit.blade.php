@@ -59,9 +59,9 @@
                             <div class="form-group">
                                 <label for="guru_id">Pengajar <span class="text-danger">*</span></label>
                                 <select id="guru_id" class="form-control" name="guru_id">
-                                    @if ($jadwal->gurus)
-                                        <option value="{{ $jadwal->gurus->id }}" selected>
-                                            {{ $jadwal->gurus->NIP }} - {{ $jadwal->gurus->nama_guru }}
+                                    @if ($jadwal->guru)
+                                        <option value="{{ $jadwal->guru->id }}" selected>
+                                            {{ $jadwal->guru->NIP }} - {{ $jadwal->guru->nama_guru }}
                                         </option>
                                     @endif
                                 </select>

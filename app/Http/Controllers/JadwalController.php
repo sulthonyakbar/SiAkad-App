@@ -6,6 +6,7 @@ use App\Models\JadwalPelajaran;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Guru;
+use App\Models\Angkatan;
 use App\Models\MataPelajaran;
 use App\Models\Kelas;
 use Illuminate\Http\JsonResponse;
@@ -17,12 +18,19 @@ class JadwalController extends Controller
      */
     public function index()
     {
-        return view('pages.admin.jadwal.index');
+        $angkatans = Angkatan::orderBy('tahun_ajaran', 'desc')->get();
+        return view('pages.admin.jadwal.index', compact('angkatans'));
     }
 
-    public function getJadwalData()
+    public function getJadwalData(Request $request)
     {
-        $jadwal = JadwalPelajaran::with('kelas', 'mapel', 'gurus')->select('jadwal_pelajarans.*');
+        $jadwal = JadwalPelajaran::with('kelas', 'mapel', 'guru')->select('jadwal_pelajarans.*');
+
+        if ($request->filled('angkatan_id')) {
+            $jadwal->whereHas('kelas', function ($query) use ($request) {
+                $query->where('angkatan_id', $request->angkatan_id);
+            });
+        }
 
         return DataTables::of($jadwal)
             ->addColumn('kelas', function ($row) {
@@ -32,7 +40,7 @@ class JadwalController extends Controller
                 return $row->mapel->nama_mapel ?? '-';
             })
             ->addColumn('guru', function ($row) {
-                return $row->gurus->nama_guru ?? '-';
+                return $row->guru->nama_guru ?? '-';
             })
             ->addColumn('jam', function ($row) {
                 return $row->jam_mulai . ' - ' . $row->jam_selesai;
@@ -68,20 +76,23 @@ class JadwalController extends Controller
             'guru_id' => 'required|exists:gurus,id',
         ]);
 
+        $angkatanId = Kelas::findOrFail($request->kelas_id)->angkatan_id;
+
         foreach ($request->jadwals as $jadwal) {
-            $exists = JadwalPelajaran::where('hari', $jadwal['hari'])
-                ->where(function ($query) use ($jadwal) {
-                    $query->where('jam_mulai', '<', $jadwal['jam_selesai'])
-                        ->where('jam_selesai', '>', $jadwal['jam_mulai']);
+            $exists = JadwalPelajaran::whereHas('kelas', function ($query) use ($angkatanId) {
+                    $query->where('angkatan_id', $angkatanId);
                 })
+                ->where('hari', $jadwal['hari'])
+                ->where('jam_mulai', '<', $jadwal['jam_selesai'])
+                ->where('jam_selesai', '>', $jadwal['jam_mulai'])
                 ->where(function ($query) use ($request) {
-                    $query->where('kelas_id', $request->kelas_id)
-                        ->orWhere('guru_id', $request->guru_id);
+                    $query->where('guru_id', $request->guru_id)
+                        ->orWhere('kelas_id', $request->kelas_id);
                 })
                 ->exists();
 
             if ($exists) {
-                return back()->withErrors(['jadwal' => 'Terdapat jadwal bentrok untuk guru atau kelas pada waktu yang sama.'])->withInput();
+                return back()->withErrors(['jadwal' => 'Jadwal bentrok! Guru atau Kelas sudah memiliki jadwal lain pada hari dan jam yang sama di tahun ajaran ini.'])->withInput();
             }
 
             JadwalPelajaran::create([
