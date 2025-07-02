@@ -109,6 +109,20 @@
         </script>
     @endif
 
+    @if (session('warning'))
+        <script>
+            Swal.fire({
+                title: "Warning!",
+                text: "{{ session('warning') }}",
+                icon: "warning",
+                confirmButtonText: "OK",
+                customClass: {
+                    confirmButton: "btn btn-warning",
+                }
+            });
+        </script>
+    @endif
+
     <script>
         function confirmDelete(event, formId) {
             event.preventDefault();

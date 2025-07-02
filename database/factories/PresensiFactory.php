@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Kelas;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Presensi>
@@ -17,7 +18,8 @@ class PresensiFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'tanggal' => $this->faker->date(),
+            'kelas_id' => Kelas::factory(),
         ];
     }
 }

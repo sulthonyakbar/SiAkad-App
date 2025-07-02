@@ -27,6 +27,8 @@ class PresensiController extends Controller
     {
         $guru = auth()->user()->guru;
 
+        $semesterId = session('semester_aktif');
+
         $presensi = Presensi::whereHas('kelas', function ($query) use ($guru) {
             $query->where('guru_id', $guru->id);
         })->with('kelas')->get();
@@ -38,12 +40,18 @@ class PresensiController extends Controller
             ->addColumn('tanggal', function ($row) {
                 return Carbon::parse($row->tanggal)->translatedFormat('d F Y');
             })
-            ->addColumn('aksi', function ($row) {
-                return '
-                <a href="' . route('presensi.detail', ['kelas_id' => $row->kelas_id, 'tanggal' => $row->tanggal]) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
-                    <i class="fa-solid fa-eye"></i>
-                </a>
-                <a href="' . route('presensi.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+            ->addColumn('aksi', function ($row) use ($semesterId) {
+                $presensiSemester = Carbon::parse($row->tanggal)->month >= 7 ? 'Ganjil' : 'Genap';
+
+                $detailBtn = '<a href="' . route('presensi.detail', ['kelas_id' => $row->kelas_id, 'tanggal' => $row->tanggal]) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail"><i class="fa-solid fa-eye"></i></a>';
+
+                if ($semesterId !== $presensiSemester) {
+                    $editBtn = '<button class="btn btn-secondary btn-action disabled-edit" data-toggle="tooltip" title="Tidak bisa edit di luar semester saat presensi dibuat"><i class="fas fa-pencil-alt"></i></button>';
+                } else {
+                    $editBtn = '<a href="' . route('presensi.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                }
+
+                return $detailBtn . ' ' . $editBtn;
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -69,16 +77,19 @@ class PresensiController extends Controller
         $siswaList = collect();
 
         if ($guru) {
-            $kelas = Kelas::where('guru_id', $guru->id)->first();
+            $angkatanId = session('angkatan_aktif');
+
+            $kelas = Kelas::where('guru_id', $guru->id)
+                ->where('angkatan_id', $angkatanId)
+                ->first();
 
             if ($kelas) {
-                $angkatanId = session('angkatan_aktif');
-                if ($angkatanId) {
-                    $siswaList = Siswa::whereHas('kartuStudi', function ($query) use ($kelas, $angkatanId) {
-                        $query->where('kelas_id', $kelas->id)
-                            ->where('angkatan_id', $angkatanId);
-                    })->get();
-                }
+                $siswaList = Siswa::whereHas('kartuStudi', function ($q) use ($kelas, $angkatanId) {
+                    $q->where('kelas_id', $kelas->id)
+                        ->whereHas('semester', function ($s) use ($angkatanId) {
+                            $s->where('angkatan_id', $angkatanId);
+                        });
+                })->get();
             }
         }
 

@@ -8,7 +8,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\JsonResponse;
 use App\Models\Siswa;
 use App\Models\Kelas;
-use App\Models\Angkatan;
+use App\Models\Semester;
 
 class KartuStudiController extends Controller
 {
@@ -77,7 +77,7 @@ class KartuStudiController extends Controller
         $kelas = Kelas::where('angkatan_id', $angkatan)->get();
         $siswa = Siswa::where('angkatan_id', $angkatan)->get();
 
-        return view('pages.admin.kartu_studi.create', compact('kelas', 'angkatan'));
+        return view('pages.admin.kartu_studi.create', compact('kelas', 'angkatan', 'siswa'));
     }
 
     /**
@@ -93,13 +93,18 @@ class KartuStudiController extends Controller
 
         $semesterId = session('semester_aktif');
 
+        $semester = Semester::with('angkatan')->findOrFail($semesterId);
+        $angkatanId = $semester->angkatan_id;
+
         foreach ($request->siswa_id as $siswaId) {
-            $exists = KartuStudi::where('kelas_id', $request->kelas_id)
-                ->where('siswa_id', $siswaId)
+            $sudahTerdaftar = KartuStudi::where('siswa_id', $siswaId)
+                ->whereHas('semester', function ($query) use ($angkatanId) {
+                    $query->where('angkatan_id', $angkatanId);
+                })
                 ->exists();
 
-            if ($exists) {
-                return back()->withErrors(['siswaId' => 'Siswa sudah ditempatkan di kelas ini.'])->withInput();
+            if ($sudahTerdaftar) {
+                return back()->withErrors(['siswa_id' => 'Siswa sudah ditempatkan di kelas lain pada tahun ajaran yang sama.'])->withInput();
             }
 
             KartuStudi::create([
@@ -196,14 +201,38 @@ class KartuStudiController extends Controller
 
         $semesterId = session('semester_aktif');
 
-        KartuStudi::where('kelas_id', $id)->delete();
+        $semester = Semester::with('angkatan')->findOrFail($semesterId);
+        $angkatanId = $semester->angkatan_id;
 
-        foreach ($request->siswa_id as $siswaId) {
-            KartuStudi::create([
-                'siswa_id' => $siswaId,
-                'kelas_id' => $id,
-                'semester_id' => $semesterId
-            ]);
+        KartuStudi::where('kelas_id', $id)->where('semester_id', $semesterId)->delete();
+
+        $gagal = [];
+
+        if ($request->filled('siswa_id')) {
+            foreach ($request->siswa_id as $siswaId) {
+                $sudahTerdaftar = KartuStudi::where('siswa_id', $siswaId)
+                    ->where('kelas_id', '!=', $id)
+                    ->whereHas('semester', function ($q) use ($angkatanId) {
+                        $q->where('angkatan_id', $angkatanId);
+                    })
+                    ->exists();
+
+                if ($sudahTerdaftar) {
+                    $gagal[] = $siswaId;
+                    continue;
+                }
+
+                KartuStudi::create([
+                    'siswa_id' => $siswaId,
+                    'kelas_id' => $id,
+                    'semester_id' => $semesterId
+                ]);
+            }
+        }
+
+        if (!empty($gagal)) {
+            return redirect()->route('kartu.studi.index')
+                ->with('warning', 'Sebagian siswa tidak dimasukkan karena sudah ditempatkan di kelas lain pada tahun ajaran yang sama.');
         }
 
         return redirect()->route('kartu.studi.index')->with('success', 'Penentuan Kelas berhasil diperbarui.');
