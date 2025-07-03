@@ -142,22 +142,6 @@ class PengumumanController extends Controller
         return redirect()->route('pengumuman.index')->with('success', 'Pengumuman berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $pengumuman = Pengumuman::findOrFail($id);
-
-        if ($pengumuman->gambar && file_exists(public_path($pengumuman->gambar))) {
-            unlink(public_path($pengumuman->gambar));
-        }
-
-        $pengumuman->delete();
-
-        return redirect()->route('pengumuman.index')->with('success', 'Pengumuman berhasil dihapus.');
-    }
-
     public function searchKategori(Request $request): JsonResponse
     {
         $query = $request->input('q');
@@ -169,5 +153,18 @@ class PengumumanController extends Controller
             ->get();
 
         return response()->json($data);
+    }
+
+    public function readPengumuman($id)
+    {
+        $role = auth()->user()->role;
+
+        if (!in_array($role, ['guru', 'orangtua'])) {
+            abort(403, 'Anda tidak memiliki akses');
+        }
+
+        $pengumuman = Pengumuman::with(['kategori', 'guru'])->findOrFail($id);
+
+        return view('pages.admin.pengumuman.read', compact('pengumuman'));
     }
 }

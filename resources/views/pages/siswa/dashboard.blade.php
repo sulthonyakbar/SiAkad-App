@@ -34,7 +34,9 @@
                                 };
                             @endphp
 
-                            <h4><span class="badge badge-{{ $badgeColor }}">{{ $statusPresensi }}</span></h4>
+                            <h4><span
+                                    class="badge badge-{{ $badgeColor }}">{{ $statusPresensi ?? 'Belum presensi' }}</span>
+                            </h4>
                         </div>
                     </div>
                 </div>
@@ -109,13 +111,18 @@
                                 <a href="#">{{ $item->created_at->diffForHumans() }}</a>
                             </div>
                             <div class="article-title">
-                                <h2><a href="#">{{ $item->judul }}</a></h2>
+                                <h2><a href="{{ route('siswa.pengumuman.read', $item->id) }}">{{ $item->judul }}</a></h2>
                             </div>
                             <p class="text-wrap">
                                 {{ Str::limit(preg_replace('/\s+/', ' ', strip_tags($item->isi)), 100, '...') }}
                             </p>
                             <div class="article-user">
-                                <img alt="image" src="{{ asset($item->guru->foto) }}">
+                                @if (!empty($item->guru->foto))
+                                    <img alt="image" src="{{ asset($item->guru->foto) }}">
+                                @else
+                                    <img alt="image" src="{{ asset('img/avatar/avatar-3.png') }}"
+                                        class="rounded-circle mr-1">
+                                @endif
                                 <div class="article-user-details">
                                     <div class="user-detail-name">
                                         <a href="#">{{ $item->guru->nama_guru ?? 'Admin' }}</a>

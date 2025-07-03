@@ -99,17 +99,22 @@
                                 <a href="#">{{ $item->created_at->diffForHumans() }}</a>
                             </div>
                             <div class="article-title">
-                                <h2><a href="#">{{ $item->judul }}</a></h2>
+                                <h2><a href="{{ route('guru.pengumuman.read', $item->id) }}">{{ $item->judul }}</a></h2>
                             </div>
                             <p>{{ \Illuminate\Support\Str::limit(strip_tags($item->isi), 100, '...') }}</p>
                             <div class="article-user">
-                                <img alt="image" src="{{ asset($item->guru->foto) }}">
-                                <div class="article-user-details">
-                                    <div class="user-detail-name">
-                                        <a href="#">{{ $item->guru->nama_guru ?? 'Admin' }}</a>
+                                @if (!empty($item->guru->foto))
+                                    <img alt="image" src="{{ asset($item->guru->foto) }}">
+                                @else
+                                    <img alt="image" src="{{ asset('img/avatar/avatar-3.png') }}"
+                                        class="rounded-circle mr-1">
+                                @endif
+                                    <div class="article-user-details">
+                                        <div class="user-detail-name">
+                                            <a href="#">{{ $item->guru->nama_guru ?? 'Admin' }}</a>
+                                        </div>
+                                        <div class="text-job">Admin</div>
                                     </div>
-                                    <div class="text-job">Admin</div>
-                                </div>
                             </div>
                         </div>
                     </article>

@@ -144,6 +144,7 @@ Route::group(['middleware' => ['role.orangtua', 'tahun.ajaran', 'semester']], fu
     Route::get('/s/dashboard', [DashboardController::class, 'dashboardSiswa'])->name('siswa.dashboard');
     Route::get('/s/profile', [SiswaController::class, 'profile'])->name('siswa.profile');
     Route::put('/s/profile', [SiswaController::class, 'update'])->name('siswa.update.profile');
+    Route::get('/s/pengumuman/{id}', [PengumumanController::class, 'readPengumuman'])->name('siswa.pengumuman.read');
 
     Route::get('/s/akun', [AuthController::class, 'editAkun'])->name('akun.edit.siswa');
     Route::put('/s/akun', [AuthController::class, 'updateAkun'])->name('akun.update.siswa');
@@ -168,6 +169,7 @@ Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], functi
     Route::get('/g/dashboard', [DashboardController::class, 'dashboardGuru'])->name('guru.dashboard');
     Route::get('/g/profile', [GuruController::class, 'profile'])->name('guru.profile');
     Route::put('/g/profile', [GuruController::class, 'updateProfile'])->name('guru.update.profile');
+    Route::get('/g/pengumuman/{id}', [PengumumanController::class, 'readPengumuman'])->name('guru.pengumuman.read');
 
     Route::get('/g/akun', [AuthController::class, 'editAkun'])->name('akun.edit.guru');
     Route::put('/g/akun', [AuthController::class, 'updateAkun'])->name('akun.update.guru');

@@ -23,6 +23,17 @@
                         {{-- <a class="btn btn-primary" href="{{ route('kartu.studi.create') }}" role="button"><i
                                 class="fa-solid fa-plus"></i></a> --}}
                     </div>
+                    <div class="form-inline ml-auto">
+                        <select class="form-control select2" name="semester_id" id="semesterFilter">
+                            <option value="">Semua Semester</option>
+                            @foreach ($semesters as $semester)
+                                <option value="{{ $semester->id }}">
+                                    {{ $semester->angkatan->tahun_ajaran ?? '-' }} - {{ $semester->nama_semester }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
@@ -31,6 +42,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Tahun Ajaran</th>
+                                    <th>Semester</th>
                                     <th>Kelas</th>
                                     <th>Jumlah Siswa</th>
                                     <th>Action</th>
@@ -76,13 +88,19 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/components-table.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
         $(document).ready(function() {
             $('#ksTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('kartu.studi.data') }}",
+                ajax: {
+                    url: "{{ route('kartu.studi.data') }}",
+                    data: function(d) {
+                        d.semester_id = $('#semesterFilter').val();
+                    }
+                },
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',
@@ -92,6 +110,10 @@
                     {
                         data: 'tahun_ajaran',
                         name: 'tahun_ajaran',
+                    },
+                    {
+                        data: 'semester',
+                        name: 'semester',
                     },
                     {
                         data: 'kelas',
@@ -115,6 +137,14 @@
                     }
                 }],
             });
+        });
+
+        $('#semesterFilter').change(function() {
+            $('#ksTable').DataTable().ajax.reload();
+        });
+
+        $(document).ready(function() {
+            $('.select2').select2();
         });
     </script>
 @endpush

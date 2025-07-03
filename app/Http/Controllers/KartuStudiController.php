@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\Semester;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 
 class KartuStudiController extends Controller
 {
@@ -17,39 +18,39 @@ class KartuStudiController extends Controller
      */
     public function index()
     {
-        return view('pages.admin.kartu_studi.index');
+        $semesters = Semester::with('angkatan')->orderByDesc('nama_semester')->get();
+        return view('pages.admin.kartu_studi.index', compact('semesters'));
     }
 
-    public function getKSData()
+    public function getKSData(Request $request)
     {
-        // $ks = KartuStudi::with('kelas')->select('kartu_studis.*')->withCount('siswa')->groupBy('kelas_id')->get();
-
-        $ks = KartuStudi::with('kelas')
+        $ks = KartuStudi::with(['kelas', 'semester.angkatan'])
             ->get()
             ->filter(function ($item) {
-                return $item->kelas !== null;
+                return $item->kelas !== null && $item->semester !== null;
             })
             ->groupBy('kelas_id')
             ->map(function ($group) {
-                $kelas = $group->first()->kelas;
+                $firstItem = $group->first();
+                $kelas = $firstItem->kelas;
+                $semester = $firstItem->semester;
+
                 return (object) [
                     'id' => $kelas->id,
-                    'tahun_ajaran' => $kelas->angkatan->tahun_ajaran ?? '-',
+                    'tahun_ajaran' => $semester->angkatan->tahun_ajaran ?? '-',
+                    'semester' => $semester->nama_semester ?? '-',
                     'nama_kelas' => $kelas->nama_kelas ?? '-',
                     'jumlah_siswa' => $group->count()
                 ];
             })
             ->values();
 
-        // $ks = KartuStudi::with('kelas')
-        // ->select('kelas_id')
-        // ->withCount('siswa')
-        // ->groupBy('kelas_id')
-        // ->get();
-
         return DataTables::of($ks)
             ->addColumn('tahun_ajaran', function ($row) {
                 return $row->tahun_ajaran ?? '-';
+            })
+            ->addColumn('semester', function ($row) {
+                return $row->semester ?? '-';
             })
             ->addColumn('kelas', function ($row) {
                 return $row->nama_kelas ?? '-';

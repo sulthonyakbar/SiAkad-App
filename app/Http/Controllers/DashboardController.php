@@ -37,7 +37,7 @@ class DashboardController extends Controller
             if (!$item->mapel || !$item->kelas) {
                 return null;
             }
-            if (str_contains($titleFormatter($item), 'Pengajar') && !$item->gurus) {
+            if (str_contains($titleFormatter($item), 'Pengajar') && !$item->guru) {
                 return null;
             }
 
@@ -61,7 +61,11 @@ class DashboardController extends Controller
 
         $jadwalCount = JadwalPelajaran::count();
 
-        $jadwal = JadwalPelajaran::with(['mapel', 'kelas', 'guru'])->get();
+        $angkatanId = session('angkatan_aktif');
+
+        $jadwal = JadwalPelajaran::whereHas('kelas', function ($query) use ($angkatanId) {
+            $query->where('angkatan_id', $angkatanId);
+        })->with(['mapel', 'kelas', 'guru'])->get();
 
         $titleFormatter = function ($item) {
             $namaGuru = $item->guru ? $item->guru->nama_guru : 'N/A';
@@ -87,8 +91,13 @@ class DashboardController extends Controller
         $jumlahMapelAmpu = 0;
 
         if ($guru) {
+            $angkatanId = session('angkatan_aktif');
+
             $jadwal = JadwalPelajaran::with(['mapel', 'kelas'])
                 ->where('guru_id', $guru->id)
+                ->whereHas('kelas', function ($query) use ($angkatanId) {
+                    $query->where('angkatan_id', $angkatanId);
+                })
                 ->get();
 
             $titleFormatter = function ($item) {
@@ -101,8 +110,6 @@ class DashboardController extends Controller
             $kelasWali = Kelas::where('guru_id', $guru->id)->first();
 
             if ($kelasWali) {
-                $angkatanId = session('angkatan_aktif');
-
                 $jumlahSiswa = Siswa::whereHas('kartuStudi', function ($query) use ($kelasWali, $angkatanId) {
                     $query->where('kelas_id', $kelasWali->id)
                         ->where('angkatan_id', $angkatanId);
@@ -131,7 +138,6 @@ class DashboardController extends Controller
 
         $angkatan = session('angkatan_aktif');
 
-        // Ambil data kelas aktif siswa berdasarkan kartu studi
         $kartuStudi = $siswa->kartuStudi()
             ->whereHas('kelas', function ($query) use ($angkatan) {
                 $query->where('angkatan_id', $angkatan);
@@ -143,14 +149,15 @@ class DashboardController extends Controller
         $kelas = $kelasAktif?->nama_kelas ?? 'Belum Ditentukan';
         $ruang = $kelasAktif?->ruang ?? '-';
 
-        $jadwal = JadwalPelajaran::with(['mapel', 'kelas', 'gurus'])
-            ->whereHas('kelas', function ($query) use ($siswa) {
-                $query->where('id', $siswa->kelas_id);
-            })
-            ->get();
+        $jadwal = collect();
+        if ($kelasAktif) {
+            $jadwal = JadwalPelajaran::with(['mapel', 'kelas', 'guru'])
+                ->where('kelas_id', $kelasAktif->id)
+                ->get();
+        }
 
         $titleFormatter = function ($item) {
-            $namaGuru = $item->gurus ? $item->gurus->nama_guru : 'N/A';
+            $namaGuru = $item->guru ? $item->guru->nama_guru : 'N/A';
             return $item->mapel->nama_mapel . ' - Kelas ' . $item->kelas->nama_kelas . ' - Pengajar ' . $namaGuru;
         };
 
