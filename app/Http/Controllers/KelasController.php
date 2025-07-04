@@ -126,16 +126,6 @@ class KelasController extends Controller
         return redirect()->route('kelas.index')->with('success', 'Kelas berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $kelas = Kelas::findOrFail($id);
-        $kelas->delete();
-        return redirect()->route('kelas.index')->with('success', 'Kelas berhasil dihapus.');
-    }
-
     public function searchGuru(Request $request): JsonResponse
     {
         $query = $request->input('q');

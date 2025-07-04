@@ -14,7 +14,7 @@ class AkunTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function testUpdateAkunValid()
+    public function testEditAkunValid()
     {
         $admin = User::factory()->create([
             'email' => 'admin@siakad-slbdwsidoarjo.com',
@@ -58,7 +58,7 @@ class AkunTest extends TestCase
         }
     }
 
-    public function testUpdateAkunInvalid()
+    public function testEditAkunInvalid()
     {
         $admin = User::factory()->create([
             'email' => 'admin@siakad-slbdwsidoarjo.com',
@@ -126,6 +126,68 @@ class AkunTest extends TestCase
             if (in_array($role, ['admin', 'guru', 'orangtua'])) {
                 $response->assertSeeText('Data Akun');
             }
+        }
+    }
+
+    public function testEditAkunValidForGuruAndSiswa()
+    {
+        $roles = [
+            'guru' => ['route' => 'akun.update.guru', 'redirect' => 'guru.dashboard'],
+            'orangtua' => ['route' => 'akun.update.siswa', 'redirect' => 'siswa.dashboard'],
+        ];
+
+        foreach ($roles as $role => $routes) {
+            $user = User::factory()->create([
+                'role' => $role,
+                'username' => $role . '_lama',
+                'email' => $role . '@example.com',
+                'password' => Hash::make('password123'),
+            ]);
+
+            $this->actingAs($user);
+
+            $response = $this->put(route($routes['route']), [
+                'username' => $role . '_baru',
+                'email' => $role . '_baru@example.com',
+                'password' => 'newpassword123',
+                'password_confirmation' => 'newpassword123',
+            ]);
+
+            $response->assertRedirect(route($routes['redirect']));
+
+            $this->assertDatabaseHas('users', [
+                'id' => $user->id,
+                'username' => $role . '_baru',
+                'email' => $role . '_baru@example.com',
+            ]);
+        }
+    }
+
+    public function testEditAkunInvalidForGuruAndSiswa()
+    {
+        $roles = [
+            'guru' => 'akun.update.guru',
+            'orangtua' => 'akun.update.siswa',
+        ];
+
+        foreach ($roles as $role => $route) {
+            $user = User::factory()->create([
+                'role' => $role,
+                'username' => $role . '_lama',
+                'email' => $role . '@example.com',
+                'password' => Hash::make('password123'),
+            ]);
+
+            $this->actingAs($user);
+
+            $response = $this->put(route($route), [
+                'username' => '',
+                'email' => 'notanemail',
+                'password' => '123',
+                'password_confirmation' => '456',
+            ]);
+
+            $response->assertSessionHasErrors(['username', 'email', 'password']);
         }
     }
 }

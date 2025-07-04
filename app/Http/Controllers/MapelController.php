@@ -85,14 +85,4 @@ class MapelController extends Controller
 
         return redirect()->route('mapel.index')->with('success', 'Mata pelajaran berhasil diperbarui.');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $mapel = MataPelajaran::findOrFail($id);
-        $mapel->delete();
-        return redirect()->route('mapel.index')->with('success', 'Mata pelajaran berhasil dihapus.');
-    }
 }

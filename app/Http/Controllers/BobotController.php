@@ -21,7 +21,6 @@ class BobotController extends Controller
     {
         $guru = auth()->user()->guru;
 
-        // Ambil mapel yang diajar oleh guru melalui jadwal
         $mapel = MataPelajaran::whereHas('jadwalPelajaran', function ($query) use ($guru) {
             $query->where('guru_id', $guru->id);
         })->with('bobotPenilaian')->get();
@@ -65,13 +64,11 @@ class BobotController extends Controller
             'bobot_uas' => 'required|numeric|min:0|max:100',
         ]);
 
-        // Pastikan total bobot = 100
         $total = $request->bobot_uh + $request->bobot_uts + $request->bobot_uas;
         if ($total != 100) {
             return back()->withErrors(['total' => 'Total bobot harus 100%.']);
         }
 
-        // Cek apakah mapel ini sudah punya bobot
         $mapel = MataPelajaran::where('id', $request->mapel_id)->first();
         if ($mapel->bobot_id) {
             return back()->withErrors(['mapel' => 'Bobot untuk mata pelajaran ini sudah ada.']);
