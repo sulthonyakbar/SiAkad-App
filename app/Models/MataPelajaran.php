@@ -13,7 +13,6 @@ class MataPelajaran extends Model
     protected $fillable = [
         'nama_mapel',
         'deskripsi',
-        'bobot_id',
     ];
 
     public function jadwalPelajaran()
@@ -23,7 +22,7 @@ class MataPelajaran extends Model
 
     public function bobotPenilaian()
     {
-        return $this->belongsTo(BobotPenilaian::class, 'bobot_id');
+        return $this->hasOne(BobotPenilaian::class, 'mapel_id');
     }
 
     public function nilai()
