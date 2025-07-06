@@ -168,7 +168,7 @@ Route::group(['middleware' => ['role.orangtua', 'tahun.ajaran', 'semester']], fu
 Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], function () {
     Route::get('/g/dashboard', [DashboardController::class, 'dashboardGuru'])->name('guru.dashboard');
     Route::get('/g/profile', [GuruController::class, 'profile'])->name('guru.profile');
-    Route::put('/g/profile', [GuruController::class, 'updateProfile'])->name('guru.update.profile');
+    Route::put('/g/profile', [GuruController::class, 'update'])->name('guru.update.profile');
     Route::get('/g/pengumuman/{id}', [PengumumanController::class, 'readPengumuman'])->name('guru.pengumuman.read');
 
     Route::get('/g/akun', [AuthController::class, 'editAkun'])->name('akun.edit.guru');

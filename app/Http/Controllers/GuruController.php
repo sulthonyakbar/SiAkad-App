@@ -216,10 +216,15 @@ class GuruController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id = null)
     {
-        $guru = Guru::findOrFail($id);
+        $auth = auth()->user();
 
+        if ($auth->role === 'guru') {
+            $guru = $auth->guru;
+        } else {
+            $guru = Guru::findOrFail($id);
+        }
         $request->validate([
             'nama_guru' => 'required|string|regex:/^[A-Za-z\s]+$/u|max:255',
             'jabatan' => 'required|string|regex:/^[A-Za-z\s]+$/u|max:255',
@@ -275,7 +280,11 @@ class GuruController extends Controller
 
         $guru->save();
 
-        return redirect()->route('pegawai.guru.index')->with('success', 'Data pegawai berhasil diperbarui.');
+        if ($auth->role === 'admin') {
+            return redirect()->route('pegawai.guru.index')->with('success', 'Data pegawai berhasil diperbarui.');
+        } else {
+            return redirect()->route('guru.dashboard')->with('success', 'Profil Anda berhasil diperbarui.');
+        }
     }
 
     /**

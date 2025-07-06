@@ -74,8 +74,8 @@ class PengumumanTest extends TestCase
         $kategori = Kategori::factory()->create();
 
         $pengumumanData = Pengumuman::factory()->make([
-            'judul' => 'Pengumuman Test',
-            'isi' => 'Ini adalah isi pengumuman test.',
+            'judul' => '',
+            'isi' => '',
             'gambar' => UploadedFile::fake()->image('foto-pengumuman.jpg'),
             'kategori_id' => $kategori->id,
             'guru_id' => $guru->id,
@@ -83,7 +83,7 @@ class PengumumanTest extends TestCase
 
         $response = $this->post(route('pengumuman.store'), $pengumumanData);
 
-        $response->assertSessionHasErrors(['gambar']);
+        $response->assertSessionHasErrors(['judul', 'isi', 'gambar']);
     }
 
     public function testEditPengumumanValid()

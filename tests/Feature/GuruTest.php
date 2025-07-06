@@ -208,6 +208,63 @@ class GuruTest extends TestCase
     //     $this->assertEquals('Nonaktif', $guru->status);
     // }
 
+    public function testUpdateProfileGuruValid()
+    {
+        $guru = Guru::factory()->withUserRole('guru')->create([
+            'nama_guru' => 'Test Update Profile Guru',
+            'NIP' => '12345678',
+        ]);
+
+        $this->actingAs($guru->user);
+
+        $updateData = [
+            'nama_guru'      => 'Guru Update Profile',
+            'jabatan'        => 'Guru Matematika',
+            'jenis_kelamin'  => 'Perempuan',
+            'NIP'            => '22222222',
+            'pangkat'        => 'III/D',
+            'NUPTK'          => '123456789012',
+            'tempat_lahir'   => 'Malang',
+            'tanggal_lahir'  => '1990-08-17',
+            'pendidikan'     => 'S2',
+            'mulai_bekerja'  => '2015-01-01',
+            'sertifikasi'    => 'Tidak',
+            'no_telp'        => '081234567890',
+            'alamat'         => 'Jl. Contoh Guru 1',
+            'foto'           => UploadedFile::fake()->image('guru-update.jpg'),
+        ];
+
+
+        $response = $this->put(route('guru.update.profile', $guru->id), $updateData);
+
+        $response->assertRedirect(route('guru.dashboard'));
+
+        $this->assertDatabaseHas('gurus', [
+            'id' => $guru->id,
+            'nama_guru' => 'Guru Update Profile',
+            'NIP' => '22222222',
+        ]);
+    }
+
+    public function testUpdateProfileGuruInvalid()
+    {
+        $guru = Guru::factory()->withUserRole('guru')->create([
+            'nama_guru' => 'Test Update Profile Guru',
+            'NIP' => '12345678',
+        ]);
+
+        $this->actingAs($guru->user);
+
+        $updateData = [
+            'nama_guru'      => '12345678',
+            'NIP'            => 'abcdefgh',
+        ];
+
+        $response = $this->put(route('guru.update.profile', $guru->id), $updateData);
+
+        $response->assertSessionHasErrors(['nama_guru', 'NIP']);
+    }
+
     public function testUnauthorizedUserCannotAccess()
     {
         $siswa = User::factory()->create([
