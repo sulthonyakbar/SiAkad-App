@@ -134,6 +134,7 @@ class PresensiController extends Controller
             'kelas_id'  => 'required|exists:kelas,id',
             'tanggal'   => 'required|date',
             'status'    => 'required|array',
+            'status.*'  => 'required|in:Hadir,Sakit,Izin,Alpa',
         ]);
 
         DB::beginTransaction();
@@ -162,7 +163,7 @@ class PresensiController extends Controller
             return redirect()->route('presensi.index')->with('success', 'Presensi berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat menyimpan presensi: ' . $e->getMessage())->withInput();
+            return redirect()->back()->withErrors('Terjadi kesalahan saat menyimpan presensi: ' . $e->getMessage())->withInput();
         }
     }
 
