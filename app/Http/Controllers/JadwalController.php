@@ -167,17 +167,6 @@ class JadwalController extends Controller
         return redirect()->route('jadwal.index')->with('success', 'Jadwal Pelajaran berhasil diperbarui');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        $jadwal = JadwalPelajaran::findOrFail($id);
-        $jadwal->delete();
-
-        return response()->json(['success' => 'Jadwal Pelajaran berhasil dihapus']);
-    }
-
     public function searchGuru(Request $request): JsonResponse
     {
         $query = $request->input('q');
