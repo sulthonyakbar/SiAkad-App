@@ -41,11 +41,17 @@ class PresensiController extends Controller
                 return Carbon::parse($row->tanggal)->translatedFormat('d F Y');
             })
             ->addColumn('aksi', function ($row) use ($semesterId) {
-                $presensiSemester = Carbon::parse($row->tanggal)->month >= 7 ? 'Ganjil' : 'Genap';
+                $angkatanId = session('angkatan_aktif');
+                $tanggal = Carbon::parse($row->tanggal);
+                $presensiSemesterTipe = $tanggal->month >= 7 ? 'Ganjil' : 'Genap';
+
+                $semesterPresensi = Semester::where('angkatan_id', $angkatanId)
+                    ->where('nama_semester', $presensiSemesterTipe)
+                    ->first();
 
                 $detailBtn = '<a href="' . route('presensi.detail', ['kelas_id' => $row->kelas_id, 'tanggal' => $row->tanggal]) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail"><i class="fa-solid fa-eye"></i></a>';
 
-                if ($semesterId !== $presensiSemester) {
+                if (!$semesterPresensi || $semesterPresensi->id != $semesterId) {
                     $editBtn = '<button class="btn btn-secondary btn-action disabled-edit" data-toggle="tooltip" title="Tidak bisa edit di luar semester saat presensi dibuat"><i class="fas fa-pencil-alt"></i></button>';
                 } else {
                     $editBtn = '<a href="' . route('presensi.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
@@ -104,20 +110,20 @@ class PresensiController extends Controller
                 return '
                     <input type="hidden" name="siswa_id[]" value="' . $row->id . '">
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="hadir" checked>
+                        <input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="Hadir" checked>
                         <label class="form-check-label">Hadir</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="izin">
+                        <input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="Izin">
                         <label class="form-check-label">Izin</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="sakit">
+                        <input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="Sakit">
                         <label class="form-check-label">Sakit</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="alfa">
-                        <label class="form-check-label">Alfa</label>
+                        <input class="form-check-input" type="radio" name="status[' . $row->id . ']" value="Alpa">
+                        <label class="form-check-label">Alpa</label>
                     </div>
                 ';
             })
@@ -131,17 +137,27 @@ class PresensiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kelas_id'  => 'required|exists:kelas,id',
             'tanggal'   => 'required|date',
             'status'    => 'required|array',
             'status.*'  => 'required|in:Hadir,Sakit,Izin,Alpa',
         ]);
 
+        $guru = auth()->user()->guru;
+        $angkatanId = session('angkatan_aktif');
+
+        $kelas = Kelas::where('guru_id', $guru->id)
+            ->where('angkatan_id', $angkatanId)
+            ->first();
+
+        if (!$kelas) {
+            return redirect()->back()->withErrors('Anda bukan wali kelas di tahun ajaran aktif.');
+        }
+
         DB::beginTransaction();
         try {
             $presensi = Presensi::firstOrCreate(
                 [
-                    'kelas_id' => $request->kelas_id,
+                    'kelas_id' => $kelas->id,
                     'tanggal'  => Carbon::parse($request->tanggal)->toDateString(),
                 ]
             );

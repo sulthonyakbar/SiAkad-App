@@ -54,6 +54,7 @@ class PresensiTest extends TestCase
         ]);
 
         $presensi = Presensi::where('kelas_id', $kelas->id)->where('tanggal', $presensiData['tanggal'])->first();
+        
         foreach ($siswaList as $siswa) {
             $this->assertDatabaseHas('detail_presensis', [
                 'presensi_id' => $presensi->id,

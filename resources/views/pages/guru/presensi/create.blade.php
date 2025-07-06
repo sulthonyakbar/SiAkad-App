@@ -26,8 +26,6 @@
                 <form action="{{ route('presensi.store') }}" method="POST">
                     @csrf
 
-                    <input type="hidden" name="kelas_id" value="{{ $kelas->id ?? '' }}">
-
                     <div class="form-group">
                         <label for="tanggal">Tanggal Presensi</label>
                         <input type="date" name="tanggal" id="tanggal" class="form-control" style="width: 250px;"
