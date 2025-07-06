@@ -19,7 +19,6 @@ class MataPelajaranFactory extends Factory
         return [
             'nama_mapel' => $this->faker->word(),
             'deskripsi' => $this->faker->sentence(),
-            'bobot_id' => null,
         ];
     }
 }

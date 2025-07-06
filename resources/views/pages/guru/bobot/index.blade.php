@@ -23,16 +23,6 @@
                         {{-- <a class="btn btn-primary" href="{{ route('aktivitas.create') }}" role="button"><i
                                 class="fa-solid fa-plus"></i></a> --}}
                     </div>
-                    {{-- <form action="{{ route('kelas.index') }}" method="GET" class="form-inline ml-auto">
-                        <div class="input-group" style="width: 320px;">
-                            <input type="text" name="search" class="form-control rounded" placeholder="Search"
-                                value="{{ $search ?? '' }}" style="height: 42px;">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary rounded" type="submit"><i
-                                        class="fas fa-search"></i></button>
-                            </div>
-                        </div>
-                    </form> --}}
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
@@ -75,8 +65,8 @@
                         searchable: false
                     },
                     {
-                        data: 'nama_mapel',
-                        name: 'nama_mapel',
+                        data: 'mapel',
+                        name: 'mapel',
                     },
                     {
                         data: 'bobot_uh',

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\MataPelajaran;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class BobotPenilaianFactory extends Factory
             'bobot_uh' => $this->faker->numberBetween(1, 100),
             'bobot_uts' => $this->faker->numberBetween(1, 100),
             'bobot_uas' => $this->faker->numberBetween(1, 100),
+            'mapel_id' => MataPelajaran::factory(),
         ];
     }
 }

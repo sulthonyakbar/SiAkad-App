@@ -29,9 +29,9 @@ class NilaiTest extends TestCase
 
         $bobot = BobotPenilaian::factory()->create([
             'mapel_id' => $mapel->id,
-            'nilai_uh' => 30,
-            'nilai_uts' => 30,
-            'nilai_uas' => 40,
+            'bobot_uh' => 30,
+            'bobot_uts' => 30,
+            'bobot_uas' => 40,
         ]);
 
         $ks = KartuStudi::factory()->create();

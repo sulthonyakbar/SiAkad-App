@@ -26,6 +26,9 @@ class BobotController extends Controller
         })->with('bobotPenilaian')->get();
 
         return datatables()->of($mapel)
+            ->addColumn('mapel', function ($row) {
+                return $row->nama_mapel ?? '-';
+            })
             ->addColumn('bobot_uh', function ($row) {
                 return $row->bobotPenilaian->bobot_uh ?? '-';
             })
@@ -69,20 +72,17 @@ class BobotController extends Controller
             return back()->withErrors(['total' => 'Total bobot harus 100%.']);
         }
 
-        $mapel = MataPelajaran::where('id', $request->mapel_id)->first();
-        if ($mapel->bobot_id) {
+        $existing = BobotPenilaian::where('mapel_id', $request->mapel_id)->first();
+        if ($existing) {
             return back()->withErrors(['mapel' => 'Bobot untuk mata pelajaran ini sudah ada.']);
         }
 
-        // Simpan bobot penilaian
-        $bobot = BobotPenilaian::create([
-            'bobot_uh' => $request->bobot_uh,
+        BobotPenilaian::create([
+            'mapel_id'  => $request->mapel_id,
+            'bobot_uh'  => $request->bobot_uh,
             'bobot_uts' => $request->bobot_uts,
             'bobot_uas' => $request->bobot_uas,
         ]);
-
-        // Update mapel dengan relasi ke bobot penilaian
-        $mapel->update(['bobot_id' => $bobot->id]);
 
         return redirect()->route('bobot.index')->with('success', 'Bobot penilaian berhasil ditambahkan.');
     }

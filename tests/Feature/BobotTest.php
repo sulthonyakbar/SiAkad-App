@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\BobotPenilaian;
 use App\Models\MataPelajaran;
+use App\Models\Guru;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -18,24 +19,20 @@ class BobotTest extends TestCase
      */
     public function testCreateBobotValid()
     {
-        $guru = User::factory()->create([
-            'email' => 'guru@siakad-slbdwsidoarjo.com',
-            'username' => 'guru',
-            'password' => Hash::make('admin123'),
-            'role' => 'guru'
+        $guru = Guru::factory()->withUserRole('guru')->create([
+            'nama_guru' => 'Test Guru',
+            'NIP' => '12345678',
         ]);
 
-        $this->actingAs($guru);
+        $this->actingAs($guru->user);
 
-        $mapel = MataPelajaran::factory()->create([
-            'bobot_id' => null,
-        ]);
+        $mapel = MataPelajaran::factory()->create();
 
         $bobotData = BobotPenilaian::factory()->make([
-            'mapel_id' => $mapel->id,
             'bobot_uh' => '20',
             'bobot_uts' => '30',
             'bobot_uas' => '50',
+            'mapel_id' => $mapel->id,
         ])->toArray();
 
         $response = $this->post(route('bobot.store'), $bobotData);
@@ -46,26 +43,20 @@ class BobotTest extends TestCase
             'bobot_uh' => 20,
             'bobot_uts' => 30,
             'bobot_uas' => 50,
-        ]);
-        $this->assertDatabaseHas('mata_pelajarans', [
-            'id' => $mapel->id,
+            'mapel_id' => $mapel->id,
         ]);
     }
 
     public function testCreateBobotInvalid()
     {
-        $guru = User::factory()->create([
-            'email' => 'guru@siakad-slbdwsidoarjo.com',
-            'username' => 'guru',
-            'password' => Hash::make('admin123'),
-            'role' => 'guru'
+        $guru = Guru::factory()->withUserRole('guru')->create([
+            'nama_guru' => 'Test Guru',
+            'NIP' => '12345678',
         ]);
 
-        $this->actingAs($guru);
+        $this->actingAs($guru->user);
 
-        $mapel = MataPelajaran::factory()->create([
-            'bobot_id' => null,
-        ]);
+        $mapel = MataPelajaran::factory()->create();
 
         $bobotData = BobotPenilaian::factory()->make([
             'mapel_id' => $mapel->id,
@@ -81,14 +72,13 @@ class BobotTest extends TestCase
 
     public function testEditBobotValid()
     {
-        $guru = User::factory()->create([
-            'email' => 'guru@siakad-slbdwsidoarjo.com',
-            'username' => 'guru',
-            'password' => Hash::make('admin123'),
-            'role' => 'guru'
+
+        $guru = Guru::factory()->withUserRole('guru')->create([
+            'nama_guru' => 'Test Guru',
+            'NIP' => '12345678',
         ]);
 
-        $this->actingAs($guru);
+        $this->actingAs($guru->user);
 
         $bobot = BobotPenilaian::factory()->create([
             'bobot_uh' => '40',
@@ -116,14 +106,13 @@ class BobotTest extends TestCase
 
     public function testEditMapelInvalid()
     {
-         $guru = User::factory()->create([
-            'email' => 'guru@siakad-slbdwsidoarjo.com',
-            'username' => 'guru',
-            'password' => Hash::make('admin123'),
-            'role' => 'guru'
+
+        $guru = Guru::factory()->withUserRole('guru')->create([
+            'nama_guru' => 'Test Guru',
+            'NIP' => '12345678',
         ]);
 
-        $this->actingAs($guru);
+        $this->actingAs($guru->user);
 
         $bobot = BobotPenilaian::factory()->create([
             'bobot_uh' => '40',
@@ -144,20 +133,17 @@ class BobotTest extends TestCase
 
     public function testViewMapelList()
     {
-        $guru = User::factory()->create([
-            'email' => 'guru@siakad-slbdwsidoarjo.com',
-            'username' => 'guru',
-            'password' => Hash::make('admin123'),
-            'role' => 'guru'
+        $guru = Guru::factory()->withUserRole('guru')->create([
+            'nama_guru' => 'Test Guru',
+            'NIP' => '12345678',
         ]);
 
-        $this->actingAs($guru);
+        $this->actingAs($guru->user);
 
-        $mapel = MataPelajaran::factory()->create([
-            'bobot_id' => null,
-        ]);
+        $mapel = MataPelajaran::factory()->create();
 
         BobotPenilaian::factory()->create([
+            'mapel_id' => $mapel->id,
             'bobot_uh' => 20,
             'bobot_uts' => 30,
             'bobot_uas' => 50,

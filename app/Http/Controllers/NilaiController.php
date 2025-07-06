@@ -8,7 +8,6 @@ use App\Models\JadwalPelajaran;
 use App\Models\Kelas;
 use App\Models\Nilai;
 use App\Models\Siswa;
-use App\Models\BobotPenilaian;
 use App\Models\MataPelajaran;
 use App\Models\Semester;
 use Yajra\DataTables\Facades\DataTables;
