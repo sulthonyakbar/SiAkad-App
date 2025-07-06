@@ -16,6 +16,8 @@ return new class extends Migration
             $table->integer('bobot_uh');
             $table->integer('bobot_uts');
             $table->integer('bobot_uas');
+            $table->uuid('mapel_id');
+            $table->foreign('mapel_id')->references('id')->on('mata_pelajarans')->onDelete('cascade');
             $table->timestamps();
         });
     }

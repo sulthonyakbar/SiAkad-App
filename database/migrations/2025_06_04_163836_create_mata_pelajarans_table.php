@@ -15,8 +15,6 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('nama_mapel');
             $table->text('deskripsi')->nullable();
-            $table->uuid('bobot_id')->nullable();
-            $table->foreign('bobot_id')->references('id')->on('bobot_penilaians')->onDelete('cascade');;
             $table->timestamps();
         });
     }
