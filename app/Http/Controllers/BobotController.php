@@ -39,8 +39,14 @@ class BobotController extends Controller
                 return $row->bobotPenilaian->bobot_uas ?? '-';
             })
             ->addColumn('aksi', function ($row) {
-                return '
-                <a href="' . route('bobot.edit', $row->bobotPenilaian->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                if ($row->bobotPenilaian) {
+                    return '
+            <a href="' . route('bobot.edit', $row->bobotPenilaian->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit">
+                <i class="fas fa-pencil-alt"></i>
+            </a>';
+                } else {
+                    return '<span class="badge badge-secondary">Belum Diatur</span>';
+                }
             })
             ->rawColumns(['aksi'])
             ->make(true);
