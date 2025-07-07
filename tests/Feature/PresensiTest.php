@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Angkatan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Models\User;
@@ -28,14 +29,18 @@ class PresensiTest extends TestCase
 
         $this->actingAs($guru->user);
 
+        $angkatan = Angkatan::factory()->create([
+            'tahun_ajaran' => '2025/2026',
+        ]);
+
         $kelas = Kelas::factory()->create([
             'guru_id' => $guru->id,
+            'angkatan_id' => $angkatan->id,
         ]);
 
         $siswaList = Siswa::factory()->count(3)->create();
 
         $presensiData = [
-            'kelas_id' => $kelas->id,
             'tanggal'  => now()->toDateString(),
             'status'   => [],
         ];
@@ -54,7 +59,7 @@ class PresensiTest extends TestCase
         ]);
 
         $presensi = Presensi::where('kelas_id', $kelas->id)->where('tanggal', $presensiData['tanggal'])->first();
-        
+
         foreach ($siswaList as $siswa) {
             $this->assertDatabaseHas('detail_presensis', [
                 'presensi_id' => $presensi->id,
@@ -73,15 +78,22 @@ class PresensiTest extends TestCase
 
         $this->actingAs($guru->user);
 
+        $angkatan = Angkatan::factory()->create();
+        $this->withSession(['angkatan_aktif' => $angkatan->id]);
+
+        Kelas::factory()->create([
+            'guru_id' => $guru->id,
+            'angkatan_id' => $angkatan->id,
+        ]);
+
         $presensiData = [
-            'kelas_id' => null,
             'tanggal'  => 'bukan-tanggal',
             'status'   => [],
         ];
 
         $response = $this->post(route('presensi.store'), $presensiData);
 
-        $response->assertSessionHasErrors(['kelas_id', 'tanggal', 'status']);
+        $response->assertSessionHasErrors(['tanggal', 'status']);
     }
 
     public function testEditPresensiValid()

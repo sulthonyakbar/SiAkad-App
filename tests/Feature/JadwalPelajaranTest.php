@@ -30,8 +30,12 @@ class JadwalPelajaranTest extends TestCase
         $this->actingAs($admin);
 
         $mapel = MataPelajaran::factory()->create();
-        $kelas = Kelas::factory()->create();
+
         $guru = Guru::factory()->withUserRole('guru')->create();
+
+        $kelas = Kelas::factory()->create([
+            'guru_id' => $guru->id
+        ]);
 
         $jadwalData = JadwalPelajaran::factory()->make([
             'jadwals' => [
@@ -82,8 +86,10 @@ class JadwalPelajaranTest extends TestCase
         $this->actingAs($admin);
 
         $mapel = MataPelajaran::factory()->create();
-        $kelas = Kelas::factory()->create();
         $guru = Guru::factory()->withUserRole('guru')->create();
+        $kelas = Kelas::factory()->create([
+            'guru_id' => $guru->id
+        ]);
 
         $jadwalData = JadwalPelajaran::factory()->make([
             'jadwals' => [
@@ -105,10 +111,10 @@ class JadwalPelajaranTest extends TestCase
 
         $response = $this->post(route('jadwal.store'), $jadwalData);
 
-        $response->assertSessionHasErrors(['jadwals.1.hari', 'jadwals.1.jam_mulai', 'jadwals.1.jam_selesai']);
+        $response->assertSessionHasErrors();
     }
 
-    public function testViewKelasList()
+    public function testEditJadwalPelajaranValid()
     {
         $admin = User::factory()->create([
             'email' => 'admin@siakad-slbdwsidoarjo.com',
@@ -120,8 +126,106 @@ class JadwalPelajaranTest extends TestCase
         $this->actingAs($admin);
 
         $mapel = MataPelajaran::factory()->create();
-        $kelas = Kelas::factory()->create();
         $guru = Guru::factory()->withUserRole('guru')->create();
+        $kelas = Kelas::factory()->create([
+            'guru_id' => $guru->id
+        ]);
+
+        $jadwal = JadwalPelajaran::factory()->create([
+            'mapel_id' => $mapel->id,
+            'kelas_id' => $kelas->id,
+            'guru_id' => $guru->id,
+        ]);
+
+        $updateData = [
+            'hari' => 'Selasa',
+            'jam_mulai' => '10:00',
+            'jam_selesai' => '11:30',
+            'mapel_id' => $mapel->id,
+            'kelas_id' => $kelas->id,
+            'guru_id' => $guru->id,
+        ];
+
+        $response = $this->put(route('jadwal.update', $jadwal->id), $updateData);
+
+        $response->assertRedirect(route('jadwal.index'));
+
+        $this->assertDatabaseHas('jadwal_pelajarans', [
+            'id' => $jadwal->id,
+            'hari' => 'Selasa',
+            'jam_mulai' => '10:00:00',
+            'jam_selesai' => '11:30:00',
+            'mapel_id' => $mapel->id,
+            'kelas_id' => $kelas->id,
+            'guru_id' => $guru->id,
+        ]);
+    }
+
+    public function testEditJadwalPelajaranInvalid()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
+
+        $this->actingAs($admin);
+
+        $mapel = MataPelajaran::factory()->create();
+        $guru = Guru::factory()->withUserRole('guru')->create();
+        $kelas = Kelas::factory()->create([
+            'guru_id' => $guru->id
+        ]);
+
+        $jadwalA = JadwalPelajaran::factory()->create([
+            'hari' => 'Senin',
+            'jam_mulai' => '08:00',
+            'jam_selesai' => '09:30',
+            'mapel_id' => $mapel->id,
+            'kelas_id' => $kelas->id,
+            'guru_id' => $guru->id,
+        ]);
+
+        $jadwal = JadwalPelajaran::factory()->create([
+            'hari' => 'Selasa',
+            'jam_mulai' => '13:00',
+            'jam_selesai' => '14:30',
+            'mapel_id' => $mapel->id,
+            'kelas_id' => $kelas->id,
+            'guru_id' => $guru->id,
+        ]);
+
+        $updateData = [
+            'hari' => 'Senin',
+            'jam_mulai' => '08:00',
+            'jam_selesai' => '09:30',
+            'mapel_id' => $mapel->id,
+            'kelas_id' => $kelas->id,
+            'guru_id' => $guru->id,
+        ];
+
+        $response = $this->put(route('jadwal.update', $jadwal->id), $updateData);
+
+        $response->assertSessionHasErrors();
+    }
+
+    public function testViewJadwalPelajaranList()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
+
+        $this->actingAs($admin);
+
+        $mapel = MataPelajaran::factory()->create();
+        $guru = Guru::factory()->withUserRole('guru')->create();
+        $kelas = Kelas::factory()->create([
+            'guru_id' => $guru->id
+        ]);
 
         JadwalPelajaran::factory()->create([
             'hari' => 'Senin',

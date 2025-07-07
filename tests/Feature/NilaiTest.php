@@ -2,10 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Models\Angkatan;
 use App\Models\BobotPenilaian;
 use App\Models\Guru;
 use App\Models\KartuStudi;
 use App\Models\MataPelajaran;
+use App\Models\Kelas;
+use App\Models\Siswa;
+use App\Models\Semester;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -25,6 +29,26 @@ class NilaiTest extends TestCase
 
         $this->actingAs($guru->user);
 
+        $kelas = Kelas::factory()->create([
+            'guru_id' => $guru->id,
+        ]);
+
+        $angkatan = Angkatan::factory()->create();
+
+        $siswa = Siswa::factory()->create([
+            'angkatan_id' => $angkatan->id,
+        ]);
+
+        $semester = Semester::factory()->create([
+            'angkatan_id' => $angkatan->id,
+        ]);
+
+        $ks = KartuStudi::factory()->create([
+            'siswa_id' => $siswa->id,
+            'kelas_id' => $kelas->id,
+            'semester_id' => $semester->id,
+        ]);
+
         $mapel = MataPelajaran::factory()->create();
 
         $bobot = BobotPenilaian::factory()->create([
@@ -33,8 +57,6 @@ class NilaiTest extends TestCase
             'bobot_uts' => 30,
             'bobot_uas' => 40,
         ]);
-
-        $ks = KartuStudi::factory()->create();
 
         $nilaiData = [
             'ks_id' => $ks->id,

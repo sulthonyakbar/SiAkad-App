@@ -80,8 +80,8 @@ class JadwalController extends Controller
 
         foreach ($request->jadwals as $jadwal) {
             $exists = JadwalPelajaran::whereHas('kelas', function ($query) use ($angkatanId) {
-                    $query->where('angkatan_id', $angkatanId);
-                })
+                $query->where('angkatan_id', $angkatanId);
+            })
                 ->where('hari', $jadwal['hari'])
                 ->where('jam_mulai', '<', $jadwal['jam_selesai'])
                 ->where('jam_selesai', '>', $jadwal['jam_mulai'])
@@ -146,12 +146,15 @@ class JadwalController extends Controller
 
         $jadwal = JadwalPelajaran::findOrFail($id);
 
+        $angkatanId = Kelas::findOrFail($request->kelas_id)->angkatan_id;
+
         $exists = JadwalPelajaran::where('id', '!=', $id)
-            ->where('hari', $request->hari)
-            ->where(function ($query) use ($request) {
-                $query->where('jam_mulai', '<', $request->jam_selesai)
-                    ->where('jam_selesai', '>', $request->jam_mulai);
+            ->whereHas('kelas', function ($query) use ($angkatanId) {
+                $query->where('angkatan_id', $angkatanId);
             })
+            ->where('hari', $request->hari)
+            ->where('jam_mulai', '<', $request->jam_selesai)
+            ->where('jam_selesai', '>', $request->jam_mulai)
             ->where(function ($query) use ($request) {
                 $query->where('kelas_id', $request->kelas_id)
                     ->orWhere('guru_id', $request->guru_id);
@@ -159,7 +162,9 @@ class JadwalController extends Controller
             ->exists();
 
         if ($exists) {
-            return back()->withErrors(['jadwal' => 'Terdapat jadwal bentrok untuk guru atau kelas pada waktu yang sama.'])->withInput();
+            return back()->withErrors([
+                'jadwal' => 'Terdapat jadwal bentrok untuk guru atau kelas pada waktu yang sama di tahun ajaran ini.'
+            ])->withInput();
         }
 
         $jadwal->update($request->all());
