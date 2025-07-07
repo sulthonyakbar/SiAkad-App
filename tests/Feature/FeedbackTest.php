@@ -112,7 +112,7 @@ class FeedbackTest extends TestCase
             'pesan' => 'Feedback yang telah diperbarui',
         ];
 
-        $response = $this->put(route('feedback.update', $feedback->id), $feedbackData);
+        $response = $this->put(route('feedback.update', $aktivitas->id), $feedbackData);
 
         $response->assertRedirect(route('feedback.index'));
 
@@ -210,7 +210,7 @@ class FeedbackTest extends TestCase
             'feedback_id' => $feedback->id,
         ]);
 
-        $response = $this->get(route('feedback.detail', $feedback->id));
+        $response = $this->get(route('feedback.detail', $aktivitas->id));
 
         $response->assertSeeText('Detail Data Feedback Aktivitas Harian Siswa');
     }
