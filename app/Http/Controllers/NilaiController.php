@@ -114,14 +114,14 @@ class NilaiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kartu_studi_id' => 'required|exists:kartu_studis,id',
+            'ks_id' => 'required|exists:kartu_studis,id',
             'nilai'          => 'required|array',
             'nilai.*.uh'     => 'required|numeric|min:0|max:100',
             'nilai.*.uts'    => 'required|numeric|min:0|max:100',
             'nilai.*.uas'    => 'required|numeric|min:0|max:100',
         ]);
 
-        $kartuStudiId = $request->kartu_studi_id;
+        $kartuStudiId = $request->ks_id;
 
         foreach ($request->nilai as $mapel_id => $nilaiData) {
 
@@ -140,7 +140,6 @@ class NilaiController extends Controller
 
             Nilai::updateOrCreate(
                 [
-                    // Kunci untuk mencari: apakah nilai untuk mapel dan kartu studi ini sudah ada?
                     'ks_id'    => $kartuStudiId,
                     'mapel_id' => $mapel_id,
                 ],
@@ -198,7 +197,6 @@ class NilaiController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            // Tidak perlu validasi kartu_studi_id karena kita sudah dapat dari URL
             'nilai'          => 'required|array',
             'nilai.*.uh'     => 'required|numeric|min:0|max:100',
             'nilai.*.uts'    => 'required|numeric|min:0|max:100',

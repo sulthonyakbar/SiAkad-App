@@ -27,7 +27,7 @@
                 <form action="{{ route('nilai.store') }}" method="POST">
                     @csrf
 
-                    <input type="hidden" name="kartu_studi_id" value="{{ $kartuStudi->id }}">
+                    <input type="hidden" name="ks_id" value="{{ $kartuStudi->id }}">
 
                     <table class="table table-bordered">
                         <thead>

@@ -24,7 +24,7 @@
                             <h4>Wali Kelas</h4>
                         </div>
                         <div class="card-body">
-                            {{ $kelasWali->nama_kelas ?? 'Bukan Wali Kelas' }}
+                            {{ $kelasWali->nama_kelas . ' - Ruang ' . $kelasWali->ruang ?? 'Bukan Wali Kelas' }}
                         </div>
                     </div>
                 </div>
