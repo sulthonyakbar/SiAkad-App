@@ -199,8 +199,15 @@ class KartuStudiTest extends TestCase
 
         $guru = Guru::factory()->withUserRole('guru')->create();
 
-        $kelasA = Kelas::factory()->create(['angkatan_id' => $angkatan->id, 'guru_id' => $guru->id]);
-        $kelasB = Kelas::factory()->create(['angkatan_id' => $angkatan->id, 'guru_id' => $guru->id]);
+        $kelasA = Kelas::factory()->create([
+            'angkatan_id' => $angkatan->id,
+            'guru_id' => $guru->id
+        ]);
+
+        $kelasB = Kelas::factory()->create([
+            'angkatan_id' => $angkatan->id,
+            'guru_id' => $guru->id
+        ]);
 
         $siswaTerdaftar = Siswa::factory()->create();
         $siswaBaru = Siswa::factory()->create();

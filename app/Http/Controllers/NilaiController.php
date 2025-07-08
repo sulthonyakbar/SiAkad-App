@@ -25,21 +25,21 @@ class NilaiController extends Controller
     public function getNilaiData()
     {
         $guru = auth()->user()->guru;
+        $angkatanId = session('angkatan_aktif');
+        $semesterId = session('semester_aktif');
 
-        if ($guru) {
-            $kelas = Kelas::where('guru_id', $guru->id)->first();
+        $kelasIds = Kelas::where('guru_id', $guru->id)
+            ->where('angkatan_id', $angkatanId)
+            ->pluck('id');
 
-            if ($kelas) {
-                $angkatanId = session('angkatan_aktif');
-
-                $siswaList = Siswa::whereHas('kartuStudi', function ($query) use ($kelas, $angkatanId) {
-                    $query->whereHas('kelas', function ($subQuery) use ($kelas, $angkatanId) {
-                        $subQuery->where('id', $kelas->id)
-                            ->where('angkatan_id', $angkatanId);
-                    });
-                })->get();
-            }
-        }
+        $siswaList = Siswa::whereHas('kartuStudi', function ($query) use ($kelasIds, $semesterId) {
+            $query->whereIn('kelas_id', $kelasIds)
+                ->where('semester_id', $semesterId);
+        })
+            ->with(['kartuStudi' => function ($q) use ($semesterId) {
+                $q->where('semester_id', $semesterId)->with('kelas');
+            }])
+            ->get();
 
         return DataTables::of($siswaList)
             ->addColumn('NISN', function ($row) {
@@ -61,11 +61,26 @@ class NilaiController extends Controller
                     ->where('semester_id', $semesterId)
                     ->first();
 
-                return '
-                <a href="' . route('nilai.detail', $kartuStudi->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
-                    <i class="fa-solid fa-eye"></i>
-                </a>
-                <a href="' . route('nilai.edit', $kartuStudi->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
+                if (!$kartuStudi) {
+                    return '-';
+                }
+
+                $adaNilai = \App\Models\Nilai::where('ks_id', $kartuStudi->id)->exists();
+
+                $detailBtn = '
+                    <a href="' . route('nilai.detail', $kartuStudi->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>';
+
+                $editBtn = $adaNilai
+                    ? '<a href="' . route('nilai.edit', $kartuStudi->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit">
+                        <i class="fas fa-pencil-alt"></i>
+                    </a>'
+                    : '<button class="btn btn-warning btn-action" title="Belum ada nilai" disabled>
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>';
+
+                return $detailBtn . ' ' . $editBtn;
             })
             ->rawColumns(['aksi_nilai', 'aksi'])
             ->make(true);
@@ -77,31 +92,31 @@ class NilaiController extends Controller
     public function create($id)
     {
         $guru = auth()->user()->guru;
-
         $siswa = Siswa::findOrFail($id);
 
-        // Cek kelas yang diajar guru
-        $kelas = Kelas::where('guru_id', $guru->id)->first();
+        $kelasList = Kelas::where('guru_id', $guru->id)->pluck('id');
 
-        if (!$kelas) {
+        if ($kelasList->isEmpty()) {
             return back()->withErrors(['kelas' => 'Guru tidak mengajar di kelas manapun.']);
         }
 
         $semesterId = session('semester_aktif');
+        $angkatanId = session('angkatan_aktif');
 
-        // Ambil kartu studi siswa untuk semester dan kelas ini
         $kartuStudi = KartuStudi::where('siswa_id', $id)
-            ->where('kelas_id', $kelas->id)
+            ->whereIn('kelas_id', $kelasList)
             ->where('semester_id', $semesterId)
+            ->whereHas('semester', function ($query) use ($angkatanId) {
+                $query->where('angkatan_id', $angkatanId);
+            })
             ->first();
 
         if (!$kartuStudi) {
-            return back()->with('error', 'Siswa belum terdaftar di kelas Anda pada semester aktif ini.');
+            return back()->withErrors(['kartu_studi' => 'Siswa belum terdaftar di kelas Anda pada semester dan tahun ajaran aktif ini.']);
         }
 
-        // Ambil semua mapel yg diajar guru di kelas ini (misal berdasarkan jadwal atau relasi khusus)
-        $mapels = MataPelajaran::whereHas('jadwalPelajaran', function ($query) use ($kelas, $guru) {
-            $query->where('kelas_id', $kelas->id)
+        $mapels = MataPelajaran::whereHas('jadwalPelajaran', function ($query) use ($kelasList, $guru) {
+            $query->whereIn('kelas_id', $kelasList)
                 ->where('guru_id', $guru->id);
         })->with('bobotPenilaian')->get();
 
