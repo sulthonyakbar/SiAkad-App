@@ -182,31 +182,31 @@ class GuruTest extends TestCase
         $response->assertSeeText('Detail Data Guru');
     }
 
-    // public function testChangeStatusGuru()
-    // {
-    //      $admin = User::factory()->create([
-    //         'email' => 'admin@siakad-slbdwsidoarjo.com',
-    //         'username' => 'admin',
-    //         'password' => Hash::make('admin123'),
-    //         'role' => 'admin'
-    //     ]);
+    public function testChangeStatusGuru()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
 
-    //     $this->actingAs($admin);
+        $this->actingAs($admin);
 
-    //     $guru = Guru::factory()->create([
-    //         'nama_guru' => 'Test Status Guru',
-    //         'NIP' => '12345678',
-    //         'status' => 'Aktif',
-    //     ]);
+        $guru = Guru::factory()->withUserRole('guru')->create([
+            'status' => 'Aktif',
+        ]);
 
-    //     $response = $this->put(route('pegawai.status', $guru->id));
+        $response = $this->patch(route('pegawai.status', ['id' => $guru->id, 'status' => 'Nonaktif']));
 
-    //     $response->assertRedirect(route('pegawai.guru.index'));
+        $response->assertRedirect();
 
-    //     $guru->refresh();
+        $response->assertSessionHas('success', 'Status pegawai berhasil diubah.');
 
-    //     $this->assertEquals('Nonaktif', $guru->status);
-    // }
+        $guru->refresh();
+
+        $this->assertEquals('Nonaktif', $guru->status);
+    }
 
     public function testUpdateProfileGuruValid()
     {

@@ -134,16 +134,31 @@
                 showCancelButton: true,
                 confirmButtonText: "Ya, hapus!",
                 cancelButtonText: "Batal",
-                customClass: {
-                    confirmButton: "btn btn-danger",
-                    cancelButton: "btn btn-secondary"
-                }
+                confirmButtonColor: '#DC4C64',
+                cancelButtonColor: '#9FA6B2',
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById(formId).submit();
                 }
             });
         }
+
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            Swal.fire({
+                title: 'Apakah Anda yakin ingin logout?',
+                text: "Sesi Anda akan berakhir!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#DC4C64',
+                cancelButtonColor: '#9FA6B2',
+                confirmButtonText: 'Ya, logout!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logoutForm').submit();
+                }
+            });
+        });
 
         document.addEventListener("DOMContentLoaded", function() {
             const requiredInputs = document.querySelectorAll(

@@ -250,6 +250,31 @@ class SiswaTest extends TestCase
         $response->assertSeeText('Detail Data Siswa');
     }
 
+    public function testChangeStatusSiswa()
+    {
+        $admin = User::factory()->create([
+            'email' => 'admin@siakad-slbdwsidoarjo.com',
+            'username' => 'admin',
+            'password' => Hash::make('admin123'),
+            'role' => 'admin'
+        ]);
+
+        $this->actingAs($admin);
+
+        $siswa = Siswa::factory()->create([
+            'status' => 'Aktif',
+        ]);
+
+        $response = $this->patch(route('siswa.status', ['id' => $siswa->id, 'status' => 'Nonaktif']));
+
+        $response->assertRedirect();
+
+        $response->assertSessionHas('success', 'Status siswa berhasil diubah menjadi Nonaktif.');
+
+        $siswa->refresh();
+        $this->assertEquals('Nonaktif', $siswa->status);
+    }
+
     public function testUnauthorizedUserCannotAccess()
     {
         $siswa = User::factory()->create([

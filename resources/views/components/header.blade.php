@@ -125,45 +125,47 @@
         <li class="dropdown">
             <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                 @if (auth()->user()->role === 'orangtua' && auth()->user()->siswa->foto)
-                <img alt="Foto Profile" src="{{ asset(Auth::user()->siswa->foto) }}" class="rounded-circle mr-1"
-                    style="max-width: 30px; max-height: 35px;">
-                @elseif (auth()->user()->role === 'guru' && auth()->user()->guru->foto || auth()->user()->role === 'admin' && auth()->user()->guru->foto)
-                <img alt="Foto Profile" src="{{ asset(Auth::user()->guru->foto) }}" class="rounded-circle mr-1"
-                    style="max-width: 30px; max-height: 35px;">
+                    <img alt="Foto Profile" src="{{ asset(Auth::user()->siswa->foto) }}" class="rounded-circle mr-1"
+                        style="max-width: 30px; max-height: 35px;">
+                @elseif (
+                    (auth()->user()->role === 'guru' && auth()->user()->guru->foto) ||
+                        (auth()->user()->role === 'admin' && auth()->user()->guru->foto))
+                    <img alt="Foto Profile" src="{{ asset(Auth::user()->guru->foto) }}" class="rounded-circle mr-1"
+                        style="max-width: 30px; max-height: 35px;">
                 @else
-                <img alt="image" src="{{ asset('img/avatar/avatar-3.png') }}" class="rounded-circle mr-1"
-                    style="max-width: 30px; max-height: 35px;">
+                    <img alt="image" src="{{ asset('img/avatar/avatar-3.png') }}" class="rounded-circle mr-1"
+                        style="max-width: 30px; max-height: 35px;">
                 @endif
                 @if (auth()->user()->role === 'admin' || auth()->user()->role === 'guru')
-                <div class="d-sm-none d-lg-inline-block">{{ Auth::user()->guru->nama_guru }}</div>
+                    <div class="d-sm-none d-lg-inline-block">{{ Auth::user()->guru->nama_guru }}</div>
                 @else
-                <div class="d-sm-none d-lg-inline-block">{{ Auth::user()->siswa->nama_siswa }}</div>
+                    <div class="d-sm-none d-lg-inline-block">{{ Auth::user()->siswa->nama_siswa }}</div>
                 @endif
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 @if (auth()->user()->role === 'orangtua')
-                <form action="{{ route('akun.edit.siswa') }}" method="GET">
-                    <button type="submit" class="dropdown-item">
-                        <i class="fas fa-cog mr-2"></i> Pengaturan Akun
-                    </button>
-                </form>
+                    <form action="{{ route('akun.edit.siswa') }}" method="GET">
+                        <button type="submit" class="dropdown-item">
+                            <i class="fas fa-cog mr-2"></i> Pengaturan Akun
+                        </button>
+                    </form>
                 @elseif (auth()->user()->role === 'guru')
-                <form action="{{ route('guru.profile') }}" method="GET">
-                    <button type="submit" class="dropdown-item">
-                        <i class="fas fa-user mr-2"></i> Profile
-                    </button>
-                </form>
-                <form action="{{ route('akun.edit.guru') }}" method="GET">
-                    <button type="submit" class="dropdown-item">
-                        <i class="fas fa-cog mr-2"></i> Pengaturan Akun
-                    </button>
-                </form>
+                    <form action="{{ route('guru.profile') }}" method="GET">
+                        <button type="submit" class="dropdown-item">
+                            <i class="fas fa-user mr-2"></i> Profile
+                        </button>
+                    </form>
+                    <form action="{{ route('akun.edit.guru') }}" method="GET">
+                        <button type="submit" class="dropdown-item">
+                            <i class="fas fa-cog mr-2"></i> Pengaturan Akun
+                        </button>
+                    </form>
                 @endif
 
-                <form action="{{ route('logout') }}" method="POST">
+                <form id="logoutForm" action="{{ route('logout') }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="dropdown-item text-danger">
+                    <button type="button" class="dropdown-item text-danger" id="logoutBtn">
                         <i class="fas fa-sign-out-alt mr-2"></i> Logout
                     </button>
                 </form>
