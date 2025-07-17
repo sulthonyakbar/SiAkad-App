@@ -154,8 +154,6 @@ class AuthTest extends TestCase
 
     // public function testRedirectToLoginIfNotAuthenticated()
     // {
-    //     // $this->withoutMiddleware();
-
     //     $protectedRoutes = [
     //         route('admin.dashboard'),
     //         route('guru.dashboard'),
