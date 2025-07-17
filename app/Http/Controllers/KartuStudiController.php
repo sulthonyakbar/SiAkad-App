@@ -24,7 +24,12 @@ class KartuStudiController extends Controller
 
     public function getKSData(Request $request)
     {
+        $semesterId = $request->semester_id;
+
         $ks = KartuStudi::with(['kelas', 'semester.angkatan'])
+            ->when($semesterId, function ($query) use ($semesterId) {
+                $query->where('semester_id', $semesterId);
+            })
             ->get()
             ->filter(function ($item) {
                 return $item->kelas !== null && $item->semester !== null;
@@ -44,7 +49,7 @@ class KartuStudiController extends Controller
                 ];
             })
             ->values();
-
+            
         return DataTables::of($ks)
             ->addColumn('tahun_ajaran', function ($row) {
                 return $row->tahun_ajaran ?? '-';

@@ -52,31 +52,6 @@
                     </div>
                 </div>
 
-                {{-- <div class="card-footer text-right">
-                    <nav class="d-inline-block">
-                        <ul class="pagination mb-0">
-                            <!-- Tombol Sebelumnya -->
-                            <li class="page-item {{ $kelas->currentPage() <= 1 ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $kelas->previousPageUrl() ?? '#' }}" tabindex="-1"><i
-                                        class="fas fa-chevron-left"></i></a>
-                            </li>
-
-                            <!-- Halaman-halaman -->
-                            @for ($i = 1; $i <= $kelas->lastPage(); $i++)
-                                <li class="page-item {{ $i === $kelas->currentPage() ? 'active' : '' }}">
-                                    <a class="page-link" href="?page={{ $i }}">{{ $i }} <span
-                                            class="sr-only">(current)</span></a>
-                                </li>
-                            @endfor
-
-                            <!-- Tombol Berikutnya -->
-                            <li class="page-item {{ $kelas->currentPage() >= $kelas->lastPage() ? 'disabled' : '' }}">
-                                <a class="page-link" href="{{ $kelas->nextPageUrl() ?? '#' }}"><i
-                                        class="fas fa-chevron-right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div> --}}
             </div>
         </div>
     </section>

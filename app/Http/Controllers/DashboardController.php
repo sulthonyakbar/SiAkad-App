@@ -107,7 +107,9 @@ class DashboardController extends Controller
 
             $jumlahMapelAmpu = $jadwal->pluck('mapel_id')->unique()->count();
 
-            $kelasWali = Kelas::where('guru_id', $guru->id)->first();
+            $kelasWali = Kelas::where('guru_id', $guru->id)
+                ->where('angkatan_id', $angkatanId)
+                ->first();
 
             if ($kelasWali) {
                 $jumlahSiswa = Siswa::whereHas('kartuStudi', function ($query) use ($kelasWali, $angkatanId) {
