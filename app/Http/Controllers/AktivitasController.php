@@ -180,16 +180,15 @@ class AktivitasController extends Controller
         $siswaList = collect();
 
         if ($guru) {
-            $kelas = Kelas::where('guru_id', $guru->id)->first();
+            $angkatanId = session('angkatan_aktif');
+
+            $kelas = Kelas::where('guru_id', $guru->id)
+                ->where('angkatan_id', $angkatanId)
+                ->first();
 
             if ($kelas) {
-                $angkatanId = session('angkatan_aktif');
-
-                $siswaList = Siswa::whereHas('kartuStudi', function ($q) use ($kelas, $angkatanId) {
-                    $q->whereHas('kelas', function ($subQ) use ($kelas, $angkatanId) {
-                        $subQ->where('id', $kelas->id)
-                            ->where('angkatan_id', $angkatanId);
-                    });
+                $siswaList = Siswa::whereHas('kartuStudi', function ($q) use ($kelas) {
+                    $q->where('kelas_id', $kelas->id);
                 })
                     ->where(function ($q) use ($query) {
                         $q->where('nama_siswa', 'like', '%' . $query . '%')

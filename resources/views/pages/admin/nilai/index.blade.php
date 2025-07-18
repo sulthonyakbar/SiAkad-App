@@ -44,8 +44,9 @@
                                     <th>No</th>
                                     <th>Tahun Ajaran</th>
                                     <th>Semester</th>
-                                    <th>Nama Siswa</th>
+                                    <th>Kelas</th>
                                     <th>NISN</th>
+                                    <th>Nama Siswa</th>
                                     <th>Mata Pelajaran</th>
                                     <th>Nilai UH</th>
                                     <th>Nilai UTS</th>
@@ -96,12 +97,16 @@
                         name: 'semester',
                     },
                     {
-                        data: 'nama_siswa',
-                        name: 'nama_siswa',
+                        data: 'kelas',
+                        name: 'kelas',
                     },
                     {
                         data: 'NISN',
                         name: 'NISN',
+                    },
+                    {
+                        data: 'nama_siswa',
+                        name: 'nama_siswa',
                     },
                     {
                         data: 'mapel',

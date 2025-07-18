@@ -291,6 +291,9 @@ class NilaiController extends Controller
             ->addColumn('semester', function ($row) {
                 return $row->kartuStudi->semester->nama_semester ?? '-';
             })
+            ->addColumn('kelas', function ($row) {
+                return $row->kartuStudi->kelas->nama_kelas ?? '-';
+            })  
             ->addColumn('nama_siswa', function ($row) {
                 return $row->kartuStudi->siswa->nama_siswa ?? '-';
             })
