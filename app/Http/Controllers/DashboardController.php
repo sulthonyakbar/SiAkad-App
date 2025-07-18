@@ -9,6 +9,7 @@ use App\Models\Kelas;
 use App\Models\JadwalPelajaran;
 use App\Models\Pengumuman;
 use App\Models\Presensi;
+use App\Models\KartuStudi;
 use App\Models\DetailPresensi;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -112,9 +113,11 @@ class DashboardController extends Controller
                 ->first();
 
             if ($kelasWali) {
-                $jumlahSiswa = Siswa::whereHas('kartuStudi', function ($query) use ($kelasWali, $angkatanId) {
+                $jumlahSiswa = Siswa::whereHas('kartuStudi', function ($query) use ($angkatanId, $kelasWali) {
                     $query->where('kelas_id', $kelasWali->id)
-                        ->where('angkatan_id', $angkatanId);
+                        ->whereHas('semester', function ($q) use ($angkatanId) {
+                            $q->where('angkatan_id', $angkatanId);
+                        });
                 })->count();
 
                 $presensiHariIni = Presensi::where('kelas_id', $kelasWali->id)
