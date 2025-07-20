@@ -47,7 +47,7 @@ class FeedbackController extends Controller
                     <a href="' . route('feedback.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
                 } else {
                     $editBtn = '
-                    <button class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit" disabled><i class="fas fa-pencil-alt"></i></button>';
+                    <button class="btn btn-secondary btn-action" data-toggle="tooltip" title="Edit" disabled><i class="fas fa-pencil-alt"></i></button>';
                 }
 
                 return $detailBtn . $editBtn;

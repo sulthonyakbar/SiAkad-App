@@ -76,7 +76,7 @@ class NilaiController extends Controller
                     ? '<a href="' . route('nilai.edit', $kartuStudi->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit">
                         <i class="fas fa-pencil-alt"></i>
                     </a>'
-                    : '<button class="btn btn-warning btn-action" title="Belum ada nilai" disabled>
+                    : '<button class="btn btn-secondary btn-action" title="Belum ada nilai" disabled>
                         <i class="fas fa-pencil-alt"></i>
                     </button>';
 
@@ -293,7 +293,7 @@ class NilaiController extends Controller
             })
             ->addColumn('kelas', function ($row) {
                 return $row->kartuStudi->kelas->nama_kelas ?? '-';
-            })  
+            })
             ->addColumn('nama_siswa', function ($row) {
                 return $row->kartuStudi->siswa->nama_siswa ?? '-';
             })
