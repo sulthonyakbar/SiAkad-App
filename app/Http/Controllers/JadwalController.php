@@ -192,10 +192,15 @@ class JadwalController extends Controller
     {
         $query = $request->input('q');
 
+        $angkatanId = session('angkatan_aktif');
+
         $data = Kelas::select("kelas.id", "kelas.nama_kelas", "kelas.ruang")
+            ->where('kelas.angkatan_id', $angkatanId)
             ->when($query, function ($q) use ($query) {
-                $q->where('kelas.nama_kelas', 'LIKE', '%' . $query . '%')
-                    ->orWhere('kelas.ruang', 'LIKE', '%' . $query . '%');
+                $q->where(function ($sub) use ($query) {
+                    $sub->where('kelas.nama_kelas', 'LIKE', '%' . $query . '%')
+                        ->orWhere('kelas.ruang', 'LIKE', '%' . $query . '%');
+                });
             })
             ->get();
 

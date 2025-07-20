@@ -49,7 +49,7 @@ class KartuStudiController extends Controller
                 ];
             })
             ->values();
-            
+
         return DataTables::of($ks)
             ->addColumn('tahun_ajaran', function ($row) {
                 return $row->tahun_ajaran ?? '-';
@@ -267,8 +267,16 @@ class KartuStudiController extends Controller
     {
         $query = $request->input('q');
 
-        $data = Kelas::where('nama_kelas', 'LIKE', '%' . $query . '%')
-            ->orWhere('ruang', 'LIKE', '%' . $query . '%')
+        $angkatanId = session('angkatan_aktif');
+
+        $data = Kelas::select("kelas.id", "kelas.nama_kelas", "kelas.ruang")
+            ->where('kelas.angkatan_id', $angkatanId)
+            ->when($query, function ($q) use ($query) {
+                $q->where(function ($sub) use ($query) {
+                    $sub->where('kelas.nama_kelas', 'LIKE', '%' . $query . '%')
+                        ->orWhere('kelas.ruang', 'LIKE', '%' . $query . '%');
+                });
+            })
             ->get();
 
         return response()->json($data);
