@@ -99,18 +99,21 @@ class KartuStudiController extends Controller
 
         $semesterId = session('semester_aktif');
 
-        $semester = Semester::with('angkatan')->findOrFail($semesterId);
-        $angkatanId = $semester->angkatan_id;
+        $sudahPenempatan = KartuStudi::where('kelas_id', $request->kelas_id)
+            ->where('semester_id', $semesterId)
+            ->exists();
+
+        if ($sudahPenempatan) {
+            return back()->withErrors(['kelas_id' => 'Kelas ini sudah melakukan penempatan siswa pada semester ini.'])->withInput();
+        }
 
         foreach ($request->siswa_id as $siswaId) {
             $sudahTerdaftar = KartuStudi::where('siswa_id', $siswaId)
-                ->whereHas('semester', function ($query) use ($angkatanId) {
-                    $query->where('angkatan_id', $angkatanId);
-                })
+                ->where('semester_id', $semesterId)
                 ->exists();
 
             if ($sudahTerdaftar) {
-                return back()->withErrors(['siswa_id' => 'Siswa sudah ditempatkan di kelas lain pada tahun ajaran yang sama.'])->withInput();
+                return back()->withErrors(['siswa_id' => 'Siswa sudah ditempatkan di kelas lain pada semester ini.'])->withInput();
             }
 
             KartuStudi::create([
@@ -207,9 +210,6 @@ class KartuStudiController extends Controller
 
         $semesterId = session('semester_aktif');
 
-        $semester = Semester::with('angkatan')->findOrFail($semesterId);
-        $angkatanId = $semester->angkatan_id;
-
         KartuStudi::where('kelas_id', $id)->where('semester_id', $semesterId)->delete();
 
         $gagal = [];
@@ -218,9 +218,7 @@ class KartuStudiController extends Controller
             foreach ($request->siswa_id as $siswaId) {
                 $sudahTerdaftar = KartuStudi::where('siswa_id', $siswaId)
                     ->where('kelas_id', '!=', $id)
-                    ->whereHas('semester', function ($q) use ($angkatanId) {
-                        $q->where('angkatan_id', $angkatanId);
-                    })
+                    ->where('semester_id', $semesterId)
                     ->exists();
 
                 if ($sudahTerdaftar) {
@@ -238,7 +236,7 @@ class KartuStudiController extends Controller
 
         if (!empty($gagal)) {
             return redirect()->route('kartu.studi.index')
-                ->with('warning', 'Sebagian siswa tidak dimasukkan karena sudah ditempatkan di kelas lain pada tahun ajaran yang sama.');
+                ->with('warning', 'Sebagian siswa tidak dimasukkan karena sudah ditempatkan di kelas lain pada semester ini.');
         }
 
         return redirect()->route('kartu.studi.index')->with('success', 'Penentuan Kelas berhasil diperbarui.');
