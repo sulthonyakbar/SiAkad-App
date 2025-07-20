@@ -256,8 +256,11 @@ class KartuStudiController extends Controller
     {
         $query = $request->input('q');
 
-        $data = Siswa::where('nama_siswa', 'LIKE', '%' . $query . '%')
-            ->orWhere('NISN', 'LIKE', '%' . $query . '%')
+        $data = Siswa::where('status', 'Aktif')
+            ->where(function ($q1) use ($query) {
+                $q1->where('nama_siswa', 'LIKE', '%' . $query . '%')
+                    ->orWhere('NISN', 'LIKE', '%' . $query . '%');
+            })
             ->get();
 
         return response()->json($data);

@@ -153,6 +153,16 @@ class PresensiController extends Controller
             return redirect()->back()->withErrors('Anda bukan wali kelas di tahun ajaran aktif.');
         }
 
+        $tanggal = Carbon::parse($request->tanggal)->toDateString();
+
+        $existingPresensi = Presensi::where('kelas_id', $kelas->id)
+            ->where('tanggal', $tanggal)
+            ->first();
+
+        if ($existingPresensi) {
+            return redirect()->back()->withErrors('Presensi untuk hari ini sudah dibuat. Silakan ubah melalui menu edit presensi.');
+        }
+
         DB::beginTransaction();
         try {
             $presensi = Presensi::firstOrCreate(
