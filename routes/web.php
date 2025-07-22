@@ -105,7 +105,6 @@ Route::group(['middleware' => ['role.admin', 'tahun.ajaran', 'semester']], funct
     Route::delete('/a/mapel/{id}', [MapelController::class, 'destroy'])->name('mapel.destroy');
 
     Route::get('/a/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
-    Route::get('/a/jadwal/search-guru', [JadwalController::class, 'searchGuru'])->name('search.guru');
     Route::get('/a/jadwal/search-kelas', [JadwalController::class, 'searchKelas'])->name('search.kelas');
     Route::get('/a/jadwal/search-mapel', [JadwalController::class, 'searchMapel'])->name('search.mapel');
     Route::get('/a/jadwal/data', [JadwalController::class, 'getJadwalData'])->name('jadwal.data');

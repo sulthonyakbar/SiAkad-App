@@ -31,37 +31,26 @@
                     <input type="hidden" name="id" value="{{ $jadwal->id }}" required>
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="kelas_id">Kelas <span class="text-danger">*</span></label>
                                 <select id="kelas_id" class="form-control" name="kelas_id">
                                     @if ($jadwal->kelas)
                                         <option value="{{ $jadwal->kelas->id }}" selected>
-                                            {{ $jadwal->kelas->nama_kelas }} - Ruang {{ $jadwal->kelas->ruang }}
+                                            {{ $jadwal->kelas->nama_kelas }} - Ruang {{ $jadwal->kelas->ruang }} - Pengajar
+                                            {{ $jadwal->kelas->guru ? $jadwal->kelas->guru->nama_guru : 'Tidak ada pengajar' }}
                                         </option>
                                     @endif
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="mapel_id">Mata Pelajaran <span class="text-danger">*</span></label>
                                 <select id="mapel_id" class="form-control" name="mapel_id">
                                     @if ($jadwal->mapel)
                                         <option value="{{ $jadwal->mapel->id }}" selected>
                                             {{ $jadwal->mapel->nama_mapel }} - {{ $jadwal->mapel->deskripsi }}
-                                        </option>
-                                    @endif
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="guru_id">Pengajar <span class="text-danger">*</span></label>
-                                <select id="guru_id" class="form-control" name="guru_id">
-                                    @if ($jadwal->guru)
-                                        <option value="{{ $jadwal->guru->id }}" selected>
-                                            {{ $jadwal->guru->NIP }} - {{ $jadwal->guru->nama_guru }}
                                         </option>
                                     @endif
                                 </select>
@@ -125,35 +114,6 @@
 
     <script>
         $(document).ready(function() {
-            $('#guru_id').select2({
-                placeholder: 'Pilih Pengajar',
-                ajax: {
-                    url: '{{ route('search.guru') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            q: params.term // search term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.NIP + ' - ' + item.nama_guru
-                                }
-                            })
-                        };
-                    },
-                    cache: true
-                }
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
             $('#kelas_id').select2({
                 placeholder: 'Pilih Kelas',
                 ajax: {
@@ -170,7 +130,7 @@
                             results: $.map(data, function(item) {
                                 return {
                                     id: item.id,
-                                    text: item.nama_kelas + ' - Ruang ' + item.ruang
+                                    text: item.nama_kelas + ' - Ruang ' + item.ruang + ' - Pengajar ' + (item.wali_kelas ? item.wali_kelas : 'Tidak ada pengajar')
                                 }
                             })
                         };

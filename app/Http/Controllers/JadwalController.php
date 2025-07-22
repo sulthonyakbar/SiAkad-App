@@ -73,10 +73,11 @@ class JadwalController extends Controller
             'jadwals.*.jam_selesai' => 'required|date_format:H:i|after:jadwals.*.jam_mulai',
             'mapel_id' => 'required|exists:mata_pelajarans,id',
             'kelas_id' => 'required|exists:kelas,id',
-            'guru_id' => 'required|exists:gurus,id',
         ]);
 
-        $angkatanId = Kelas::findOrFail($request->kelas_id)->angkatan_id;
+        $kelas = Kelas::findOrFail($request->kelas_id);
+        $guruId = $kelas->guru_id;
+        $angkatanId = $kelas->angkatan_id;
 
         foreach ($request->jadwals as $jadwal) {
             $exists = JadwalPelajaran::whereHas('kelas', function ($query) use ($angkatanId) {
@@ -85,8 +86,8 @@ class JadwalController extends Controller
                 ->where('hari', $jadwal['hari'])
                 ->where('jam_mulai', '<', $jadwal['jam_selesai'])
                 ->where('jam_selesai', '>', $jadwal['jam_mulai'])
-                ->where(function ($query) use ($request) {
-                    $query->where('guru_id', $request->guru_id)
+                ->where(function ($query) use ($request, $guruId) {
+                    $query->where('guru_id', $guruId)
                         ->orWhere('kelas_id', $request->kelas_id);
                 })
                 ->exists();
@@ -101,7 +102,7 @@ class JadwalController extends Controller
                 'jam_selesai' => $jadwal['jam_selesai'],
                 'mapel_id' => $request->mapel_id,
                 'kelas_id' => $request->kelas_id,
-                'guru_id' => $request->guru_id,
+                'guru_id' => $guruId,
             ]);
         }
 
@@ -141,12 +142,13 @@ class JadwalController extends Controller
             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
             'mapel_id' => 'required|exists:mata_pelajarans,id',
             'kelas_id' => 'required|exists:kelas,id',
-            'guru_id' => 'required|exists:gurus,id',
         ]);
 
         $jadwal = JadwalPelajaran::findOrFail($id);
 
-        $angkatanId = Kelas::findOrFail($request->kelas_id)->angkatan_id;
+        $kelas = Kelas::with('guru')->findOrFail($request->kelas_id);
+        $angkatanId = $kelas->angkatan_id;
+        $guruId = $kelas->guru_id;
 
         $exists = JadwalPelajaran::where('id', '!=', $id)
             ->whereHas('kelas', function ($query) use ($angkatanId) {
@@ -155,9 +157,9 @@ class JadwalController extends Controller
             ->where('hari', $request->hari)
             ->where('jam_mulai', '<', $request->jam_selesai)
             ->where('jam_selesai', '>', $request->jam_mulai)
-            ->where(function ($query) use ($request) {
+            ->where(function ($query) use ($request, $guruId) {
                 $query->where('kelas_id', $request->kelas_id)
-                    ->orWhere('guru_id', $request->guru_id);
+                    ->orWhere('guru_id', $guruId);
             })
             ->exists();
 
@@ -167,25 +169,16 @@ class JadwalController extends Controller
             ])->withInput();
         }
 
-        $jadwal->update($request->all());
+        $jadwal->update([
+            'hari' => $request->hari,
+            'jam_mulai' => $request->jam_mulai,
+            'jam_selesai' => $request->jam_selesai,
+            'mapel_id' => $request->mapel_id,
+            'kelas_id' => $request->kelas_id,
+            'guru_id' => $guruId,
+        ]);
 
         return redirect()->route('jadwal.index')->with('success', 'Jadwal Pelajaran berhasil diperbarui');
-    }
-
-    public function searchGuru(Request $request): JsonResponse
-    {
-        $query = $request->input('q');
-
-        $data = Guru::select("gurus.id", "gurus.nama_guru", "gurus.NIP")
-            ->join('users', 'users.id', '=', 'gurus.user_id')
-            ->where('users.role', 'guru')
-            ->when($query, function ($q) use ($query) {
-                $q->where('gurus.nama_guru', 'LIKE', '%' . $query . '%')
-                    ->orWhere('gurus.NIP', 'LIKE', '%' . $query . '%');
-            })
-            ->get();
-
-        return response()->json($data);
     }
 
     public function searchKelas(Request $request): JsonResponse
@@ -194,12 +187,14 @@ class JadwalController extends Controller
 
         $angkatanId = session('angkatan_aktif');
 
-        $data = Kelas::select("kelas.id", "kelas.nama_kelas", "kelas.ruang")
+        $data = Kelas::select("kelas.id", "kelas.nama_kelas", "kelas.ruang", "gurus.nama_guru as wali_kelas")
+            ->join('gurus', 'kelas.guru_id', '=', 'gurus.id')
             ->where('kelas.angkatan_id', $angkatanId)
             ->when($query, function ($q) use ($query) {
                 $q->where(function ($sub) use ($query) {
                     $sub->where('kelas.nama_kelas', 'LIKE', '%' . $query . '%')
-                        ->orWhere('kelas.ruang', 'LIKE', '%' . $query . '%');
+                        ->orWhere('kelas.ruang', 'LIKE', '%' . $query . '%')
+                        ->orWhere('guru.nama_guru', 'LIKE', '%' . $query . '%');
                 });
             })
             ->get();

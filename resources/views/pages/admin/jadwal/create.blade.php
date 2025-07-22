@@ -26,22 +26,16 @@
                     @csrf
 
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="kelas_id">Kelas<span class="text-danger">*</span></label>
                                 <select id="kelas_id" class="form-control" name="kelas_id"></select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="mapel_id">Mata Pelajaran<span class="text-danger">*</span></label>
                                 <select id="mapel_id" class="form-control" name="mapel_id"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="guru_id">Pengajar<span class="text-danger">*</span></label>
-                                <select id="guru_id" class="form-control" name="guru_id"></select>
                             </div>
                         </div>
                     </div>
@@ -114,35 +108,6 @@
 
     <script>
         $(document).ready(function() {
-            $('#guru_id').select2({
-                placeholder: 'Pilih Pengajar',
-                ajax: {
-                    url: '{{ route('search.guru') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            q: params.term // search term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.NIP + ' - ' + item.nama_guru
-                                }
-                            })
-                        };
-                    },
-                    cache: true
-                }
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
             $('#kelas_id').select2({
                 placeholder: 'Pilih Kelas',
                 ajax: {
@@ -159,7 +124,7 @@
                             results: $.map(data, function(item) {
                                 return {
                                     id: item.id,
-                                    text: item.nama_kelas + ' - Ruang ' + item.ruang
+                                    text: item.nama_kelas + ' - Ruang ' + item.ruang + ' - Pengajar ' + item.wali_kelas
                                 }
                             })
                         };
