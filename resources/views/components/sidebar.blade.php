@@ -269,6 +269,17 @@
                                 href="{{ route('bobot.create') }}">Tambah Bobot Penilaian</a></li>
                     </ul>
                 </li>
+
+                {{-- Rekapan Siswa --}}
+                <li class="nav-item dropdown {{ request()->routeIs('rekapan.*') ? 'active' : '' }}">
+                    <a href="#" class="nav-link has-dropdown text-dark">
+                        <i class="fas fa-book"></i><span>Data Rekapan Siswa</span>
+                    </a>
+                    <ul class="dropdown-menu" style="{{ request()->routeIs('rekapan.*') ? 'display: block;' : '' }}">
+                        <li><a class="nav-link {{ request()->routeIs('rekapan.index') ? 'active' : '' }}"
+                                href="{{ route('rekapan.index') }}">Daftar Rekapan Siswa</a></li>
+                    </ul>
+                </li>
             @endif
 
             @if (auth()->user()->role === 'orangtua')

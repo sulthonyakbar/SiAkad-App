@@ -35,4 +35,9 @@ class KartuStudi extends Model
     {
         return $this->hasMany(Nilai::class, 'ks_id');
     }
+
+    public function rekapan()
+    {
+        return $this->hasOne(Rekapan::class, 'ks_id');
+    }
 }

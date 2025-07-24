@@ -16,6 +16,7 @@ use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\BobotController;
+use App\Http\Controllers\RekapanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -208,6 +209,12 @@ Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], functi
     Route::get('/g/bobot/{id}/detail', [BobotController::class, 'show'])->name('bobot.detail');
     Route::get('/g/bobot/{id}/edit', [BobotController::class, 'edit'])->name('bobot.edit');
     Route::put('/g/bobot/{id}', [BobotController::class, 'update'])->name('bobot.update');
+
+    Route::get('/g/rekapan', [RekapanController::class, 'index'])->name('rekapan.index');
+    Route::get('/g/rekapan/data', [RekapanController::class, 'getRekapanData'])->name('rekapan.data');
+    Route::post('/g/rekapan/store', [RekapanController::class, 'store'])->name('rekapan.store');
+    Route::get('/g/rekapan/{id}/detail', [RekapanController::class, 'show'])->name('rekapan.detail');
+    Route::put('/g/rekapan/{id}', [RekapanController::class, 'update'])->name('rekapan.update');
 });
 
 Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');
