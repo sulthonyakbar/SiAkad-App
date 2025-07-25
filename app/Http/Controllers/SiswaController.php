@@ -414,13 +414,11 @@ class SiswaController extends Controller
     {
         $siswa = Siswa::findOrFail($id);
 
-        // Validasi status yang diizinkan
         $allowedStatus = ['Aktif', 'Nonaktif', 'Lulus'];
         if (!in_array($status, $allowedStatus)) {
             return redirect()->back()->with('error', 'Status tidak valid.');
         }
 
-        // Update status
         $siswa->status = $status;
         $siswa->save();
 

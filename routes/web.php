@@ -163,6 +163,10 @@ Route::group(['middleware' => ['role.orangtua', 'tahun.ajaran', 'semester']], fu
 
     Route::get('/s/nilai', [NilaiController::class, 'indexNilaiSiswa'])->name('siswa.nilai.index');
     Route::get('/s/nilai/data', [NilaiController::class, 'getNilaiSiswaData'])->name('siswa.nilai.data');
+
+    Route::get('/s/rekapan', [RekapanController::class, 'indexSiswa'])->name('siswa.rekapan.index');
+    Route::get('/s/rekapan/data', [RekapanController::class, 'getRekapanDataSiswa'])->name('siswa.rekapan.data');
+    Route::get('/s/rekapan/{id}/detail', [RekapanController::class, 'showSiswa'])->name('siswa.rekapan.detail');
 });
 
 Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], function () {
@@ -214,7 +218,6 @@ Route::group(['middleware' => ['role.guru', 'tahun.ajaran', 'semester']], functi
     Route::get('/g/rekapan/data', [RekapanController::class, 'getRekapanData'])->name('rekapan.data');
     Route::post('/g/rekapan/store', [RekapanController::class, 'store'])->name('rekapan.store');
     Route::get('/g/rekapan/{id}/detail', [RekapanController::class, 'show'])->name('rekapan.detail');
-    Route::put('/g/rekapan/{id}', [RekapanController::class, 'update'])->name('rekapan.update');
 });
 
 Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');

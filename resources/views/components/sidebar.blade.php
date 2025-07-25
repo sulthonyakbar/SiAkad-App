@@ -331,6 +331,17 @@
                                 href="{{ route('siswa.nilai.index') }}">Daftar Nilai</a></li>
                     </ul>
                 </li>
+
+                 {{-- Rekapan Siswa --}}
+                <li class="nav-item dropdown {{ request()->routeIs('siswa.rekapan.*') ? 'active' : '' }}">
+                    <a href="#" class="nav-link has-dropdown text-dark">
+                        <i class="fas fa-book"></i><span>Data Rekapan Siswa</span>
+                    </a>
+                    <ul class="dropdown-menu" style="{{ request()->routeIs('siswa.rekapan.*') ? 'display: block;' : '' }}">
+                        <li><a class="nav-link {{ request()->routeIs('siswa.rekapan.index') ? 'active' : '' }}"
+                                href="{{ route('siswa.rekapan.index') }}">Daftar Rekapan Siswa</a></li>
+                    </ul>
+                </li>
             @endif
         </ul>
     </aside>
