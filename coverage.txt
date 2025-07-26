@@ -1,0 +1,32 @@
+
+
+[1;37;40mCode Coverage Report:      [0m
+[1;37;40m  2025-07-26 08:51:45      [0m
+[1;37;40m                           [0m
+[1;37;40m Summary:                  [0m
+[37;41m  Classes: 14.00% (7/50)   [0m
+[37;41m  Methods:  5.88% (13/221) [0m
+[37;41m  Lines:    3.54% (70/1978)[0m
+
+App\Console\Kernel
+  [37;41mMethods:  50.00% ( 1/ 2)[0m   [30;43mLines:  66.67% (  2/  3)[0m
+App\Exceptions\Handler
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  2/  2)[0m
+App\Http\Controllers\AuthController
+  [37;41mMethods:  28.57% ( 2/ 7)[0m   [37;41mLines:  38.81% ( 26/ 67)[0m
+App\Http\Middleware\EnsureAcademicYearExists
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 10/ 10)[0m
+App\Http\Middleware\RedirectIfAuthenticated
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;43mLines:  80.00% (  4/  5)[0m
+App\Http\Middleware\SemesterAktif
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% ( 10/ 10)[0m
+App\Models\User
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  2/  2)[0m
+App\Providers\AppServiceProvider
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  2/  2)[0m
+App\Providers\AuthServiceProvider
+  [30;42mMethods: 100.00% ( 1/ 1)[0m   [30;42mLines: 100.00% (  1/  1)[0m
+App\Providers\EventServiceProvider
+  [30;42mMethods: 100.00% ( 2/ 2)[0m   [30;42mLines: 100.00% (  2/  2)[0m
+App\Providers\RouteServiceProvider
+  [37;41mMethods:   0.00% ( 0/ 1)[0m   [30;42mLines:  90.00% (  9/ 10)[0m

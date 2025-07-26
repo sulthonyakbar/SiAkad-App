@@ -183,4 +183,11 @@ class AuthTest extends TestCase
             $this->assertGuest();
         }
     }
+
+    public function testLoginViewIsReturned()
+    {
+        $response = $this->get(route('login'));
+
+        $response->assertViewIs('pages.auth-login');
+    }
 }

@@ -12,6 +12,15 @@
             <directory>tests/Feature</directory>
         </testsuite>
     </testsuites>
+    <coverage>
+        <include>
+            <directory suffix=".php">app</directory>
+        </include>
+        <report>
+            <text outputFile="coverage.txt"/>
+            <html outputDirectory="coverage-html"/>
+        </report>
+    </coverage>
     <source>
         <include>
             <directory>app</directory>

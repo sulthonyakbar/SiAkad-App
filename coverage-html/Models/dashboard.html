@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for D:\laragon\www\SiAkad-App\app\Models</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">D:\laragon\www\SiAkad-App\app</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Models</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="AktivitasHarian.php.html#9">App\Models\AktivitasHarian</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Angkatan.php.html#9">App\Models\Angkatan</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="BobotPenilaian.php.html#9">App\Models\BobotPenilaian</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DetailPresensi.php.html#9">App\Models\DetailPresensi</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Feedback.php.html#9">App\Models\Feedback</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Guru.php.html#9">App\Models\Guru</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="JadwalPelajaran.php.html#9">App\Models\JadwalPelajaran</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="KartuStudi.php.html#9">App\Models\KartuStudi</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Kategori.php.html#9">App\Models\Kategori</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Kelas.php.html#9">App\Models\Kelas</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MataPelajaran.php.html#9">App\Models\MataPelajaran</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Nilai.php.html#9">App\Models\Nilai</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="OrangTua.php.html#9">App\Models\OrangTua</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Pengumuman.php.html#9">App\Models\Pengumuman</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presensi.php.html#9">App\Models\Presensi</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Rekapan.php.html#9">App\Models\Rekapan</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Semester.php.html#9">App\Models\Semester</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Siswa.php.html#9">App\Models\Siswa</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="AktivitasHarian.php.html#22"><abbr title="App\Models\AktivitasHarian::siswa">siswa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="AktivitasHarian.php.html#27"><abbr title="App\Models\AktivitasHarian::feedback">feedback</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Angkatan.php.html#17"><abbr title="App\Models\Angkatan::kelas">kelas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Angkatan.php.html#22"><abbr title="App\Models\Angkatan::siswa">siswa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Angkatan.php.html#27"><abbr title="App\Models\Angkatan::semester">semester</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="BobotPenilaian.php.html#20"><abbr title="App\Models\BobotPenilaian::mataPelajaran">mataPelajaran</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DetailPresensi.php.html#19"><abbr title="App\Models\DetailPresensi::presensi">presensi</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="DetailPresensi.php.html#24"><abbr title="App\Models\DetailPresensi::siswa">siswa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Feedback.php.html#17"><abbr title="App\Models\Feedback::aktivitasHarian">aktivitasHarian</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Guru.php.html#32"><abbr title="App\Models\Guru::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Guru.php.html#37"><abbr title="App\Models\Guru::kelas">kelas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Guru.php.html#42"><abbr title="App\Models\Guru::jadwalPelajaran">jadwalPelajaran</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Guru.php.html#47"><abbr title="App\Models\Guru::pengumuman">pengumuman</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="JadwalPelajaran.php.html#22"><abbr title="App\Models\JadwalPelajaran::mapel">mapel</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="JadwalPelajaran.php.html#27"><abbr title="App\Models\JadwalPelajaran::kelas">kelas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="JadwalPelajaran.php.html#32"><abbr title="App\Models\JadwalPelajaran::guru">guru</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="KartuStudi.php.html#19"><abbr title="App\Models\KartuStudi::siswa">siswa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="KartuStudi.php.html#24"><abbr title="App\Models\KartuStudi::kelas">kelas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="KartuStudi.php.html#29"><abbr title="App\Models\KartuStudi::semester">semester</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="KartuStudi.php.html#34"><abbr title="App\Models\KartuStudi::nilai">nilai</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="KartuStudi.php.html#39"><abbr title="App\Models\KartuStudi::rekapan">rekapan</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Kategori.php.html#17"><abbr title="App\Models\Kategori::pengumuman">pengumuman</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Kelas.php.html#20"><abbr title="App\Models\Kelas::guru">guru</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Kelas.php.html#25"><abbr title="App\Models\Kelas::angkatan">angkatan</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Kelas.php.html#30"><abbr title="App\Models\Kelas::jadwalPelajaran">jadwalPelajaran</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Kelas.php.html#35"><abbr title="App\Models\Kelas::kartuStudi">kartuStudi</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MataPelajaran.php.html#18"><abbr title="App\Models\MataPelajaran::jadwalPelajaran">jadwalPelajaran</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MataPelajaran.php.html#23"><abbr title="App\Models\MataPelajaran::bobotPenilaian">bobotPenilaian</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="MataPelajaran.php.html#28"><abbr title="App\Models\MataPelajaran::nilai">nilai</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Nilai.php.html#22"><abbr title="App\Models\Nilai::kartuStudi">kartuStudi</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Nilai.php.html#27"><abbr title="App\Models\Nilai::mataPelajaran">mataPelajaran</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="OrangTua.php.html#26"><abbr title="App\Models\OrangTua::siswa">siswa</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Pengumuman.php.html#21"><abbr title="App\Models\Pengumuman::kategori">kategori</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Pengumuman.php.html#26"><abbr title="App\Models\Pengumuman::guru">guru</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presensi.php.html#18"><abbr title="App\Models\Presensi::kelas">kelas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presensi.php.html#23"><abbr title="App\Models\Presensi::detailPresensi">detailPresensi</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Rekapan.php.html#18"><abbr title="App\Models\Rekapan::kartuStudi">kartuStudi</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Semester.php.html#18"><abbr title="App\Models\Semester::angkatan">angkatan</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Semester.php.html#23"><abbr title="App\Models\Semester::kartuStudi">kartuStudi</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Siswa.php.html#35"><abbr title="App\Models\Siswa::orang_tuas">orang_tuas</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Siswa.php.html#40"><abbr title="App\Models\Siswa::user">user</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Siswa.php.html#45"><abbr title="App\Models\Siswa::angkatan">angkatan</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Siswa.php.html#50"><abbr title="App\Models\Siswa::aktivitasHarian">aktivitasHarian</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Siswa.php.html#55"><abbr title="App\Models\Siswa::kartuStudi">kartuStudi</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Siswa.php.html#60"><abbr title="App\Models\Siswa::detailPresensi">detailPresensi</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.16</a> using <a href="https://www.php.net/" target="_top">PHP 8.1.10</a> and <a href="https://phpunit.de/">PHPUnit 10.5.41</a> at Sat Jul 26 8:51:44 WIB 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([18,0,0,0,0,0,0,0,0,0,0,1], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([45,0,0,0,0,0,0,0,0,0,0,2], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[0,2,"<a href=\"AktivitasHarian.php.html#9\">App\\Models\\AktivitasHarian<\/a>"],[0,3,"<a href=\"Angkatan.php.html#9\">App\\Models\\Angkatan<\/a>"],[0,1,"<a href=\"BobotPenilaian.php.html#9\">App\\Models\\BobotPenilaian<\/a>"],[0,2,"<a href=\"DetailPresensi.php.html#9\">App\\Models\\DetailPresensi<\/a>"],[0,1,"<a href=\"Feedback.php.html#9\">App\\Models\\Feedback<\/a>"],[0,4,"<a href=\"Guru.php.html#9\">App\\Models\\Guru<\/a>"],[0,3,"<a href=\"JadwalPelajaran.php.html#9\">App\\Models\\JadwalPelajaran<\/a>"],[0,5,"<a href=\"KartuStudi.php.html#9\">App\\Models\\KartuStudi<\/a>"],[0,1,"<a href=\"Kategori.php.html#9\">App\\Models\\Kategori<\/a>"],[0,4,"<a href=\"Kelas.php.html#9\">App\\Models\\Kelas<\/a>"],[0,3,"<a href=\"MataPelajaran.php.html#9\">App\\Models\\MataPelajaran<\/a>"],[0,2,"<a href=\"Nilai.php.html#9\">App\\Models\\Nilai<\/a>"],[0,1,"<a href=\"OrangTua.php.html#9\">App\\Models\\OrangTua<\/a>"],[0,2,"<a href=\"Pengumuman.php.html#9\">App\\Models\\Pengumuman<\/a>"],[0,2,"<a href=\"Presensi.php.html#9\">App\\Models\\Presensi<\/a>"],[0,1,"<a href=\"Rekapan.php.html#9\">App\\Models\\Rekapan<\/a>"],[0,2,"<a href=\"Semester.php.html#9\">App\\Models\\Semester<\/a>"],[0,6,"<a href=\"Siswa.php.html#9\">App\\Models\\Siswa<\/a>"],[100,2,"<a href=\"User.php.html#12\">App\\Models\\User<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"AktivitasHarian.php.html#22\">App\\Models\\AktivitasHarian::siswa<\/a>"],[0,1,"<a href=\"AktivitasHarian.php.html#27\">App\\Models\\AktivitasHarian::feedback<\/a>"],[0,1,"<a href=\"Angkatan.php.html#17\">App\\Models\\Angkatan::kelas<\/a>"],[0,1,"<a href=\"Angkatan.php.html#22\">App\\Models\\Angkatan::siswa<\/a>"],[0,1,"<a href=\"Angkatan.php.html#27\">App\\Models\\Angkatan::semester<\/a>"],[0,1,"<a href=\"BobotPenilaian.php.html#20\">App\\Models\\BobotPenilaian::mataPelajaran<\/a>"],[0,1,"<a href=\"DetailPresensi.php.html#19\">App\\Models\\DetailPresensi::presensi<\/a>"],[0,1,"<a href=\"DetailPresensi.php.html#24\">App\\Models\\DetailPresensi::siswa<\/a>"],[0,1,"<a href=\"Feedback.php.html#17\">App\\Models\\Feedback::aktivitasHarian<\/a>"],[0,1,"<a href=\"Guru.php.html#32\">App\\Models\\Guru::user<\/a>"],[0,1,"<a href=\"Guru.php.html#37\">App\\Models\\Guru::kelas<\/a>"],[0,1,"<a href=\"Guru.php.html#42\">App\\Models\\Guru::jadwalPelajaran<\/a>"],[0,1,"<a href=\"Guru.php.html#47\">App\\Models\\Guru::pengumuman<\/a>"],[0,1,"<a href=\"JadwalPelajaran.php.html#22\">App\\Models\\JadwalPelajaran::mapel<\/a>"],[0,1,"<a href=\"JadwalPelajaran.php.html#27\">App\\Models\\JadwalPelajaran::kelas<\/a>"],[0,1,"<a href=\"JadwalPelajaran.php.html#32\">App\\Models\\JadwalPelajaran::guru<\/a>"],[0,1,"<a href=\"KartuStudi.php.html#19\">App\\Models\\KartuStudi::siswa<\/a>"],[0,1,"<a href=\"KartuStudi.php.html#24\">App\\Models\\KartuStudi::kelas<\/a>"],[0,1,"<a href=\"KartuStudi.php.html#29\">App\\Models\\KartuStudi::semester<\/a>"],[0,1,"<a href=\"KartuStudi.php.html#34\">App\\Models\\KartuStudi::nilai<\/a>"],[0,1,"<a href=\"KartuStudi.php.html#39\">App\\Models\\KartuStudi::rekapan<\/a>"],[0,1,"<a href=\"Kategori.php.html#17\">App\\Models\\Kategori::pengumuman<\/a>"],[0,1,"<a href=\"Kelas.php.html#20\">App\\Models\\Kelas::guru<\/a>"],[0,1,"<a href=\"Kelas.php.html#25\">App\\Models\\Kelas::angkatan<\/a>"],[0,1,"<a href=\"Kelas.php.html#30\">App\\Models\\Kelas::jadwalPelajaran<\/a>"],[0,1,"<a href=\"Kelas.php.html#35\">App\\Models\\Kelas::kartuStudi<\/a>"],[0,1,"<a href=\"MataPelajaran.php.html#18\">App\\Models\\MataPelajaran::jadwalPelajaran<\/a>"],[0,1,"<a href=\"MataPelajaran.php.html#23\">App\\Models\\MataPelajaran::bobotPenilaian<\/a>"],[0,1,"<a href=\"MataPelajaran.php.html#28\">App\\Models\\MataPelajaran::nilai<\/a>"],[0,1,"<a href=\"Nilai.php.html#22\">App\\Models\\Nilai::kartuStudi<\/a>"],[0,1,"<a href=\"Nilai.php.html#27\">App\\Models\\Nilai::mataPelajaran<\/a>"],[0,1,"<a href=\"OrangTua.php.html#26\">App\\Models\\OrangTua::siswa<\/a>"],[0,1,"<a href=\"Pengumuman.php.html#21\">App\\Models\\Pengumuman::kategori<\/a>"],[0,1,"<a href=\"Pengumuman.php.html#26\">App\\Models\\Pengumuman::guru<\/a>"],[0,1,"<a href=\"Presensi.php.html#18\">App\\Models\\Presensi::kelas<\/a>"],[0,1,"<a href=\"Presensi.php.html#23\">App\\Models\\Presensi::detailPresensi<\/a>"],[0,1,"<a href=\"Rekapan.php.html#18\">App\\Models\\Rekapan::kartuStudi<\/a>"],[0,1,"<a href=\"Semester.php.html#18\">App\\Models\\Semester::angkatan<\/a>"],[0,1,"<a href=\"Semester.php.html#23\">App\\Models\\Semester::kartuStudi<\/a>"],[0,1,"<a href=\"Siswa.php.html#35\">App\\Models\\Siswa::orang_tuas<\/a>"],[0,1,"<a href=\"Siswa.php.html#40\">App\\Models\\Siswa::user<\/a>"],[0,1,"<a href=\"Siswa.php.html#45\">App\\Models\\Siswa::angkatan<\/a>"],[0,1,"<a href=\"Siswa.php.html#50\">App\\Models\\Siswa::aktivitasHarian<\/a>"],[0,1,"<a href=\"Siswa.php.html#55\">App\\Models\\Siswa::kartuStudi<\/a>"],[0,1,"<a href=\"Siswa.php.html#60\">App\\Models\\Siswa::detailPresensi<\/a>"],[100,1,"<a href=\"User.php.html#48\">App\\Models\\User::guru<\/a>"],[100,1,"<a href=\"User.php.html#53\">App\\Models\\User::siswa<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>
