@@ -11,24 +11,18 @@
         <div class="section-header">
             <h1>Detail Rekapan Siswa</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="{{ route('guru.dashboard') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('rekapan.index') }}">Data Rekapan Siswa</a></div>
+                <div class="breadcrumb-item active"><a href="{{ route('siswa.dashboard') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('siswa.rekapan.index') }}">Data Rekapan Siswa</a></div>
             </div>
         </div>
 
         <div class="card">
             <div class="card-header">
-                <a class="btn btn-primary" href="{{ route('rekapan.index') }}" role="button"><i
+                <a class="btn btn-primary" href="{{ route('siswa.rekapan.index') }}" role="button"><i
                         class="fa-solid fa-chevron-left"></i></a>
             </div>
 
             <div class="card-body">
-                <h5>
-                    NISN:
-                    <span class="text-primary">{{ $kartuStudi->first()->siswa->NISN ?? '-' }}</span>
-                    | Nama Siswa :
-                    <span class="text-primary">{{ $kartuStudi->first()->siswa->nama_siswa ?? '-' }}</span>
-                </h5>
 
                 <div class="row">
                     <div class="col-md-12">
@@ -73,7 +67,7 @@
                             </tbody>
                         </table>
 
-                        <h6 class="mt-4">Rekapan Presensi (Semester Ini)</h6>
+                        <h6 class="mt-4">Rekapan Presensi</h6>
                         <table class="table table-bordered mt-2">
                             <thead>
                                 <tr>
@@ -99,19 +93,10 @@
                             </tbody>
                         </table>
 
-                        <h6 class="mt-4">Tambahkan Pesan / Keterangan</h6>
-                        <form action="{{ route('rekapan.store', $kartuStudi->id) }}" method="POST">
-                            @csrf
-
-                            <input type="hidden" name="ks_id" value="{{ $kartuStudi->id }}">
-
-                            <div class="form-group">
-                                <textarea name="keterangan" id="keterangan" class="form-control" rows="10" style="height: 150px;"
-                                    placeholder="Tuliskan pesan atau keterangan...">{{ old('keterangan', $rekapan->keterangan ?? '') }}</textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary btn-lg btn-block">Simpan</button>
-                        </form>
+                        <h6 class="mt-4">Pesan / Keterangan dari Wali Kelas</h6>
+                        <div class="form-group">
+                            <textarea class="form-control" style="height: 100px;" readonly>{{ !empty($rekapan) && !empty($rekapan->keterangan) ? $rekapan->keterangan : 'Belum ada pesan / keterangan dari wali kelas.' }}</textarea>
+                        </div>
 
                     </div>
                 </div>
