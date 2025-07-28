@@ -283,7 +283,6 @@ class PresensiController extends Controller
             return $item->presensi->tanggal ?? now();
         })->values();
 
-
         return DataTables::of($presensi)
             ->addColumn('NISN', function ($row) {
                 return $row->siswa->NISN ?? '-';

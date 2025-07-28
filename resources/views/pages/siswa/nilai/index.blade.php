@@ -20,9 +20,21 @@
             <div class="card">
                 <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-center">
                     <div class="mb-2 mr-auto mb-md-0">
-                        {{-- <a class="btn btn-primary" href="{{ route('aktivitas.create') }}" role="button"><i
+                        {{-- <a class="btn btn-primary" href="{{ route('nilai.create') }}" role="button"><i
                                 class="fa-solid fa-plus"></i></a> --}}
                     </div>
+
+                    <div class="form-inline ml-auto">
+                        <select class="form-control select2" name="semester_id" id="semesterFilter">
+                            <option value="">Semua Semester</option>
+                            @foreach ($semesters as $semester)
+                                <option value="{{ $semester->id }}">
+                                    {{ $semester->angkatan->tahun_ajaran ?? '-' }} - {{ $semester->nama_semester }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                 </div>
                 <div class="card-body px-4">
                     <div class="table-responsive">
@@ -54,13 +66,19 @@
 
     <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/components-table.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
         $(document).ready(function() {
             $('#nilaiSiswaTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('siswa.nilai.data') }}",
+                ajax: {
+                    url: "{{ route('siswa.nilai.data') }}",
+                    data: function(d) {
+                        d.semester_id = $('#semesterFilter').val();
+                    }
+                },
                 columns: [{
                         data: null,
                         name: 'DT_RowIndex',
@@ -109,6 +127,14 @@
                     }
                 }],
             });
+        });
+
+        $('#semesterFilter').change(function() {
+            $('#nilaiSiswaTable').DataTable().ajax.reload();
+        });
+
+        $(document).ready(function() {
+            $('.select2').select2();
         });
     </script>
 @endpush

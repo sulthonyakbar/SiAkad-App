@@ -320,18 +320,25 @@ class NilaiController extends Controller
 
     public function indexNilaiSiswa()
     {
-        return view('pages.siswa.nilai.index');
+        $semesters = Semester::with('angkatan')->orderByDesc('nama_semester')->get();
+        return view('pages.siswa.nilai.index', compact('semesters'));
     }
 
     public function getNilaiSiswaData(Request $request)
     {
         $user = auth()->user()->siswa;
 
-        $nilai = Nilai::whereHas('kartuStudi', function ($query) use ($user) {
-            $query->where('siswa_id', $user->id);
-        })
-            ->with(['mataPelajaran', 'kartuStudi.semester'])
-            ->get();
+        $query = Nilai::whereHas('kartuStudi', function ($q) use ($user) {
+            $q->where('siswa_id', $user->id);
+        })->with(['mataPelajaran', 'kartuStudi.semester.angkatan']);
+
+        if ($request->filled('semester_id')) {
+            $query->whereHas('kartuStudi', function ($q) use ($request) {
+                $q->where('semester_id', $request->semester_id);
+            });
+        }
+
+        $nilai = $query->get();
 
         return DataTables::of($nilai)
             ->addColumn('angkatan', function ($row) {
