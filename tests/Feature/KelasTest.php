@@ -70,7 +70,7 @@ class KelasTest extends TestCase
             'guru_id' => $guru->id,
             'angkatan_id' => $angkatan->id,
         ]);
-        
+
         $existingKelas = Kelas::factory()->make([
             'nama_kelas' => 'D1 Test',
             'ruang' => 'Ruang A',

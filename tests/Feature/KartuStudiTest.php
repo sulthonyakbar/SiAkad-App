@@ -53,6 +53,7 @@ class KartuStudiTest extends TestCase
         $ksData = KartuStudi::factory()->make([
             'kelas_id' => $kelas->id,
             'siswa_id' => $siswas->pluck('id')->toArray(),
+            'semester_id' => $semester->id,
         ])->toArray();
 
         $response = $this->post(route('kartu.studi.store'), $ksData);

@@ -65,7 +65,7 @@ class NilaiController extends Controller
                     return '-';
                 }
 
-                $adaNilai = \App\Models\Nilai::where('ks_id', $kartuStudi->id)->exists();
+                $adaNilai = Nilai::where('ks_id', $kartuStudi->id)->exists();
 
                 $detailBtn = '
                     <a href="' . route('nilai.detail', $kartuStudi->id) . '" class="btn btn-info btn-action" data-toggle="tooltip" title="Detail">
