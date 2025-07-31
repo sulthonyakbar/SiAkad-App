@@ -106,8 +106,8 @@ class BobotController extends Controller
      */
     public function edit(string $id)
     {
-        $bobot = BobotPenilaian::with('mapel')->findOrFail($id);
-
+        $bobot = BobotPenilaian::with('mataPelajaran')->findOrFail($id);
+        
         return view('pages.guru.bobot.edit', compact('bobot'));
     }
 

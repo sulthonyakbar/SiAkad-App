@@ -31,7 +31,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Mata Pelajaran</label>
-                                <input type="text" class="form-control" value="{{ $bobot->mapel->nama_mapel ?? '-' }}"
+                                <input type="text" class="form-control" value="{{ $bobot->mataPelajaran->nama_mapel ?? '-' }}"
                                     disabled>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                                     <div class="form-group">
                                         <label>Bobot UAS (%) <span class="text-danger">*</span></label>
                                         <input type="number" name="bobot_uas" class="form-control"
-                                            value="{{ old('bobot_uas', $bobot->bobot_uas) }} " required>
+                                            value="{{ old('bobot_uas', $bobot->bobot_uas) }}" required>
                                     </div>
                                 </div>
 
