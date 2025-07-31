@@ -104,7 +104,7 @@ class BobotTest extends TestCase
         ]);
     }
 
-    public function testEditMapelInvalid()
+    public function testEditBobotInvalid()
     {
         $guru = Guru::factory()->withUserRole('guru')->create([
             'nama_guru' => 'Test Guru',

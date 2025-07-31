@@ -234,7 +234,6 @@ class GuruTest extends TestCase
             'foto'           => UploadedFile::fake()->image('guru-update.jpg'),
         ];
 
-
         $response = $this->put(route('guru.update.profile', $guru->id), $updateData);
 
         $response->assertRedirect(route('guru.dashboard'));

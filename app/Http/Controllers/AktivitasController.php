@@ -72,7 +72,6 @@ class AktivitasController extends Controller
             'deskripsi' => $request->deskripsi,
         ]);
 
-        // Upload foto jika ada
         if ($request->hasFile('foto')) {
             $image = $request->file('foto');
             $imageName = time() . '_' . $image->getClientOriginalName();
@@ -132,9 +131,7 @@ class AktivitasController extends Controller
         $aktivitas->kendala = $request->kendala;
         $aktivitas->deskripsi = $request->deskripsi;
 
-        // Upload dan ganti foto jika ada file baru
         if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
             if ($aktivitas->foto && file_exists(public_path($aktivitas->foto))) {
                 unlink(public_path($aktivitas->foto));
             }

@@ -93,7 +93,8 @@ class JadwalController extends Controller
                 ->exists();
 
             if ($exists) {
-                return back()->withErrors(['jadwal' => 'Jadwal bentrok! Guru atau Kelas sudah memiliki jadwal lain pada hari dan jam yang sama di tahun ajaran ini.'])->withInput();
+                return back()->withErrors(['jadwal' => 'Jadwal bentrok! Guru atau Kelas sudah
+                memiliki jadwal lain pada hari dan jam yang sama di tahun ajaran ini.'])->withInput();
             }
 
             JadwalPelajaran::create([

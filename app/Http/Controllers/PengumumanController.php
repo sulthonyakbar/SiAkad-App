@@ -119,7 +119,6 @@ class PengumumanController extends Controller
         $data['guru_id'] = Auth::user()->guru->id;
 
         if ($request->hasFile('gambar')) {
-            // Hapus gambar lama jika ada
             if ($pengumuman->gambar && file_exists(public_path($pengumuman->gambar))) {
                 unlink(public_path($pengumuman->gambar));
             }

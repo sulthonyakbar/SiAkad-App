@@ -221,7 +221,6 @@ class NilaiController extends Controller
         $kartuStudiId = $id;
 
         foreach ($request->nilai as $mapel_id => $nilaiData) {
-            // Dapatkan bobot penilaian
             $bobot = MataPelajaran::find($mapel_id)?->bobotPenilaian;
 
             if (!$bobot) {
@@ -229,14 +228,12 @@ class NilaiController extends Controller
                     ->withErrors(['error' => 'Bobot penilaian untuk mata pelajaran ini belum diatur.']);
             }
 
-            // Hitung nilai akhir
             $nilaiAkhir = (
                 ($nilaiData['uh'] * $bobot->bobot_uh / 100) +
                 ($nilaiData['uts'] * $bobot->bobot_uts / 100) +
                 ($nilaiData['uas'] * $bobot->bobot_uas / 100)
             );
 
-            // Gunakan updateOrCreate untuk efisiensi
             Nilai::updateOrCreate(
                 [
                     'ks_id'    => $kartuStudiId,
