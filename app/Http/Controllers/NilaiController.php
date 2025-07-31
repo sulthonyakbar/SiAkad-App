@@ -262,13 +262,16 @@ class NilaiController extends Controller
     public function indexNilaiAdmin()
     {
         $semesters = Semester::with('angkatan')->orderByDesc('nama_semester')->get();
-        return view('pages.admin.nilai.index', compact('semesters'));
+        $kelasList = Kelas::all();
+        $mapels = MataPelajaran::all();
+        return view('pages.admin.nilai.index', compact('semesters', 'kelasList', 'mapels'));
     }
 
     public function getNilaiAdminData(Request $request)
     {
         $query = Nilai::with([
             'kartuStudi.siswa',
+            'kartuStudi.kelas',
             'kartuStudi.semester.angkatan',
             'mataPelajaran'
         ]);
@@ -277,6 +280,16 @@ class NilaiController extends Controller
             $query->whereHas('kartuStudi', function ($q) use ($request) {
                 $q->where('semester_id', $request->semester_id);
             });
+        }
+
+        if ($request->filled('kelas_id')) {
+            $query->whereHas('kartuStudi', function ($q) use ($request) {
+                $q->where('kelas_id', $request->kelas_id);
+            });
+        }
+
+        if ($request->filled('mapel_id')) {
+            $query->where('mata_pelajaran_id', $request->mapel_id);
         }
 
         $nilai = $query->get();

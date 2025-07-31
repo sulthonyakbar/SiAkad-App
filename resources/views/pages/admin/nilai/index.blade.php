@@ -24,15 +24,35 @@
                                 class="fa-solid fa-plus"></i></a> --}}
                     </div>
 
-                    <div class="form-inline ml-auto">
-                        <select class="form-control select2" name="semester_id" id="semesterFilter">
-                            <option value="">Semua Semester</option>
-                            @foreach ($semesters as $semester)
-                                <option value="{{ $semester->id }}">
-                                    {{ $semester->angkatan->tahun_ajaran ?? '-' }} - {{ $semester->nama_semester }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <div class="d-flex justify-content-end align-items-center flex-wrap">
+                        <div class="mr-2 mb-2">
+                            <select class="form-control select2" name="kelas_id" id="kelasFilter">
+                                <option value="">Semua Kelas</option>
+                                @foreach ($kelasList as $kelas)
+                                    <option value="{{ $kelas->id }}">{{ $kelas->nama_kelas }} - {{ $kelas->ruang ?? '-' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mr-2 mb-2">
+                            <select class="form-control select2" name="mapel_id" id="mapelFilter">
+                                <option value="">Semua Mapel</option>
+                                @foreach ($mapels as $mapel)
+                                    <option value="{{ $mapel->id }}">{{ $mapel->nama_mapel }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-2">
+                            <select class="form-control select2" name="semester_id" id="semesterFilter">
+                                <option value="">Semua Semester</option>
+                                @foreach ($semesters as $semester)
+                                    <option value="{{ $semester->id }}">
+                                        {{ $semester->angkatan->tahun_ajaran ?? '-' }} - {{ $semester->nama_semester }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
 
                 </div>
@@ -80,6 +100,8 @@
                     url: "{{ route('admin.nilai.data') }}",
                     data: function(d) {
                         d.semester_id = $('#semesterFilter').val();
+                        d.kelas_id = $('#kelasFilter').val();
+                        d.mapel_id = $('#mapelFilter').val();
                     }
                 },
                 columns: [{
@@ -144,7 +166,7 @@
             });
         });
 
-        $('#semesterFilter').change(function() {
+        $('#semesterFilter, #kelasFilter, #mapelFilter').change(function() {
             $('#nilaiAdminTable').DataTable().ajax.reload();
         });
 
