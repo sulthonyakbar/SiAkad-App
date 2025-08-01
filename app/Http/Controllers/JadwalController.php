@@ -203,17 +203,11 @@ class JadwalController extends Controller
         return response()->json($data);
     }
 
-    public function searchMapel(Request $request): JsonResponse
+    public function getMapelByKelas($id)
     {
-        $query = $request->input('q');
+        $kelas = Kelas::findOrFail($id);
+        $mapels = $kelas->mataPelajarans()->select('id', 'nama_mapel')->get();
 
-        $data = MataPelajaran::select("mata_pelajarans.id", "mata_pelajarans.nama_mapel", "mata_pelajarans.deskripsi")
-            ->when($query, function ($q) use ($query) {
-                $q->where('mata_pelajarans.nama_mapel', 'LIKE', '%' . $query . '%')
-                    ->orWhere('mata_pelajarans.deskripsi', 'LIKE', '%' . $query . '%');
-            })
-            ->get();
-
-        return response()->json($data);
+        return response()->json($mapels);
     }
 }

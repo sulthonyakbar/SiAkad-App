@@ -37,4 +37,8 @@ class Kelas extends Model
         return $this->hasMany(KartuStudi::class, 'kelas_id');
     }
 
+    public function mataPelajarans()
+    {
+        return $this->belongsToMany(MataPelajaran::class, 'kelas_mapels', 'kelas_id', 'mapel_id');
+    }
 }

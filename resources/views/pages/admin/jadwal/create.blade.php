@@ -18,7 +18,8 @@
 
         <div class="card card-primary">
             <div class="card-header">
-                <a class="btn btn-primary" href="{{ route('jadwal.index') }}" role="button"><i class="fa-solid fa-chevron-left"></i></a>
+                <a class="btn btn-primary" href="{{ route('jadwal.index') }}" role="button"><i
+                        class="fa-solid fa-chevron-left"></i></a>
             </div>
 
             <div class="card-body">
@@ -84,7 +85,7 @@
 
                     <div class="form-group">
                         <button type="button" id="add-jadwal" class="btn btn-secondary mb-3"><i
-                            class="fas fa-plus"></i></button>
+                                class="fas fa-plus"></i></button>
                         <button type="submit" class="btn btn-primary btn-lg btn-block">
                             Tambah Data Jadwal Pelajaran
                         </button>
@@ -107,7 +108,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
+        function route(name, param = '') {
+            const routes = {
+                'search.kelas.mapel': '{{ route('search.kelas.mapel', ':id') }}',
+            };
+
+            return routes[name].replace(':id', param);
+        }
+
         $(document).ready(function() {
+            // Select2 Kelas
             $('#kelas_id').select2({
                 placeholder: 'Pilih Kelas',
                 ajax: {
@@ -116,7 +126,7 @@
                     delay: 250,
                     data: function(params) {
                         return {
-                            q: params.term // search term
+                            q: params.term
                         };
                     },
                     processResults: function(data) {
@@ -124,7 +134,8 @@
                             results: $.map(data, function(item) {
                                 return {
                                     id: item.id,
-                                    text: item.nama_kelas + ' - Ruang ' + item.ruang + ' - Pengajar ' + item.wali_kelas
+                                    text: item.nama_kelas + ' - Ruang ' + item.ruang +
+                                        ' - Pengajar ' + item.wali_kelas
                                 }
                             })
                         };
@@ -132,45 +143,42 @@
                     cache: true
                 }
             });
+
+            // Load Mapel setelah kelas dipilih
+            $('#kelas_id').on('select2:select', function(e) {
+                const kelasId = e.params.data.id;
+
+                // Reset mapel_id dulu
+                $('#mapel_id').empty().trigger('change');
+
+                $.ajax({
+                    url: route('search.kelas.mapel', kelasId),
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let options = '<option value="">Pilih Mata Pelajaran</option>';
+                        data.forEach(function(item) {
+                            options +=
+                                `<option value="${item.id}">${item.nama_mapel}</option>`;
+                        });
+                        $('#mapel_id').html(options).trigger('change');
+                    },
+                    error: function() {
+                        alert('Gagal memuat data mapel.');
+                    }
+                });
+            });
         });
     </script>
+
 
     <script>
         $(document).ready(function() {
             $('#mapel_id').select2({
                 placeholder: 'Pilih Mata Pelajaran',
-                ajax: {
-                    url: '{{ route('search.mapel') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            q: params.term // search term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.nama_mapel + ' - ' + (item.deskripsi ?? ' ')
-                                }
-                            })
-                        };
-                    },
-                    cache: true
-                }
             });
         });
     </script>
-{{--
-    <script>
-        $(document).ready(function() {
-            $('#hari').select2({
-                placeholder: 'Pilih Hari',
-            });
-        });
-    </script> --}}
 
     <script>
         let index = 1;

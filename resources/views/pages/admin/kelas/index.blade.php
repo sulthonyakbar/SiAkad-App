@@ -43,6 +43,7 @@
                                     <th>Kelas</th>
                                     <th>Ruang</th>
                                     <th>Wali Kelas</th>
+                                    <th>Mata Pelajaran</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -90,6 +91,12 @@
                     {
                         data: 'guru',
                         name: 'guru',
+                    },
+                    {
+                        data: 'aksi_mapel',
+                        name: 'aksi_mapel',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'aksi',

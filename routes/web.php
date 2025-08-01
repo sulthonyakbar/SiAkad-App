@@ -84,6 +84,10 @@ Route::group(['middleware' => ['role.admin', 'tahun.ajaran', 'semester']], funct
     Route::put('/a/kelas/{id}', [KelasController::class, 'update'])->name('kelas.update');
     Route::delete('/a/kelas/{id}', [KelasController::class, 'destroy'])->name('kelas.destroy');
 
+    Route::get('/a/kelas/{id}/mapel', [KelasController::class, 'createKelasMapel'])->name('kelas.mapel.create');
+    Route::post('/a/kelas/{id}/mapel', [KelasController::class, 'storeKelasMapel'])->name('kelas.mapel.store');
+    Route::get('/a/kelas/search-mapel', [KelasController::class, 'searchMapel'])->name('kelas.search.mapel');
+
     Route::get('/a/kartu-studi/search-siswa', [KartuStudiController::class, 'searchSiswa'])->name('ks.search.siswa');
     Route::get('/a/kartu-studi/search-kelas', [KartuStudiController::class, 'searchKelas'])->name('ks.search.kelas');
     Route::get('/a/kartu-studi', [KartuStudiController::class, 'index'])->name('kartu.studi.index');
@@ -107,7 +111,7 @@ Route::group(['middleware' => ['role.admin', 'tahun.ajaran', 'semester']], funct
 
     Route::get('/a/jadwal', [JadwalController::class, 'index'])->name('jadwal.index');
     Route::get('/a/jadwal/search-kelas', [JadwalController::class, 'searchKelas'])->name('search.kelas');
-    Route::get('/a/jadwal/search-mapel', [JadwalController::class, 'searchMapel'])->name('search.mapel');
+    Route::get('/a/jadwal/kelas/{id}/mapel', [JadwalController::class, 'getMapelByKelas'])->name('search.kelas.mapel');
     Route::get('/a/jadwal/data', [JadwalController::class, 'getJadwalData'])->name('jadwal.data');
     Route::get('/a/jadwal/create', [JadwalController::class, 'create'])->name('jadwal.create');
     Route::post('/a/jadwal/store', [JadwalController::class, 'store'])->name('jadwal.store');

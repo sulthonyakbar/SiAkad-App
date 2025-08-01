@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Kelas;
+use App\Models\MataPelajaran;
 use App\Models\Guru;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
@@ -33,11 +34,17 @@ class KelasController extends Controller
             ->addColumn('guru', function ($row) {
                 return $row->guru->nama_guru ?? '-';
             })
+            ->addColumn('aksi_mapel', function ($row) {
+                return '
+                 <a href="' . route('kelas.mapel.create', $row->id) . '" class="btn btn-primary btn-action ml-1" data-toggle="tooltip" title="Kelola Mapel">
+                    <i class="fas fa-book-open"></i>
+                </a>';
+            })
             ->addColumn('aksi', function ($row) {
                 return '
                 <a href="' . route('kelas.edit', $row->id) . '" class="btn btn-warning btn-action" data-toggle="tooltip" title="Edit"><i class="fas fa-pencil-alt"></i></a>';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['aksi_mapel', 'aksi'])
             ->make(true);
     }
 
@@ -140,5 +147,40 @@ class KelasController extends Controller
             ->get();
 
         return response()->json($data);
+    }
+
+    public function searchMapel(Request $request): JsonResponse
+    {
+        $query = $request->input('q');
+
+        $data = MataPelajaran::select("mata_pelajarans.id", "mata_pelajarans.nama_mapel", "mata_pelajarans.deskripsi")
+            ->when($query, function ($q) use ($query) {
+                $q->where('mata_pelajarans.nama_mapel', 'LIKE', '%' . $query . '%')
+                    ->orWhere('mata_pelajarans.deskripsi', 'LIKE', '%' . $query . '%');
+            })
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function createKelasMapel($id)
+    {
+        $kelas = Kelas::findOrFail($id);
+        return view('pages.admin.kelas.kelas_mapel.create', compact('kelas'));
+    }
+
+    public function storeKelasMapel(Request $request, $id)
+    {
+        $request->validate([
+            'mapel_id' => 'required|array',
+            'mapel_id.*' => 'exists:mata_pelajarans,id',
+        ]);
+
+        $kelas = Kelas::findOrFail($id);
+
+        // Sinkronisasi mapel dengan kelas
+        $kelas->mataPelajarans()->syncWithoutDetaching($request->mapel_id);
+
+        return redirect()->route('kelas.index')->with('success', 'Mata pelajaran berhasil ditambahkan ke kelas.');
     }
 }

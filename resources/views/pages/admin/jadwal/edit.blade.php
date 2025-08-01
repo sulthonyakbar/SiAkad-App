@@ -65,7 +65,8 @@
                                 <select id="hari" name="hari" class="form-control" required>
                                     <option value="">Pilih Hari</option>
                                     <option value="Senin" {{ $jadwal->hari == 'Senin' ? 'selected' : '' }}>Senin</option>
-                                    <option value="Selasa" {{ $jadwal->hari == 'Selasa' ? 'selected' : '' }}>Selasa</option>
+                                    <option value="Selasa" {{ $jadwal->hari == 'Selasa' ? 'selected' : '' }}>Selasa
+                                    </option>
                                     <option value="Rabu" {{ $jadwal->hari == 'Rabu' ? 'selected' : '' }}>Rabu</option>
                                     <option value="Kamis" {{ $jadwal->hari == 'Kamis' ? 'selected' : '' }}>Kamis</option>
                                     <option value="Jumat" {{ $jadwal->hari == 'Jumat' ? 'selected' : '' }}>Jumat</option>
@@ -113,24 +114,36 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
     <script>
+        function route(name, param = '') {
+            const routes = {
+                'search.kelas': '{{ route('search.kelas') }}',
+                'search.kelas.mapel': '{{ route('search.kelas.mapel', ':id') }}',
+            };
+
+            return routes[name].replace(':id', param);
+        }
+
         $(document).ready(function() {
+            // Kelas
             $('#kelas_id').select2({
                 placeholder: 'Pilih Kelas',
                 ajax: {
-                    url: '{{ route('search.kelas') }}',
+                    url: route('search.kelas'),
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
                         return {
-                            q: params.term // search term
-                        };
+                            q: params.term
+                        }
                     },
                     processResults: function(data) {
                         return {
                             results: $.map(data, function(item) {
                                 return {
                                     id: item.id,
-                                    text: item.nama_kelas + ' - Ruang ' + item.ruang + ' - Pengajar ' + (item.wali_kelas ? item.wali_kelas : 'Tidak ada pengajar')
+                                    text: item.nama_kelas + ' - Ruang ' + item.ruang +
+                                        ' - Pengajar ' + (item.wali_kelas ??
+                                            'Tidak ada pengajar')
                                 }
                             })
                         };
@@ -138,34 +151,33 @@
                     cache: true
                 }
             });
-        });
-    </script>
 
-    <script>
-        $(document).ready(function() {
+            // Mapel
             $('#mapel_id').select2({
-                placeholder: 'Pilih Mata Pelajaran',
-                ajax: {
-                    url: '{{ route('search.mapel') }}',
+                placeholder: 'Pilih Mata Pelajaran'
+            });
+
+            // Load mapel ketika kelas dipilih
+            $('#kelas_id').on('select2:select', function(e) {
+                const kelasId = e.params.data.id;
+                $('#mapel_id').empty().trigger('change');
+
+                $.ajax({
+                    url: route('search.kelas.mapel', kelasId),
+                    type: 'GET',
                     dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            q: params.term // search term
-                        };
+                    success: function(data) {
+                        let options = '<option value="">Pilih Mata Pelajaran</option>';
+                        data.forEach(function(item) {
+                            options +=
+                                `<option value="${item.id}">${item.nama_mapel}</option>`;
+                        });
+                        $('#mapel_id').html(options).trigger('change');
                     },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.nama_mapel + ' - ' + (item.deskripsi ?? ' ')
-                                }
-                            })
-                        };
-                    },
-                    cache: true
-                }
+                    error: function() {
+                        alert('Gagal memuat data mapel.');
+                    }
+                });
             });
         });
     </script>
