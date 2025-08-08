@@ -18,6 +18,8 @@ return new class extends Migration
             $table->integer('bobot_uas');
             $table->uuid('mapel_id');
             $table->foreign('mapel_id')->references('id')->on('mata_pelajarans')->onDelete('cascade');
+            $table->uuid('semester_id');
+            $table->foreign('semester_id')->references('id')->on('semesters')->onDelete('cascade');
             $table->timestamps();
         });
     }

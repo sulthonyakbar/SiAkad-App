@@ -15,10 +15,16 @@ class BobotPenilaian extends Model
         'bobot_uts',
         'bobot_uas',
         'mapel_id',
+        'semester_id',
     ];
 
     public function mataPelajaran()
     {
         return $this->belongsTo(MataPelajaran::class, 'mapel_id');
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class, 'semester_id');
     }
 }

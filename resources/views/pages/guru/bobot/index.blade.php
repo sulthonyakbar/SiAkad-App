@@ -30,6 +30,8 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Tahun Ajaran</th>
+                                    <th>Semester</th>
                                     <th>Nama Mata Pelajaran</th>
                                     <th>Bobot UH (%)</th>
                                     <th>Bobot UTS (%)</th>
@@ -63,6 +65,14 @@
                         name: 'DT_RowIndex',
                         orderable: false,
                         searchable: false
+                    },
+                    {
+                        data: 'tahun_ajaran',
+                        name: 'tahun_ajaran',
+                    },
+                    {
+                        data: 'semester',
+                        name: 'semester',
                     },
                     {
                         data: 'mapel',

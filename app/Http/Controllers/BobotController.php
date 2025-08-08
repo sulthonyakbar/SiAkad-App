@@ -21,11 +21,23 @@ class BobotController extends Controller
     {
         $guru = auth()->user()->guru;
 
+        $semesterId = session('semester_aktif');
+
         $mapel = MataPelajaran::whereHas('jadwalPelajaran', function ($query) use ($guru) {
             $query->where('guru_id', $guru->id);
-        })->with('bobotPenilaian')->get();
+        })
+            ->with(['bobotPenilaian' => function ($query) use ($semesterId) {
+                $query->where('semester_id', $semesterId);
+            }])
+            ->get();
 
         return datatables()->of($mapel)
+            ->addColumn('tahun_ajaran', function ($row) {
+                return $row->bobotPenilaian->semester->angkatan->tahun_ajaran ?? '-';
+            })
+            ->addColumn('semester', function ($row) {
+                return $row->bobotPenilaian->semester->nama_semester ?? '-';
+            })
             ->addColumn('mapel', function ($row) {
                 return $row->nama_mapel ?? '-';
             })
@@ -73,18 +85,24 @@ class BobotController extends Controller
             'bobot_uas' => 'required|numeric|min:0|max:100',
         ]);
 
+        $semesterId = session('semester_aktif');
+
         $total = $request->bobot_uh + $request->bobot_uts + $request->bobot_uas;
         if ($total != 100) {
             return back()->withErrors(['total' => 'Total bobot harus 100%.']);
         }
 
-        $existing = BobotPenilaian::where('mapel_id', $request->mapel_id)->first();
+        $existing = BobotPenilaian::where('mapel_id', $request->mapel_id)
+            ->where('semester_id', $semesterId)
+            ->first();
+
         if ($existing) {
-            return back()->withErrors(['mapel' => 'Bobot untuk mata pelajaran ini sudah ada.']);
+            return back()->withErrors(['mapel' => 'Bobot untuk mata pelajaran di semester ini sudah ada.']);
         }
 
         BobotPenilaian::create([
             'mapel_id'  => $request->mapel_id,
+            'semester_id' => $semesterId,
             'bobot_uh'  => $request->bobot_uh,
             'bobot_uts' => $request->bobot_uts,
             'bobot_uas' => $request->bobot_uas,
@@ -107,7 +125,7 @@ class BobotController extends Controller
     public function edit(string $id)
     {
         $bobot = BobotPenilaian::with('mataPelajaran')->findOrFail($id);
-        
+
         return view('pages.guru.bobot.edit', compact('bobot'));
     }
 

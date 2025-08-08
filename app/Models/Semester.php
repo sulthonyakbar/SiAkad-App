@@ -19,9 +19,14 @@ class Semester extends Model
     {
         return $this->belongsTo(Angkatan::class, 'angkatan_id');
     }
-    
+
     public function kartuStudi()
     {
         return $this->hasMany(KartuStudi::class, 'semester_id');
+    }
+
+    public function bobotPenilaians()
+    {
+        return $this->hasMany(BobotPenilaian::class, 'semester_id');
     }
 }
