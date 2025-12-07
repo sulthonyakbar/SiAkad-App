@@ -30,7 +30,7 @@
                     <span class="text-primary">{{ $aktivitas->siswa->nama_siswa }}</span>
                     <span class="mx-2">|</span>
                     <span class="font-weight-bold">NISN:</span>
-                    <span class="text-dark">{{ $aktivitas->siswa->NISN }}</span>
+                    <span class="text-primary">{{ $aktivitas->siswa->NISN }}</span>
                 </h5>
 
                 <div class="row">

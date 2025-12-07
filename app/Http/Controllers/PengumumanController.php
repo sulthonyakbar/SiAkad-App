@@ -66,7 +66,9 @@ class PengumumanController extends Controller
             $image = $request->file('gambar');
             $slugJudul = Str::slug(Str::limit($request->judul, 20, ''), '_') . '_' . time();
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $uploadPath = public_path('images/pengumuman/' . $slugJudul);
+            // $uploadPath = public_path('images/pengumuman/' . $slugJudul);
+            $uploadPath = $_SERVER['DOCUMENT_ROOT'] . '/images/pengumuman/' . $slugJudul;
+
 
             if (!file_exists($uploadPath)) {
                 mkdir($uploadPath, 0777, true);
@@ -118,22 +120,52 @@ class PengumumanController extends Controller
         $data = $request->only(['judul', 'isi', 'kategori_id']);
         $data['guru_id'] = Auth::user()->guru->id;
 
-        if ($request->hasFile('gambar')) {
-            if ($pengumuman->gambar && file_exists(public_path($pengumuman->gambar))) {
-                unlink(public_path($pengumuman->gambar));
-            }
+        // if ($request->hasFile('gambar')) {
+        //     if ($pengumuman->gambar && file_exists(public_path($pengumuman->gambar))) {
+        //         unlink(public_path($pengumuman->gambar));
+        //     }
 
+        //     $image = $request->file('gambar');
+        //     $slugJudul = Str::slug(Str::limit($request->judul, 20, ''), '_') . '_' . time();
+        //     $imageName = time() . '_' . $image->getClientOriginalName();
+        //     $uploadPath = public_path('images/pengumuman/' . $slugJudul);
+
+        //     if (!file_exists($uploadPath)) {
+        //         mkdir($uploadPath, 0777, true);
+        //     }
+
+        //     $image->move($uploadPath, $imageName);
+        //     $data['gambar'] = 'images/pengumuman/' . $slugJudul . '/' . $imageName;
+        // }
+
+        // Update ikon jika diunggah
+        if ($request->hasFile('gambar')) {
             $image = $request->file('gambar');
             $slugJudul = Str::slug(Str::limit($request->judul, 20, ''), '_') . '_' . time();
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $uploadPath = public_path('images/pengumuman/' . $slugJudul);
 
-            if (!file_exists($uploadPath)) {
-                mkdir($uploadPath, 0777, true);
+            // Tentukan path ke public_html jika di hosting, atau ke public jika di lokal
+            $rootPath = $_SERVER['DOCUMENT_ROOT'] ?? public_path();
+            $userImagesPath = $rootPath . '/images/pengumuman/' . $slugJudul;
+
+            // Buat folder jika belum ada
+            if (!file_exists($userImagesPath)) {
+                mkdir($userImagesPath, 0777, true);
             }
 
-            $image->move($uploadPath, $imageName);
-            $data['gambar'] = 'images/pengumuman/' . $slugJudul . '/' . $imageName;
+            // Hapus ikon lama jika ada
+            if ($pengumuman->gambar) {
+                $oldPath = $rootPath . '/' . $pengumuman->gambar;
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // Simpan foto baru
+            $image->move($userImagesPath, $imageName);
+
+            // Simpan path relatif ke database
+            $pengumuman->gambar = 'images/pengumuman/' . $slugJudul . '/' . $imageName;
         }
 
         $pengumuman->update($data);

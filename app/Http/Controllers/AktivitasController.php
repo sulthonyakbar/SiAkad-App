@@ -75,7 +75,8 @@ class AktivitasController extends Controller
         if ($request->hasFile('foto')) {
             $image = $request->file('foto');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $userImagesPath = public_path('images/aktivitas_siswa/' .   $aktivitas->siswa->nama_siswa);
+            // $userImagesPath = public_path('images/aktivitas_siswa/' .   $aktivitas->siswa->nama_siswa);
+            $userImagesPath = $_SERVER['DOCUMENT_ROOT'] . '/images/aktivitas_siswa/' . $aktivitas->siswa->nama_siswa;
 
             if (!file_exists($userImagesPath)) {
                 mkdir($userImagesPath, 0777, true);
@@ -131,20 +132,32 @@ class AktivitasController extends Controller
         $aktivitas->kendala = $request->kendala;
         $aktivitas->deskripsi = $request->deskripsi;
 
+        // Update ikon jika diunggah
         if ($request->hasFile('foto')) {
-            if ($aktivitas->foto && file_exists(public_path($aktivitas->foto))) {
-                unlink(public_path($aktivitas->foto));
-            }
-
             $image = $request->file('foto');
             $imageName = time() . '_' . $image->getClientOriginalName();
-            $userImagesPath = public_path('images/aktivitas_siswa/' . $aktivitas->siswa->nama_siswa);
 
+            // Tentukan path ke public_html jika di hosting, atau ke public jika di lokal
+            $rootPath = $_SERVER['DOCUMENT_ROOT'] ?? public_path();
+            $userImagesPath = $rootPath . '/images/aktivitas_siswa/' . $aktivitas->siswa->nama_siswa;
+
+            // Buat folder jika belum ada
             if (!file_exists($userImagesPath)) {
                 mkdir($userImagesPath, 0777, true);
             }
 
+            // Hapus ikon lama jika ada
+            if ($aktivitas->foto) {
+                $oldPath = $rootPath . '/' . $aktivitas->foto;
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // Simpan foto baru
             $image->move($userImagesPath, $imageName);
+
+            // Simpan path relatif ke database
             $aktivitas->foto = 'images/aktivitas_siswa/' . $aktivitas->siswa->nama_siswa . '/' . $imageName;
         }
 

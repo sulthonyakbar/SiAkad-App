@@ -263,7 +263,7 @@ class SiswaController extends Controller
             if ($request->hasFile('foto')) {
                 $image = $request->file('foto');
                 $imageName = time() . '_' . $image->getClientOriginalName();
-                $userImagesPath = public_path('images/siswa/' . $siswa->nama_siswa);
+                $userImagesPath = $_SERVER['DOCUMENT_ROOT'] . '/images/siswa/' . $siswa->nama_siswa;
 
                 if (!file_exists($userImagesPath)) {
                     mkdir($userImagesPath, 0777, true);
@@ -378,26 +378,56 @@ class SiswaController extends Controller
                 'alasan' => $request->alasan,
             ]);
 
-            // Update foto jika diunggah
+            // Update ikon jika diunggah
             if ($request->hasFile('foto')) {
-                // Hapus foto lama jika ada
-                if ($siswa->foto && file_exists(public_path($siswa->foto))) {
-                    unlink(public_path($siswa->foto));
-                }
-
-                // Simpan foto baru
                 $image = $request->file('foto');
                 $imageName = time() . '_' . $image->getClientOriginalName();
-                $userImagesPath = public_path('images/siswa/' . $siswa->nama_siswa);
 
+                // Tentukan path ke public_html jika di hosting, atau ke public jika di lokal
+                $rootPath = $_SERVER['DOCUMENT_ROOT'] ?? public_path();
+                $userImagesPath = $rootPath . '/images/siswa/' . $siswa->nama_siswa;
+
+                // Buat folder jika belum ada
                 if (!file_exists($userImagesPath)) {
                     mkdir($userImagesPath, 0777, true);
                 }
 
+                // Hapus ikon lama jika ada
+                if ($siswa->foto) {
+                    $oldPath = $rootPath . '/' . $siswa->foto;
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }
+
+                // Simpan foto baru
                 $image->move($userImagesPath, $imageName);
+
+                // Simpan path relatif ke database
                 $siswa->foto = 'images/siswa/' . $siswa->nama_siswa . '/' . $imageName;
                 $siswa->save();
             }
+
+            // // Update foto jika diunggah
+            // if ($request->hasFile('foto')) {
+            //     // Hapus foto lama jika ada
+            //     if ($siswa->foto && file_exists(public_path($siswa->foto))) {
+            //         unlink(public_path($siswa->foto));
+            //     }
+
+            //     // Simpan foto baru
+            //     $image = $request->file('foto');
+            //     $imageName = time() . '_' . $image->getClientOriginalName();
+            //     $userImagesPath = public_path('images/siswa/' . $siswa->nama_siswa);
+
+            //     if (!file_exists($userImagesPath)) {
+            //         mkdir($userImagesPath, 0777, true);
+            //     }
+
+            //     $image->move($userImagesPath, $imageName);
+            //     $siswa->foto = 'images/siswa/' . $siswa->nama_siswa . '/' . $imageName;
+            //     $siswa->save();
+            // }
 
             DB::commit();
             return redirect()->route('siswa.index')->with('success', 'Data siswa berhasil diperbarui.');

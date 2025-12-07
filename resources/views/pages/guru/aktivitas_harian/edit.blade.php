@@ -33,119 +33,24 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="siswa_id">Pilih Siswa <span class="text-danger">*</span></label>
-                                <select id="siswa_id" class="form-control" name="siswa_id">
+                                <select id="siswa_id" class="form-control" name="siswa_id" disabled readonly>
                                     @if ($aktivitas->siswa)
                                         <option value="{{ $aktivitas->siswa->id }}" selected>
                                             {{ $aktivitas->siswa->NISN }} - {{ $aktivitas->siswa->nama_siswa }}
                                         </option>
                                     @endif
                                 </select>
+                                <input type="hidden" name="siswa_id" value="{{ $aktivitas->siswa->id }}">
                             </div>
 
                             <div class="form-group">
                                 <label for="kegiatan">Kegiatan<span class="text-danger">*</span></label>
-                                <select id="kegiatan" class="form-control select2" name="kegiatan" required>
-                                    <option value="Belajar Membaca"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Belajar Membaca' ? 'selected' : '' }}>
-                                        Belajar Membaca</option>
-                                    <option value="Belajar Menulis"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Belajar Menulis' ? 'selected' : '' }}>
-                                        Belajar Menulis</option>
-                                    <option value="Mengerjakan Soal Matematika"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Mengerjakan Soal Matematika' ? 'selected' : '' }}>
-                                        Mengerjakan Soal Matematika</option>
-                                    <option value="Mengenal Huruf dan Angka"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Mengenal Huruf dan Angka' ? 'selected' : '' }}>
-                                        Mengenal Huruf dan Angka</option>
-                                    <option value="Mengenal Warna dan Bentuk"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Mengenal Warna dan Bentuk' ? 'selected' : '' }}>
-                                        Mengenal Warna dan Bentuk</option>
-                                    <option value="Menyusun Puzzle"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Menyusun Puzzle' ? 'selected' : '' }}>
-                                        Menyusun Puzzle</option>
-                                    <option value="Melatih Konsentrasi"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Melatih Konsentrasi' ? 'selected' : '' }}>
-                                        Melatih Konsentrasi</option>
-                                    <option value="Bermain Edukatif"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Bermain Edukatif' ? 'selected' : '' }}>
-                                        Bermain Edukatif</option>
-                                    <option value="Membaca Buku Cerita"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Membaca Buku Cerita' ? 'selected' : '' }}>
-                                        Membaca Buku Cerita</option>
-                                    <option value="Menari dan Bernyanyi"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Menari dan Bernyanyi' ? 'selected' : '' }}>
-                                        Menari dan Bernyanyi</option>
-                                    <option value="Menggambar dan Mewarnai"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Menggambar dan Mewarnai' ? 'selected' : '' }}>
-                                        Menggambar dan Mewarnai</option>
-                                    <option value="Olahraga Ringan"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Olahraga Ringan' ? 'selected' : '' }}>
-                                        Olahraga Ringan</option>
-                                    <option value="Latihan Motorik Halus"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Latihan Motorik Halus' ? 'selected' : '' }}>
-                                        Latihan Motorik Halus</option>
-                                    <option value="Latihan Motorik Kasar"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Latihan Motorik Kasar' ? 'selected' : '' }}>
-                                        Latihan Motorik Kasar</option>
-                                    <option value="Belajar Bersosialisasi"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Belajar Bersosialisasi' ? 'selected' : '' }}>
-                                        Belajar Bersosialisasi</option>
-                                    <option value="Melatih Kemandirian"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Melatih Kemandirian' ? 'selected' : '' }}>
-                                        Melatih Kemandirian</option>
-                                    <option value="Makan Bersama"
-                                        {{ old('kegiatan', $aktivitas->kegiatan) == 'Makan Bersama' ? 'selected' : '' }}>
-                                        Makan Bersama</option>
-                                </select>
+                                <input id="kegiatan" type="text" class="form-control" name="kegiatan" value="{{ old('kegiatan', $aktivitas->kegiatan) }}" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="kendala">Kendala<span class="text-danger">*</span></label>
-                                <select id="kendala" class="form-control select2" name="kendala" required>
-                                    <option value="">Pilih Kendala</option>
-                                    <option value="Kurang Fokus"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Kurang Fokus' ? 'selected' : '' }}>
-                                        Kurang Fokus</option>
-                                    <option value="Sulit Menghafal"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Sulit Menghafal' ? 'selected' : '' }}>
-                                        Sulit Menghafal</option>
-                                    <option value="Kesulitan Menulis"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Kesulitan Menulis' ? 'selected' : '' }}>
-                                        Kesulitan Menulis</option>
-                                    <option value="Sulit Mengenali Huruf dan Angka"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Sulit Mengenali Huruf dan Angka' ? 'selected' : '' }}>
-                                        Sulit Mengenali Huruf dan Angka</option>
-                                    <option value="Kurang Percaya Diri"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Kurang Percaya Diri' ? 'selected' : '' }}>
-                                        Kurang Percaya Diri</option>
-                                    <option value="Kesulitan Bersosialisasi"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Kesulitan Bersosialisasi' ? 'selected' : '' }}>
-                                        Kesulitan Bersosialisasi</option>
-                                    <option value="Mudah Lelah atau Mengantuk"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Mudah Lelah atau Mengantuk' ? 'selected' : '' }}>
-                                        Mudah Lelah atau Mengantuk</option>
-                                    <option value="Kurang Koordinasi Motorik"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Kurang Koordinasi Motorik' ? 'selected' : '' }}>
-                                        Kurang Koordinasi Motorik</option>
-                                    <option value="Kesulitan Mengikuti Arahan"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Kesulitan Mengikuti Arahan' ? 'selected' : '' }}>
-                                        Kesulitan Mengikuti Arahan</option>
-                                    <option value="Sulit Berkomunikasi dengan Teman"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Sulit Berkomunikasi dengan Teman' ? 'selected' : '' }}>
-                                        Sulit Berkomunikasi dengan Teman</option>
-                                    <option value="Kurang Minat dalam Kegiatan"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Kurang Minat dalam Kegiatan' ? 'selected' : '' }}>
-                                        Kurang Minat dalam Kegiatan</option>
-                                    <option value="Mudah Terdistraksi"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Mudah Terdistraksi' ? 'selected' : '' }}>
-                                        Mudah Terdistraksi</option>
-                                    <option value="Kesulitan Mengontrol Emosi"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Kesulitan Mengontrol Emosi' ? 'selected' : '' }}>
-                                        Kesulitan Mengontrol Emosi</option>
-                                    <option value="Tidak Ada Kendala"
-                                        {{ old('kendala', $aktivitas->kendala) == 'Tidak Ada Kendala' ? 'selected' : '' }}>
-                                        Tidak Ada Kendala</option>
-                                </select>
+                                <input id="kendala" type="text" class="form-control" name="kendala" value="{{ old('kendala', $aktivitas->kendala) }}" required>
                             </div>
                         </div>
 
