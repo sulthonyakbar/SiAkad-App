@@ -36,7 +36,7 @@
 
                             <div class="form-group">
                                 <label for="isi">Isi <span class="text-danger">*</span></label>
-                                <textarea id="isi" class="form-control" name="isi" required></textarea>
+                                <textarea id="isi" class="form-control" name="isi"></textarea>
                             </div>
 
                         </div>
@@ -44,10 +44,7 @@
 
                             <div class="form-group">
                                 <label for="gambar">Gambar <span class="text-danger">* </span></label>
-                                <div class="custom-file">
-                                    <input type="file" name="gambar" class="custom-file-input" id="gambar" required>
-                                    <label class="custom-file-label">Choose File</label>
-                                </div>
+                                <input id="gambar" type="file" class="form-control" name="gambar" accept=".png" required>
                                 <div class="form-text text-muted">The image must be a PNG file</div>
                             </div>
 
